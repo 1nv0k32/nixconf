@@ -21,9 +21,11 @@ let
     '';
   };
 
-  soapysdr-uhd = pkgs.soapysdr-with-plugins.override {
-    extraPackages = [ pkgs.soapyuhd ];
-  };
+  soapysdr-uhd = (
+    pkgs.soapysdr-with-plugins.override {
+      extraPackages = [ pkgs.soapyuhd ];
+    }
+  );
 
   guiWrapped = pkgs.symlinkJoin {
     name = "sdrGuiTools";
