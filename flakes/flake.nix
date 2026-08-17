@@ -1,7 +1,7 @@
 {
   inputs = {
     cfg = {
-      url = "github:1nv0k32/nixos-config";
+      url = "git+https://codeberg.org/1nv0k32/nixconf";
     };
   };
 
