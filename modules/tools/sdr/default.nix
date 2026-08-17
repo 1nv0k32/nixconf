@@ -33,7 +33,7 @@ let
     postBuild = ''
       for bin in $out/bin/*; do
         wrapProgram "$bin" \
-          --set UHD_IMAGES_DIR "${cliWrapped}/share/uhd/images" \
+          --set UHD_IMAGES_DIR "${cliWrapped}/share/uhd/images"
       done
     '';
   };
