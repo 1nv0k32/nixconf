@@ -22,7 +22,7 @@ let
   };
 
   soapysdr-uhd = (
-    pkgs.soapysdr-with-plugins.override {
+    pkgs.soapysdr.override {
       extraPackages = [ pkgs.soapyuhd ];
     }
   );
