@@ -34,7 +34,6 @@ let
       for bin in $out/bin/*; do
         wrapProgram "$bin" \
           --set UHD_IMAGES_DIR "${cliWrapped}/share/uhd/images" \
-          --set SOAPY_SDR_PLUGIN_PATH="${cliWrapped}/lib/SoapySDR/modules0.8"
       done
     '';
   };
