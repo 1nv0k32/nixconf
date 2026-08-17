@@ -10,6 +10,7 @@ let
     name = "sdrCliTools";
     paths = with pkgs; [
       uhd
+      soapysdr-with-plugins
     ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
@@ -20,22 +21,12 @@ let
       done
     '';
   };
-
-  soapysdr-uhd = (
-    pkgs.soapysdr.override {
-      extraPackages = [ pkgs.soapyuhd ];
-    }
-  );
-
   guiWrapped = pkgs.symlinkJoin {
     name = "sdrGuiTools";
     paths = with pkgs; [
       gnuradio
       gqrx
-      abracadabra
-      (sdrpp.override {
-        soapysdr-with-plugins = soapysdr-uhd;
-      })
+      sdrpp
     ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
