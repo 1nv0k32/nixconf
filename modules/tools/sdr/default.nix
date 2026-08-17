@@ -31,10 +31,9 @@ let
       gnuradio
       gqrx
       abracadabra
-      sdrpp.override
-      {
+      (sdrpp.override {
         soapysdr-with-plugins = soapysdr-uhd;
-      }
+      })
     ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
