@@ -9,6 +9,7 @@
     ./tmux.nix
     ./fzf.nix
     ./kube.nix
+    ./tor.nix
     ./sdr
   ];
 }

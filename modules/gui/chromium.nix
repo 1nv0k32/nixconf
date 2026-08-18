@@ -19,6 +19,7 @@
       "pkehgijcmpdhfbdbbnkijodmdjhbjlgp" # privacy badger
       "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
       "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
+      "pfnededegaaopdmhkdmcofjmoldfiped" # proxy switchy omega3
     ];
     extraOpts = {
       "RestoreOnStartup" = 1;
