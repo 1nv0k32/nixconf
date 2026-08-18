@@ -27,6 +27,7 @@ let
       gnuradio
       gqrx
       sdrpp
+      qradiolink
     ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
