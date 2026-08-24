@@ -20,6 +20,7 @@
       alsa-utils
       virt-manager
       networkmanagerapplet
+      unstable.openlogi
       obs-studio
       gimp
       freecad
