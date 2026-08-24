@@ -54,6 +54,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware";
+    openlogi = {
+      url = "github:AprilNEA/OpenLogi";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs =
@@ -80,6 +84,7 @@
         nixvim.nixosModules.nixvim
         disko.nixosModules.disko
         nixos-generators.nixosModules.all-formats
+        openlogi.nixosModules.default
       ];
       darwinMods = [
         home-manager.darwinModules.home-manager

@@ -19,5 +19,5 @@
   environment.sysConf.gui.enable = true;
   programs.dconf.enable = true;
   services.flatpak.enable = true;
-  hardware.logitech.wireless.enable = true;
+  programs.openlogi.enable = true;
 }
