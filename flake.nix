@@ -330,7 +330,7 @@
           kernel = (import "${self}/shells/kernel.nix" { inherit pkgs lib; }).shell;
           python = (import "${self}/shells/python.nix" { inherit pkgs lib; }).shell;
           go = (import "${self}/shells/go.nix" { inherit pkgs lib; }).shell;
-          fhs = (import "${self}/shells/fhs.nix" { inherit pkgs lib; }).shell;
+          fhs = (import "${self}/shells/fhs.nix" { inherit pkgs lib; }).shell.env;
         };
       }
     );

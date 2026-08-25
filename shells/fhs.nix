@@ -1,4 +1,17 @@
 { lib, pkgs, ... }:
+let
+  LD_LIBRARY_PATH =
+    with pkgs;
+    lib.makeLibraryPath [
+      stdenv.cc.cc
+      zlib
+      ncurses5
+      pixman
+      libpng
+      libtinfo
+      libxcrypt-legacy
+    ];
+in
 {
   shell = pkgs.buildFHSEnv {
     name = "fhs";
@@ -21,18 +34,42 @@
         libftdi
         libftdi1
         libusb1
+        # vivado
+        ncurses5
+        zlib
+        libuuid
+        bash
+        coreutils
+        libxext
+        libx11
+        libxrender
+        libxtst
+        libxi
+        libxft
+        libxcb
+        freetype
+        fontconfig
+        glib
+        gtk2
+        gtk3
+        graphviz
+        gcc
+        unzip
+        nettools
       ]);
 
     NIX_HARDENING_ENABLE = "";
-    LD_LIBRARY_PATH =
-      with pkgs;
-      lib.makeLibraryPath [
-        stdenv.cc.cc
-        zlib
-      ];
+    LD_LIBRARY_PATH = LD_LIBRARY_PATH;
 
     runScript = ''
-      ${lib.getExe pkgs.zsh}
+      env LIBRARY_PATH=/usr/lib \
+      C_INCLUDE_PATH=/usr/include \
+      CPLUS_INCLUDE_PATH=/usr/include \
+      CMAKE_LIBRARY_PATH=/usr/lib \
+      CMAKE_INCLUDE_PATH=/usr/include \
+      LD_LIBRARY_PATH=${LD_LIBRARY_PATH} \
+      bash
+      # ${lib.getExe pkgs.zsh}
     '';
   };
 }
