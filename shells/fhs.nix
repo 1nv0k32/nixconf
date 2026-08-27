@@ -18,6 +18,14 @@ in
     targetPkgs =
       pkgs:
       (with pkgs; [
+        # basics
+        coreutils
+        bash
+        gcc
+        unzip
+        nettools
+        ncurses5
+        zlib
         # python
         uv
         python312
@@ -35,11 +43,7 @@ in
         libftdi1
         libusb1
         # vivado
-        ncurses5
-        zlib
         libuuid
-        bash
-        coreutils
         libxext
         libx11
         libxrender
@@ -53,23 +57,19 @@ in
         gtk2
         gtk3
         graphviz
-        gcc
-        unzip
-        nettools
       ]);
 
     NIX_HARDENING_ENABLE = "";
     LD_LIBRARY_PATH = LD_LIBRARY_PATH;
 
     runScript = ''
-      env LIBRARY_PATH=/usr/lib \
-      C_INCLUDE_PATH=/usr/include \
-      CPLUS_INCLUDE_PATH=/usr/include \
-      CMAKE_LIBRARY_PATH=/usr/lib \
-      CMAKE_INCLUDE_PATH=/usr/include \
-      LD_LIBRARY_PATH=${LD_LIBRARY_PATH} \
-      bash
-      # ${lib.getExe pkgs.zsh}
+      # env LIBRARY_PATH=/usr/lib \
+      # C_INCLUDE_PATH=/usr/include \
+      # CPLUS_INCLUDE_PATH=/usr/include \
+      # CMAKE_LIBRARY_PATH=/usr/lib \
+      # CMAKE_INCLUDE_PATH=/usr/include \
+      # LD_LIBRARY_PATH=${LD_LIBRARY_PATH} \
+      ${lib.getExe pkgs.zsh}
     '';
   };
 }
