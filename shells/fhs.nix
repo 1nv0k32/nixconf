@@ -63,11 +63,11 @@ in
     LD_LIBRARY_PATH = LD_LIBRARY_PATH;
 
     runScript = ''
-      # env LIBRARY_PATH=/usr/lib \
-      # C_INCLUDE_PATH=/usr/include \
-      # CPLUS_INCLUDE_PATH=/usr/include \
-      # CMAKE_LIBRARY_PATH=/usr/lib \
-      # CMAKE_INCLUDE_PATH=/usr/include \
+      env LIBRARY_PATH=/usr/lib \
+      C_INCLUDE_PATH=/usr/include \
+      CPLUS_INCLUDE_PATH=/usr/include \
+      CMAKE_LIBRARY_PATH=/usr/lib \
+      CMAKE_INCLUDE_PATH=/usr/include \
       LD_LIBRARY_PATH=${LD_LIBRARY_PATH} \
       ${lib.getExe pkgs.zsh}
     '';
