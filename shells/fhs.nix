@@ -68,7 +68,7 @@ in
       # CPLUS_INCLUDE_PATH=/usr/include \
       # CMAKE_LIBRARY_PATH=/usr/lib \
       # CMAKE_INCLUDE_PATH=/usr/include \
-      # LD_LIBRARY_PATH=${LD_LIBRARY_PATH} \
+      LD_LIBRARY_PATH=${LD_LIBRARY_PATH} \
       ${lib.getExe pkgs.zsh}
     '';
   };
