@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 let
   fetchLorePatch =
     {
@@ -34,10 +34,9 @@ let
 in
 {
   hardware.raspberry-pi.firmware.uboot.package =
-    lib.mkForce
-      (pkgs.unstable.ubootRaspberryPiAarch64.override {
-        extraPatches = rpi5-nvme-patches;
-      }).overrideAttrs
+    (pkgs.unstable.ubootRaspberryPiAarch64.override {
+      extraPatches = rpi5-nvme-patches;
+    }).overrideAttrs
       (old: {
         postPatch = (old.postPatch or "") + ''
           substituteInPlace board/raspberrypi/rpi/rpi.env \
