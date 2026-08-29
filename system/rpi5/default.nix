@@ -6,6 +6,7 @@
 {
   imports = [
     (import ./disko.nix)
+    (import ./uboot-rpi-arm64.nix)
     (import "${self}/modules/etc/media.nix")
     (import "${self}/modules/etc/gitea.nix")
   ];
@@ -19,7 +20,9 @@
     ];
     firmware = {
       enable = true;
-      uboot.enable = true;
+      uboot = {
+        enable = true;
+      };
     };
   };
 
