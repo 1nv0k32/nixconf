@@ -12,12 +12,12 @@
 
   users.users.root.initialPassword = "root";
 
-  hardware = {
+  hardware.raspberry-pi = {
     configtxt.settings.all.dtparam = lib.mkAfter [
       "usb_max_current_enable=1"
       "pciex1_gen=3"
     ];
-    raspberry-pi.firmware = {
+    firmware = {
       enable = true;
       uboot.enable = true;
     };
