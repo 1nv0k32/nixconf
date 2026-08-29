@@ -534,27 +534,6 @@
         "type": "github"
       }
     },
-    "openlogi": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs-unstable"
-        ],
-        "rust-overlay": "rust-overlay"
-      },
-      "locked": {
-        "lastModified": 1787559178,
-        "narHash": "sha256-PZAlVx/qsOkBcmGGyrpMif2aWTlLtWLbPeZFwjtdLO0=",
-        "owner": "AprilNEA",
-        "repo": "OpenLogi",
-        "rev": "8c9455ac140baf5abbbfd29e44b2ce8abf0d798a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "AprilNEA",
-        "repo": "OpenLogi",
-        "type": "github"
-      }
-    },
     "openstack-nix": {
       "inputs": {
         "flake-utils": "flake-utils_2",
@@ -658,32 +637,10 @@
         "nixpkgs-test": "nixpkgs-test",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixvim": "nixvim",
-        "openlogi": "openlogi",
         "openstack-nix": "openstack-nix",
         "openstack-nix-dev": "openstack-nix-dev",
         "sops-nix": "sops-nix",
         "srvos": "srvos"
-      }
-    },
-    "rust-overlay": {
-      "inputs": {
-        "nixpkgs": [
-          "openlogi",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1787246814,
-        "narHash": "sha256-pEd4/iPY3Zm/EhhHmeB1QnIWXJSLx7gJzD/05mm2MCo=",
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "rev": "c84e121aaede7ef8c7bd9fb5154ccc1599e07816",
-        "type": "github"
-      },
-      "original": {
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "type": "github"
       }
     },
     "sops-nix": {
