@@ -34,7 +34,7 @@ let
 in
 {
   hardware.raspberry-pi.firmware.uboot.package =
-    (pkgs.ubootRaspberryPiAarch64.override {
+    (pkgs.unstable.ubootRaspberryPiAarch64.override {
       extraPatches = rpi5-nvme-patches;
     }).overrideAttrs
       (old: {
