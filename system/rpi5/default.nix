@@ -6,7 +6,6 @@
 {
   imports = [
     (import ./disko.nix)
-    (import ./uboot.nix)
     (import "${self}/modules/etc/media.nix")
     (import "${self}/modules/etc/gitea.nix")
   ];

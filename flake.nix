@@ -314,6 +314,7 @@
         };
       in
       {
+        overlays = import "${self}/overlays";
         formatter = pkgs.nixfmt-tree;
 
         packages = {
