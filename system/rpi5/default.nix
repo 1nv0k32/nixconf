@@ -12,9 +12,15 @@
 
   users.users.root.initialPassword = "root";
 
-  hardware.raspberry-pi.firmware = {
-    enable = true;
-    uboot.enable = true;
+  hardware = {
+    configtxt.settings.all.dtparam = lib.mkAfter [
+      "usb_max_current_enable=1"
+      "pciex1_gen=3"
+    ];
+    raspberry-pi.firmware = {
+      enable = true;
+      uboot.enable = true;
+    };
   };
 
   networking = {
@@ -33,6 +39,8 @@
       "cgroup_enable=cpuset"
       "cgroup_enable=memory"
       "cgroup_memory=1"
+      "8250.nr_uarts=1"
+      "rootflags=data=journal"
     ];
   };
 }
