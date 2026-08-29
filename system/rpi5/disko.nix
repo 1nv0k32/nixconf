@@ -9,27 +9,13 @@
           partitions = {
             FIRMWARE = {
               label = "FIRMWARE";
-              size = "1024M";
-              type = "0700";
+              size = "2048M";
+              type = "EF00";
               priority = 1;
-              attributes = [ 0 ];
               content = {
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot/firmware";
-                mountOptions = [
-                  "noatime"
-                ];
-              };
-            };
-            ESP = {
-              label = "ESP";
-              size = "1024M";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
                 mountOptions = [
                   "noatime"
                   "umask=0077"
