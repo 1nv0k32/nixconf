@@ -38,6 +38,7 @@
 
   boot = {
     initrd.systemd.tpm2.enable = lib.mkForce false;
+    kernel.sysctl."vm.mmap_rnd_bits" = lib.mkForce null;
     kernelParams = [
       "cgroup_enable=cpuset"
       "cgroup_enable=memory"
