@@ -233,7 +233,7 @@
     toggleterm = {
       enable = true;
       settings = {
-        direction = "float";
+        direction = "horizontal";
         open_mapping = "[[<c-\\>]]";
       };
     };
