@@ -58,6 +58,11 @@ in
         enable = true;
         package =
           (pkgs.unstable.ubootRaspberryPiAarch64.override {
+            extraConfig = ''
+              CONFIG_LOG=y
+              CONFIG_LOGLEVEL=8
+              CONFIG_LOG_MAX_LEVEL=8
+            '';
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
             (old: {
