@@ -249,7 +249,7 @@
                 (import "${self}/system/rpi5")
               ]
               ++ nixosMods
-              ++ baseModules
+              ++ defaultModules
               ++ optionalLocalModules attrs.modules;
             };
           # QEMU
