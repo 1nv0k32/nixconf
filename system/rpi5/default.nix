@@ -59,9 +59,16 @@ in
         package =
           (pkgs.unstable.ubootRaspberryPiAarch64.override {
             extraConfig = ''
+              CONFIG_SPL_LOG=n
+              CONFIG_TPL_LOG=n
               CONFIG_LOG=y
-              CONFIG_LOGLEVEL=8
-              CONFIG_LOG_MAX_LEVEL=8
+              CONFIG_LOGLEVEL=7
+              CONFIG_LOG_MAX_LEVEL=7
+              CONFIG_DM_VIDEO=y
+              CONFIG_VIDEO=y
+              CONFIG_CONSOLE_MUX=y
+              CONFIG_SYS_CONSOLE_IS_IN_ENV=y
+              CONFIG_SILENT_CONSOLE=n
             '';
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
