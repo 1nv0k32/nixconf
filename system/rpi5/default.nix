@@ -58,33 +58,28 @@ in
         enable = true;
         package =
           (pkgs.unstable.ubootRaspberryPiAarch64.override {
-            extraConfig = lib.mkAfter ''
-              # --- 1. LOGGING VERBOSITY ---
-              CONFIG_SPL_LOG=n
-              CONFIG_TPL_LOG=n
-              CONFIG_LOG=y
-              CONFIG_LOGLEVEL=7
-              CONFIG_LOG_MAX_LEVEL=7
-              CONFIG_SILENT_CONSOLE=n
+            extraConfig = ''
+              # --- 1. DISABLE INCOMPATIBLE PI 4 DRIVER ---
+              CONFIG_VIDEO_BCM2835=n
 
-              # --- 2. MULTIPLEXING & VIDEO DRIVER ---
-              CONFIG_DM_VIDEO=y
+              # --- 2. PIGGYBACK ON PI 5 FIRMWARE FRAMEBUFFER ---
+              CONFIG_VIDEO_SIMPLE=y
+
+              # --- 3. ENABLE VIDEO & CONSOLE MULTIPLEXING ---
               CONFIG_VIDEO=y
+              CONFIG_DM_VIDEO=y
               CONFIG_CONSOLE_MUX=y
               CONFIG_SYS_CONSOLE_IS_IN_ENV=y
 
-              # --- 3. KILL THE LOGO & SPLASH SCREEN ---
+              # --- 4. PREVENT LOGOS FROM HIDING TEXT ---
               CONFIG_VIDEO_LOGO=n
               CONFIG_SPLASH_SCREEN=n
-              CONFIG_CMD_BMP=n
-
-              # --- 4. ENHANCE TEXT RENDERING ---
               CONFIG_CONSOLE_SCROLLING=y
-              CONFIG_VIDEO_ANSI=y
 
-              # --- 5. FORCE STDOUT TO SCREEN AUTOMATICALLY ---
-              CONFIG_USE_PREBOOT=y
-              CONFIG_PREBOOT="setenv stdout serial,vidconsole; setenv stderr serial,vidconsole"
+              # --- 5. VERBOSE LOGGING ---
+              CONFIG_LOG=y
+              CONFIG_LOGLEVEL=7
+              CONFIG_SPL_LOG=n
             '';
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
@@ -93,6 +88,11 @@ in
                 substituteInPlace board/raspberrypi/rpi/rpi.env \
                   --replace-fail "boot_targets=mmc usb pxe dhcp" \
                   "boot_targets=nvme mmc usb pxe dhcp"
+
+                sed -i 's/"stdout=serial\\0"/"stdout=serial,vidconsole\\0"/g' include/env_default.h
+                sed -i 's/"stderr=serial\\0"/"stderr=serial,vidconsole\\0"/g' include/env_default.h
+                find include/configs/ -type f -exec sed -i 's/stdout=serial/stdout=serial,vidconsole/g' {} +
+                find include/configs/ -type f -exec sed -i 's/stderr=serial/stderr=serial,vidconsole/g' {} +
               '';
             });
       };
