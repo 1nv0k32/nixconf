@@ -63,9 +63,14 @@ in
               CONFIG_CONSOLE_RECORD_OUT_SIZE=0x4000
               CONFIG_FAT_WRITE=y
               CONFIG_CMD_FAT=y
+              CONFIG_NVME=y
+              CONFIG_CMD_NVME=y
+              CONFIG_PCI=y
             '';
             postConfigure = ''
-              sed -i 's/bootcmd_parts=/bootcmd_parts=fatwrite mmc 0:1 $loadaddr uboot_log.txt 0x4000; /' include/env_default.h
+              # You must run `nvme scan` before the drive becomes available to `fatwrite`.
+              # This injects the scan and write sequence just before standard boot.
+              sed -i 's/bootcmd_parts=/bootcmd_parts=nvme scan; fatwrite nvme 0:1 $loadaddr uboot_log.txt 0x4000; /' include/env_default.h
             '';
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
