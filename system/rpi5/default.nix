@@ -58,17 +58,33 @@ in
         enable = true;
         package =
           (pkgs.unstable.ubootRaspberryPiAarch64.override {
-            extraConfig = ''
+            extraConfig = lib.mkAfter ''
+              # --- 1. LOGGING VERBOSITY ---
               CONFIG_SPL_LOG=n
               CONFIG_TPL_LOG=n
               CONFIG_LOG=y
               CONFIG_LOGLEVEL=7
               CONFIG_LOG_MAX_LEVEL=7
+              CONFIG_SILENT_CONSOLE=n
+
+              # --- 2. MULTIPLEXING & VIDEO DRIVER ---
               CONFIG_DM_VIDEO=y
               CONFIG_VIDEO=y
               CONFIG_CONSOLE_MUX=y
               CONFIG_SYS_CONSOLE_IS_IN_ENV=y
-              CONFIG_SILENT_CONSOLE=n
+
+              # --- 3. KILL THE LOGO & SPLASH SCREEN ---
+              CONFIG_VIDEO_LOGO=n
+              CONFIG_SPLASH_SCREEN=n
+              CONFIG_CMD_BMP=n
+
+              # --- 4. ENHANCE TEXT RENDERING ---
+              CONFIG_CONSOLE_SCROLLING=y
+              CONFIG_VIDEO_ANSI=y
+
+              # --- 5. FORCE STDOUT TO SCREEN AUTOMATICALLY ---
+              CONFIG_USE_PREBOOT=y
+              CONFIG_PREBOOT="setenv stdout serial,vidconsole; setenv stderr serial,vidconsole"
             '';
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
