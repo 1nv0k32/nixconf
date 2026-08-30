@@ -59,27 +59,13 @@ in
         package =
           (pkgs.unstable.ubootRaspberryPiAarch64.override {
             extraConfig = ''
-              # --- 1. DISABLE INCOMPATIBLE PI 4 DRIVER ---
-              CONFIG_VIDEO_BCM2835=n
-
-              # --- 2. PIGGYBACK ON PI 5 FIRMWARE FRAMEBUFFER ---
-              CONFIG_VIDEO_SIMPLE=y
-
-              # --- 3. ENABLE VIDEO & CONSOLE MULTIPLEXING ---
-              CONFIG_VIDEO=y
-              CONFIG_DM_VIDEO=y
-              CONFIG_CONSOLE_MUX=y
-              CONFIG_SYS_CONSOLE_IS_IN_ENV=y
-
-              # --- 4. PREVENT LOGOS FROM HIDING TEXT ---
-              CONFIG_VIDEO_LOGO=n
-              CONFIG_SPLASH_SCREEN=n
-              CONFIG_CONSOLE_SCROLLING=y
-
-              # --- 5. VERBOSE LOGGING ---
-              CONFIG_LOG=y
-              CONFIG_LOGLEVEL=7
-              CONFIG_SPL_LOG=n
+              CONFIG_CONSOLE_RECORD=y
+              CONFIG_CONSOLE_RECORD_OUT_SIZE=0x4000
+              CONFIG_FAT_WRITE=y
+              CONFIG_CMD_FAT=y
+            '';
+            postConfigure = ''
+              sed -i 's/bootcmd_parts=/bootcmd_parts=fatwrite mmc 0:1 $loadaddr uboot_log.txt 0x4000; /' include/env_default.h
             '';
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
@@ -88,11 +74,6 @@ in
                 substituteInPlace board/raspberrypi/rpi/rpi.env \
                   --replace-fail "boot_targets=mmc usb pxe dhcp" \
                   "boot_targets=nvme mmc usb pxe dhcp"
-
-                sed -i 's/"stdout=serial\\0"/"stdout=serial,vidconsole\\0"/g' include/env_default.h
-                sed -i 's/"stderr=serial\\0"/"stderr=serial,vidconsole\\0"/g' include/env_default.h
-                find include/configs/ -type f -exec sed -i 's/stdout=serial/stdout=serial,vidconsole/g' {} +
-                find include/configs/ -type f -exec sed -i 's/stderr=serial/stderr=serial,vidconsole/g' {} +
               '';
             });
       };
