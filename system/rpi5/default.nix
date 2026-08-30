@@ -1,5 +1,6 @@
 {
   self,
+  pkgs,
   lib,
   ...
 }:
@@ -20,6 +21,7 @@
     ];
     firmware = {
       enable = true;
+      package = pkgs.unstable.raspberrypifw;
       uboot = {
         enable = true;
       };
