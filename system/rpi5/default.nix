@@ -60,6 +60,7 @@ in
           (pkgs.unstable.ubootRaspberryPiAarch64.override {
             defaultSrc = fetchTarball {
               url = "https://git.u-boot-project.org/u-boot/custodians/neil.armstrong/u-boot-nvme/-/archive/u-boot-nvme-fixes/u-boot-nvme-u-boot-nvme-fixes.tar.gz";
+              sha256 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
             };
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
