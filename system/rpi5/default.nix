@@ -62,7 +62,7 @@ in
               owner = "u-boot";
               repo = "u-boot";
               rev = "main";
-              sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+              sha256 = "sha256-LaFGK9nINg9X5sqscjUE+6ynZsB4Upx0il67wnuf/iI=";
             };
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
