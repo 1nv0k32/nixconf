@@ -7,7 +7,7 @@
 
   outputs =
     { cfg, ... }:
-    with cfg.nixosModules;
+    with cfg.nixosModules.systemTypes;
     let
       mkHost =
         host: attrib:
@@ -24,42 +24,42 @@
       nixosConfigurations = builtins.mapAttrs mkHost {
         nyx = {
           domain = "nyxlan.internal";
-          systemType = systemTypes.z13g2;
+          systemType = z13g2;
         };
         nyxpi = {
           domain = "nyxlan.internal";
-          systemType = systemTypes.rpi5;
+          systemType = rpi5;
         };
         nyxmac = {
           domain = null;
-          systemType = systemTypes.mac;
+          systemType = mac;
         };
         nyxdroid = {
           domain = null;
-          systemType = systemTypes.avf;
+          systemType = avf;
         };
         nyxwsl = {
           domain = null;
-          systemType = systemTypes.wsl;
+          systemType = wsl;
         };
         # VMs
         nyxvm = {
           domain = null;
-          systemType = systemTypes.qemu;
+          systemType = qemu;
         };
         nyxutm = {
           domain = null;
-          systemType = systemTypes.utm;
+          systemType = utm;
         };
         nyxprl = {
           domain = null;
-          systemType = systemTypes.parallels;
+          systemType = parallels;
         };
       };
       darwinConfigurations = builtins.mapAttrs mkHost {
         nyxdarwin = {
           domain = null;
-          systemType = systemTypes.darwin;
+          systemType = darwin;
         };
       };
     };
