@@ -58,11 +58,8 @@ in
         enable = true;
         package =
           (pkgs.unstable.ubootRaspberryPiAarch64.override {
-            defaultSrc = pkgs.fetchFromGitHub {
-              owner = "u-boot";
-              repo = "u-boot";
-              rev = "main";
-              sha256 = "sha256-LaFGK9nINg9X5sqscjUE+6ynZsB4Upx0il67wnuf/iI=";
+            defaultSrc = fetchTarball {
+              url = "https://git.u-boot-project.org/u-boot/custodians/neil.armstrong/u-boot-nvme/-/archive/u-boot-nvme-fixes/u-boot-nvme-u-boot-nvme-fixes.tar.gz";
             };
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
