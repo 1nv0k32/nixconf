@@ -58,6 +58,12 @@ in
         enable = true;
         package =
           (pkgs.unstable.ubootRaspberryPiAarch64.override {
+            defaultSrc = pkgs.fetchFromGitHub {
+              owner = "u-boot";
+              repo = "u-boot";
+              rev = "main";
+              sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+            };
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
             (old: {
