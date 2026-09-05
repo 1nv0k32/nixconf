@@ -236,12 +236,11 @@
           # Raspberry Pi 5
           rpi5 =
             attrs:
-            lib.nixosSystem {
+            nixpkgs-unstable.lib.nixosSystem {
               system = systems.aarch64-linux;
               specialArgs = {
                 inherit self;
                 inherit (attrs) hostName domain;
-                inherit nixos-raspberrypi;
               };
               modules = [
                 nixos-hardware.nixosModules.raspberry-pi-5

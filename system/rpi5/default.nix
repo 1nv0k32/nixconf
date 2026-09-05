@@ -49,7 +49,7 @@ in
   hardware.raspberry-pi = {
     configtxt.settings.all.dtparam = lib.mkAfter [
       "usb_max_current_enable=1"
-      "pciex1_gen=2"
+      "pciex1_gen=3"
     ];
     firmware = {
       enable = true;
@@ -82,10 +82,6 @@ in
   };
 
   boot = {
-    # linux-rpi + systemd stage-1 initrd hangs early on the Pi 5 (root=fstab,
-    # shrunk/mismatched initrd modules). Use the classic scripted initrd, which
-    # is what nixos-hardware/JamieMagee's working rpi5 config relies on.
-    initrd.systemd.enable = lib.mkForce false;
     initrd.systemd.tpm2.enable = lib.mkForce false;
     kernel.sysctl."vm.mmap_rnd_bits" = lib.mkForce null;
     kernelParams = [
