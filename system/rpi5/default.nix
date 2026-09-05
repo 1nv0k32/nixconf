@@ -68,7 +68,7 @@ in
                   "boot_targets=nvme mmc pxe dhcp"
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                  'CONFIG_PREBOOT="pci enum; nvme scan; if load nvme 0:2 ''${kernel_addr_r} /boot/nixos/qw1abxk4gg52yzkbnb6z5mmbn0lgp3hv-linux-rpi-6.18.39-stable_20260724-Image; then sleep 3; reset; fi;"'
+                  'CONFIG_PREBOOT="pci enum; nvme scan; if load nvme 0:2 ''${ramdisk_addr_r} /boot/nixos/1svrrg63n982ch1p6x85g6ggx1gz7f6a-initrd-linux-rpi-6.18.39-stable_20260724-initrd; then sleep 3; reset; fi;"'
               '';
             });
       };
