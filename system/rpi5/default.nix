@@ -40,8 +40,8 @@ in
 {
   imports = [
     (import ./disko.nix)
-    (import "${self}/modules/etc/media.nix")
-    (import "${self}/modules/etc/gitea.nix")
+    # (import "${self}/modules/etc/media.nix")
+    # (import "${self}/modules/etc/gitea.nix")
   ];
 
   users.users.root.initialPassword = "root";
