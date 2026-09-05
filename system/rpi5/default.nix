@@ -89,7 +89,7 @@ in
       "cgroup_enable=memory"
       "cgroup_memory=1"
       "8250.nr_uarts=1"
-      "rootflags=data=journal"
+      "console=tty0"
     ];
   };
 }
