@@ -49,6 +49,7 @@ in
   hardware.raspberry-pi = {
     configtxt.settings.all.dtparam = lib.mkAfter [
       "usb_max_current_enable=1"
+      "pciex1=on"
       "pciex1_gen=3"
     ];
     firmware = {
