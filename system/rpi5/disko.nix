@@ -29,9 +29,7 @@
                 type = "filesystem";
                 format = "ext4";
                 mountpoint = "/";
-                mountOptions = [
-                  "data=journal"
-                ];
+                mountOptions = [ ];
               };
             };
           };
