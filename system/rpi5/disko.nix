@@ -23,7 +23,7 @@
               };
             };
             root = {
-              label = "ROOT";
+              label = "NIXOS_SD";
               size = "100%";
               content = {
                 type = "filesystem";
