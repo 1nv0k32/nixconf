@@ -68,7 +68,7 @@ in
                   "boot_targets=nvme mmc pxe dhcp"
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                  'CONFIG_PREBOOT="pci enum; nvme scan;"'
+                  'CONFIG_PREBOOT="pci enum; if nvme scan; then sleep 3; reset; fi;"'
               '';
             });
       };
