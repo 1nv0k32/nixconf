@@ -68,7 +68,7 @@ in
                   "boot_targets=nvme mmc pxe dhcp"
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                  'CONFIG_PREBOOT="pci enum; nvme scan; if ext4ls nvme 0:2 /boot/extlinux; then sleep 3; reset; fi;"'
+                  'CONFIG_PREBOOT="pci enum; nvme scan; if load nvme 0:2 ''${scriptaddr} /boot/extlinux/extlinux.conf; then sleep 3; reset; fi;"'
               '';
             });
       };
