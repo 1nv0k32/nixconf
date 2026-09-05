@@ -49,7 +49,7 @@ in
   hardware.raspberry-pi = {
     configtxt.settings.all.dtparam = lib.mkAfter [
       "usb_max_current_enable=1"
-      "pciex1_gen=3"
+      "pciex1_gen=2"
     ];
     firmware = {
       enable = true;
@@ -58,10 +58,6 @@ in
         enable = true;
         package =
           (pkgs.unstable.ubootRaspberryPiAarch64.override {
-            defaultSrc = fetchTarball {
-              url = "https://git.u-boot-project.org/u-boot/custodians/neil.armstrong/u-boot-nvme/-/archive/u-boot-nvme-fixes/u-boot-nvme-u-boot-nvme-fixes.tar.gz";
-              sha256 = "1ila17jl4c63crr0qn8ipzih0zvv5l4y75xkssvrlv3v1y4dhb14";
-            };
             extraPatches = rpi5-nvme-patches;
           }).overrideAttrs
             (old: {
