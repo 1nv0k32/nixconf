@@ -64,10 +64,16 @@ in
               postPatch = (old.postPatch or "") + ''
                 substituteInPlace board/raspberrypi/rpi/rpi.env \
                   --replace-fail "boot_targets=mmc usb pxe dhcp" \
-                  "boot_targets=nvme mmc usb pxe dhcp"
+                  "boot_targets=nvme mmc usb pxe dhcp" \
+                  --replace-fail "stdin=serial,usbkbd" \
+                  "stdin=usbkbd" \
+                  --replace-fail "stdout=serial,vidconsole" \
+                  "stdout=vidconsole" \
+                  --replace-fail "stderr=serial,vidconsole" \
+                  "stderr=vidconsole"
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                  'CONFIG_PREBOOT="usb start;"'
+                  'CONFIG_PREBOOT="usb start; setenv stdin usbkbd; setenv stdout vidconsole; setenv stderr vidconsole; cls; echo UBOOT_READY;"'
                 echo 'CONFIG_BOOTDELAY=-1' >> configs/rpi_arm64_defconfig
               '';
             });
