@@ -67,8 +67,8 @@ in
                   "boot_targets=nvme mmc usb pxe dhcp"
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                  'CONFIG_PREBOOT="echo PREBOOT_START; echo PCI_START; pci enum; echo PCI_DONE; echo USB_START; usb start; echo USB_DONE; echo NVME_START; nvme scan; echo NVME_DONE;"'
-                echo '# CONFIG_VIDEO_LOGO is not set' >> configs/rpi_arm64_defconfig
+                  'CONFIG_PREBOOT="usb start;"'
+                echo 'CONFIG_BOOTDELAY=-1' >> configs/rpi_arm64_defconfig
               '';
             });
       };
