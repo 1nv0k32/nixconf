@@ -69,9 +69,16 @@ in
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
                   'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf;"'
-                substituteInPlace boot/pxe_utils.c \
-                  --replace-fail $'\t\tlog_debug("using booti\\n");\n\t\tdo_booti(ctx->cmdtp, 0, bootm_argc, bootm_argv);' \
-                  $'\t\tlog_debug("using booti\\n");\n\t\t{\n\t\t\tchar _bcmd[160];\n\t\t\tchar *_fdt = env_get("fdt_addr");\n\t\t\tsnprintf(_bcmd, sizeof(_bcmd), "booti %s %s %s",\n\t\t\t\tbootm_argv[1],\n\t\t\t\tbootm_argv[2] ? bootm_argv[2] : "-",\n\t\t\t\t_fdt ? _fdt : "");\n\t\t\trun_command(_bcmd, 0);\n\t\t}'
+                echo 'CONFIG_CONSOLE_RECORD=y' >> configs/rpi_arm64_defconfig
+                echo 'CONFIG_CONSOLE_RECORD_OUT_SIZE=0x80000' >> configs/rpi_arm64_defconfig
+                echo 'CONFIG_FAT_WRITE=y' >> configs/rpi_arm64_defconfig
+                substituteInPlace cmd/sysboot.c \
+                  --replace-fail $'#include <pxe_utils.h>\n#include <vsprintf.h>' \
+                  $'#include <console.h>\n#include <pxe_utils.h>\n#include <vsprintf.h>\n#include <linux/string.h>' \
+                  --replace-fail $'\tint ret;\n\n\tif (argc > 1 && strstr(argv[1], "-p")) {' \
+                  $'\tint ret;\n\n\tconsole_record_reset_enable();\n\tif (argc > 1 && strstr(argv[1], "-p")) {' \
+                  --replace-fail $'\tpxe_destroy_ctx(&ctx);\n\tif (ret)' \
+                  $'\tpxe_destroy_ctx(&ctx);\n\t{\n\t\tstatic char _log[0x80000];\n\t\tint _len = 0, _r;\n\t\tchar _line[256];\n\t\twhile (_len < (int)sizeof(_log) - 258) {\n\t\t\t_r = console_record_readline(_line, sizeof(_line));\n\t\t\tif (_r < 0)\n\t\t\t\tbreak;\n\t\t\tmemcpy(_log + _len, _line, _r);\n\t\t\t_len += _r;\n\t\t\t_log[_len++] = 0x0a;\n\t\t}\n\t\tif (_len > 0 && !fs_set_blk_dev("nvme", "0:1", FS_TYPE_ANY)) {\n\t\t\tloff_t _w;\n\t\t\tfs_write("uboot-log.txt", (ulong)_log, 0, _len, &_w);\n\t\t}\n\t}\n\tif (ret)'
               '';
             });
       };
