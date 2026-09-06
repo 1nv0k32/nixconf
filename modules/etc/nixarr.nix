@@ -16,7 +16,6 @@
 
     lidarr.enable = true;
     prowlarr.enable = true;
-    readarr.enable = true;
     jellyseerr.enable = true;
 
     sonarr = {
