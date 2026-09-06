@@ -23,20 +23,20 @@ in
       };
     };
 
-    transmission = {
-      enable = true;
-      group = group;
-      openRPCPort = true;
-      settings = {
-        download-dir = media_dir;
-        rpc-bind-address = "0.0.0.0";
-        rpc-whitelist-enabled = false;
-        rpc-host-whitelist-enabled = false;
-        upload-limit-enabled = true;
-        upload-limit = 0;
-        speed-limit-up-enabled = true;
-        speed-limit-up = 0;
-      };
-    };
+    # transmission = {
+    #   enable = true;
+    #   group = group;
+    #   openRPCPort = true;
+    #   settings = {
+    #     download-dir = media_dir;
+    #     rpc-bind-address = "0.0.0.0";
+    #     rpc-whitelist-enabled = false;
+    #     rpc-host-whitelist-enabled = false;
+    #     upload-limit-enabled = true;
+    #     upload-limit = 0;
+    #     speed-limit-up-enabled = true;
+    #     speed-limit-up = 0;
+    #   };
+    # };
   };
 }
