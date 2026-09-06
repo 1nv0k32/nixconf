@@ -2,13 +2,9 @@
   self,
   pkgs,
   lib,
-  config,
   ...
 }:
 let
-  ubootBootargs = lib.concatStringsSep " " (
-    [ "init=/nix/var/nix/profiles/system/init" ] ++ config.boot.kernelParams
-  );
   fetchLorePatch =
     {
       name,
@@ -69,9 +65,6 @@ in
                 substituteInPlace board/raspberrypi/rpi/rpi.env \
                   --replace-fail "boot_targets=mmc usb pxe dhcp" \
                   "boot_targets=nvme mmc pxe dhcp"
-                # substituteInPlace configs/rpi_arm64_defconfig \
-                #   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                #   'CONFIG_PREBOOT="pci enum; nvme scan; load nvme 0:2 ''${kernel_addr_r} /nix/var/nix/profiles/system/kernel; load nvme 0:2 ''${ramdisk_addr_r} /nix/var/nix/profiles/system/initrd; setenv ramdisk_size ''${filesize}; setenv bootargs ${ubootBootargs}; booti ''${kernel_addr_r} ''${ramdisk_addr_r}:''${ramdisk_size} ''${fdt_addr};"'
               '';
             });
       };
@@ -96,6 +89,7 @@ in
       "cgroup_enable=cpuset"
       "cgroup_enable=memory"
       "cgroup_memory=1"
+      "rootflags=data=journal"
     ];
   };
 }
