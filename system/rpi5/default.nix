@@ -68,7 +68,10 @@ in
                   "boot_targets=nvme mmc pxe dhcp"
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                  'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf; load nvme 0:2 ''${kernel_addr_r} /nix/var/nix/profiles/system/kernel; load nvme 0:2 ''${ramdisk_addr_r} /nix/var/nix/profiles/system/initrd; setenv ramdisk_size ''${filesize}; setenv bootargs init=/nix/var/nix/profiles/system/init cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 8250.nr_uarts=1 console=tty0 root=fstab loglevel=4 lsm=landlock,yama,bpf; booti ''${kernel_addr_r} ''${ramdisk_addr_r}:''${ramdisk_size} ''${fdt_addr};"'
+                  'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf;"'
+                substituteInPlace boot/pxe_utils.c \
+                  --replace-fail $'\t\tlog_debug("using booti\\n");\n\t\tdo_booti(ctx->cmdtp, 0, bootm_argc, bootm_argv);' \
+                  $'\t\tlog_debug("using booti\\n");\n\t\t{\n\t\t\tchar _bcmd[160];\n\t\t\tsnprintf(_bcmd, sizeof(_bcmd), "booti %s %s %s",\n\t\t\t\tbootm_argv[1],\n\t\t\t\tbootm_argv[2] ? bootm_argv[2] : "-",\n\t\t\t\tbootm_argv[3] ? bootm_argv[3] : "");\n\t\t\trun_command(_bcmd, 0);\n\t\t}'
               '';
             });
       };
