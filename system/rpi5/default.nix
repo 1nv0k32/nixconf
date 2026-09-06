@@ -73,7 +73,7 @@ in
                   --replace-fail $'\tchar *s, *b, *label_name;\n\tint err;\n\n\tb = p;' \
                   $'\tchar *s, *b, *label_name;\n\tint err, token_count = 0;\n\n\tb = p;' \
                   --replace-fail $'\t\tget_token(&p, &t, L_KEYWORD);\n\n\t\terr = 0;' \
-                  $'\t\tget_token(&p, &t, L_KEYWORD);\n\t\tif (++token_count == 15)\n\t\t\treturn -EINVAL;\n\n\t\terr = 0;'
+                  $'\t\tget_token(&p, &t, L_KEYWORD);\n\t\tif (++token_count == 30)\n\t\t\treturn -EINVAL;\n\n\t\terr = 0;'
               '';
             });
       };
