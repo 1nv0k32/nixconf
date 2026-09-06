@@ -65,10 +65,10 @@ in
               postPatch = (old.postPatch or "") + ''
                 substituteInPlace board/raspberrypi/rpi/rpi.env \
                   --replace-fail "boot_targets=mmc usb pxe dhcp" \
-                  "boot_targets=nvme mmc pxe dhcp"
+                  $'boot_targets=nvme mmc pxe dhcp\npxe_boot=booti ''${pxe_kernel} ''${pxe_initrd} ''${pxe_fdt}'
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                  'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf; booti ''${pxe_kernel} ''${pxe_initrd} ''${pxe_fdt};"'
+                  'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf; run pxe_boot;"'
                 substituteInPlace boot/pxe_utils.c \
                   --replace-fail $'\t\tcase T_MENU:\n\t\t\tcfg->prompt = 1;\n\t\t\terr = parse_menu(ctx, &p, cfg,\n\t\t\t\t\t base + ALIGN(strlen(b) + 1, 4),\n\t\t\t\t\t nest_level);\n\t\t\tbreak;' \
                   $'\t\tcase T_MENU:\n\t\t\teol_or_eof(&p);\n\t\t\tbreak;' \
