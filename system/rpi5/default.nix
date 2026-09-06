@@ -70,8 +70,10 @@ in
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
                   'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf; sleep 3; reset;"'
                 substituteInPlace boot/pxe_utils.c \
+                  --replace-fail $'\tchar *s, *b, *label_name;\n\tint err;\n\n\tb = p;' \
+                  $'\tchar *s, *b, *label_name;\n\tint err, token_count = 0;\n\n\tb = p;' \
                   --replace-fail $'\t\tget_token(&p, &t, L_KEYWORD);\n\n\t\terr = 0;' \
-                  $'\t\tget_token(&p, &t, L_KEYWORD);\n\t\treturn -EINVAL;\n\n\t\terr = 0;'
+                  $'\t\tget_token(&p, &t, L_KEYWORD);\n\t\tif (++token_count == 10)\n\t\t\treturn -EINVAL;\n\n\t\terr = 0;'
               '';
             });
       };
