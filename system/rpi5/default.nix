@@ -70,8 +70,8 @@ in
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
                   'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf;"'
                 substituteInPlace boot/pxe_utils.c \
-                  --replace-fail 'r = parse_pxefile_top(ctx, buf, menucfg, cfg, 1);' \
-                  'r = parse_pxefile_top(ctx, buf, menucfg, cfg, 1); run_command("sleep 3; reset", 0);'
+                  --replace-fail $'\t\tget_token(&p, &t, L_KEYWORD);\n\n\t\terr = 0;' \
+                  $'\t\tget_token(&p, &t, L_KEYWORD);\n\t\trun_command("sleep 3; reset", 0);\n\n\t\terr = 0;'
               '';
             });
       };
