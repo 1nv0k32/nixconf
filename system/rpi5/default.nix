@@ -68,12 +68,12 @@ in
                   "boot_targets=nvme mmc pxe dhcp"
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                  'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf;"'
+                  'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf; booti ''${pxe_kernel} ''${pxe_initrd} ''${pxe_fdt};"'
                 substituteInPlace boot/pxe_utils.c \
                   --replace-fail $'\t\tcase T_MENU:\n\t\t\tcfg->prompt = 1;\n\t\t\terr = parse_menu(ctx, &p, cfg,\n\t\t\t\t\t base + ALIGN(strlen(b) + 1, 4),\n\t\t\t\t\t nest_level);\n\t\t\tbreak;' \
                   $'\t\tcase T_MENU:\n\t\t\teol_or_eof(&p);\n\t\t\tbreak;' \
                   --replace-fail 'do_booti(ctx->cmdtp, 0, bootm_argc, bootm_argv);' \
-                  'bootm_argv[3] = env_get("fdt_addr"); env_set("bootargs", "init=/nix/var/nix/profiles/system/init cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 8250.nr_uarts=1 console=tty0 root=fstab loglevel=4 lsm=landlock,yama,bpf"); do_booti(ctx->cmdtp, 0, bootm_argc, bootm_argv);'
+                  'env_set("pxe_kernel", bootm_argv[1]); env_set("pxe_initrd", bootm_argv[2]); env_set("pxe_fdt", env_get("fdt_addr")); env_set("bootargs", "init=/nix/var/nix/profiles/system/init cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 8250.nr_uarts=1 console=tty0 root=fstab loglevel=4 lsm=landlock,yama,bpf"); return 0;'
               '';
             });
       };
