@@ -6,9 +6,6 @@
   ...
 }:
 let
-  # Reuse the exact kernel command line NixOS generates, so U-Boot's bootargs
-  # never drift from config.boot.kernelParams. init points at the current
-  # system profile so it stays valid across generations.
   ubootBootargs = lib.concatStringsSep " " (
     [ "init=/nix/var/nix/profiles/system/init" ] ++ config.boot.kernelParams
   );
@@ -56,7 +53,6 @@ in
   hardware.raspberry-pi = {
     configtxt.settings.all.dtparam = lib.mkAfter [
       "usb_max_current_enable=1"
-      "pciex1=on"
       "pciex1_gen=3"
     ];
     firmware = {
@@ -100,8 +96,6 @@ in
       "cgroup_enable=cpuset"
       "cgroup_enable=memory"
       "cgroup_memory=1"
-      "8250.nr_uarts=1"
-      "console=tty0"
     ];
   };
 }
