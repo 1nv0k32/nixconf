@@ -16,10 +16,10 @@ in
   };
   systemd = {
     settings.Manager = SYSTEMD_CONFIG;
-    user.extraConfig = ''
-      [Manager]
-      DefaultTimeoutStartSec=30s
-      DefaultTimeoutStopSec=30s
-    '';
+    # user.extraConfig = ''
+    #   [Manager]
+    #   DefaultTimeoutStartSec=30s
+    #   DefaultTimeoutStopSec=30s
+    # '';
   };
 }
