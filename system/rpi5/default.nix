@@ -71,7 +71,7 @@ in
                   'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf;"'
                 substituteInPlace boot/pxe_utils.c \
                   --replace-fail $'\t\tget_token(&p, &t, L_KEYWORD);\n\n\t\terr = 0;' \
-                  $'\t\tget_token(&p, &t, L_KEYWORD);\n\t\trun_command("sleep 3; reset", 0);\n\n\t\terr = 0;'
+                  $'\t\tget_token(&p, &t, L_KEYWORD);\n\t\tdo_reset(ctx->cmdtp, 0, 0, NULL);\n\n\t\terr = 0;'
               '';
             });
       };
