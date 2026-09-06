@@ -236,7 +236,7 @@
           # Raspberry Pi 5
           rpi5 =
             attrs:
-            nixpkgs-unstable.lib.nixosSystem {
+            lib.nixosSystem {
               system = systems.aarch64-linux;
               specialArgs = {
                 inherit self;
@@ -244,7 +244,7 @@
               };
               modules = [
                 nixos-hardware.nixosModules.raspberry-pi-5
-                # (import "${self}/system/server.nix")
+                (import "${self}/system/server.nix")
                 (import "${self}/system/rpi5")
               ]
               ++ nixosMods
