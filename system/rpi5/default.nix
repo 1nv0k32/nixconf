@@ -68,12 +68,10 @@ in
                   "boot_targets=nvme mmc pxe dhcp"
                 substituteInPlace configs/rpi_arm64_defconfig \
                   --replace-fail 'CONFIG_PREBOOT="pci enum; usb start; nvme scan;"' \
-                  'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf; if test ''${probe} = booti; then sleep 3; reset; fi;"'
+                  'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf;"'
                 substituteInPlace boot/pxe_utils.c \
                   --replace-fail $'\t\tcase T_MENU:\n\t\t\tcfg->prompt = 1;\n\t\t\terr = parse_menu(ctx, &p, cfg,\n\t\t\t\t\t base + ALIGN(strlen(b) + 1, 4),\n\t\t\t\t\t nest_level);\n\t\t\tbreak;' \
-                  $'\t\tcase T_MENU:\n\t\t\teol_or_eof(&p);\n\t\t\tbreak;' \
-                  --replace-fail 'do_booti(ctx->cmdtp, 0, bootm_argc, bootm_argv);' \
-                  'env_set("probe", "booti"); return 1; do_booti(ctx->cmdtp, 0, bootm_argc, bootm_argv);'
+                  $'\t\tcase T_MENU:\n\t\t\teol_or_eof(&p);\n\t\t\tbreak;'
               '';
             });
       };
