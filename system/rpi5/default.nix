@@ -76,9 +76,9 @@ in
                   --replace-fail $'#include <pxe_utils.h>\n#include <vsprintf.h>' \
                   $'#include <console.h>\n#include <pxe_utils.h>\n#include <vsprintf.h>\n#include <linux/string.h>' \
                   --replace-fail $'\tint ret;\n\n\tif (argc > 1 && strstr(argv[1], "-p")) {' \
-                  $'\tint ret;\n\n\tconsole_record_reset_enable();\n\tif (argc > 1 && strstr(argv[1], "-p")) {' \
+                  $'\tint ret;\n\n\tconsole_record_reset_enable();\n\tif (!fs_set_blk_dev("nvme", "0:1", FS_TYPE_ANY)) {\n\t\tloff_t _w;\n\t\tstatic const char _m[] = "sysboot: entered\\n";\n\t\tfs_write("uboot-stage.txt", (ulong)_m, 0, sizeof(_m) - 1, &_w);\n\t}\n\tif (argc > 1 && strstr(argv[1], "-p")) {' \
                   --replace-fail $'\tpxe_destroy_ctx(&ctx);\n\tif (ret)' \
-                  $'\tpxe_destroy_ctx(&ctx);\n\t{\n\t\tstatic char _log[0x80000];\n\t\tint _len = 0, _r;\n\t\tchar _line[256];\n\t\twhile (_len < (int)sizeof(_log) - 258) {\n\t\t\t_r = console_record_readline(_line, sizeof(_line));\n\t\t\tif (_r < 0)\n\t\t\t\tbreak;\n\t\t\tmemcpy(_log + _len, _line, _r);\n\t\t\t_len += _r;\n\t\t\t_log[_len++] = 0x0a;\n\t\t}\n\t\tif (_len > 0 && !fs_set_blk_dev("nvme", "0:1", FS_TYPE_ANY)) {\n\t\t\tloff_t _w;\n\t\t\tfs_write("uboot-log.txt", (ulong)_log, 0, _len, &_w);\n\t\t}\n\t}\n\tif (ret)'
+                  $'\tpxe_destroy_ctx(&ctx);\n\t{\n\t\tstatic char _log[0x80000];\n\t\tint _len = 0, _r;\n\t\tchar _line[256];\n\t\twhile (_len < (int)sizeof(_log) - 258) {\n\t\t\t_r = console_record_readline(_line, sizeof(_line));\n\t\t\tif (_r < 0)\n\t\t\t\tbreak;\n\t\t\tmemcpy(_log + _len, _line, _r);\n\t\t\t_len += _r;\n\t\t\t_log[_len++] = 0x0a;\n\t\t}\n\t\tif (_len == 0) {\n\t\t\tconst char *_e = "sysboot: returned, empty console record\\n";\n\t\t\tmemcpy(_log, _e, strlen(_e));\n\t\t\t_len = strlen(_e);\n\t\t}\n\t\tif (!fs_set_blk_dev("nvme", "0:1", FS_TYPE_ANY)) {\n\t\t\tloff_t _w;\n\t\t\tfs_write("uboot-log.txt", (ulong)_log, 0, _len, &_w);\n\t\t}\n\t}\n\tif (ret)'
               '';
             });
       };
