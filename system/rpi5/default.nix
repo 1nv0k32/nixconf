@@ -71,7 +71,7 @@ in
                   'CONFIG_PREBOOT="pci enum; nvme scan; sysboot nvme 0:2 any ''${scriptaddr} /boot/extlinux/extlinux.conf;"'
                 substituteInPlace boot/pxe_utils.c \
                   --replace-fail $'\t\tlog_debug("using booti\\n");\n\t\tdo_booti(ctx->cmdtp, 0, bootm_argc, bootm_argv);' \
-                  $'\t\tlog_debug("using booti\\n");\n\t\t{\n\t\t\tchar _bcmd[160];\n\t\t\tsnprintf(_bcmd, sizeof(_bcmd), "booti %s %s %s",\n\t\t\t\tbootm_argv[1],\n\t\t\t\tbootm_argv[2] ? bootm_argv[2] : "-",\n\t\t\t\tbootm_argv[3] ? bootm_argv[3] : "");\n\t\t\trun_command(_bcmd, 0);\n\t\t}'
+                  $'\t\tlog_debug("using booti\\n");\n\t\t{\n\t\t\tchar _bcmd[160];\n\t\t\tchar *_fdt = env_get("fdt_addr");\n\t\t\tsnprintf(_bcmd, sizeof(_bcmd), "booti %s %s %s",\n\t\t\t\tbootm_argv[1],\n\t\t\t\tbootm_argv[2] ? bootm_argv[2] : "-",\n\t\t\t\t_fdt ? _fdt : "");\n\t\t\trun_command(_bcmd, 0);\n\t\t}'
               '';
             });
       };
