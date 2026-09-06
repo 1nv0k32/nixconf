@@ -25,6 +25,7 @@
             root = {
               label = "ROOT";
               size = "100%";
+              attributes = [ 2 ];
               content = {
                 type = "filesystem";
                 format = "ext4";
