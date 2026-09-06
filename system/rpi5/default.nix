@@ -89,6 +89,7 @@ in
   };
 
   boot = {
+    loader.generic-extlinux-compatible.configurationLimit = 3;
     initrd.systemd.tpm2.enable = lib.mkForce false;
     kernel.sysctl."vm.mmap_rnd_bits" = lib.mkForce null;
     kernelParams = [
