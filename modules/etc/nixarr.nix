@@ -11,6 +11,7 @@
 
     transmission = {
       enable = true;
+      openFirewall = true;
       extraSettings = {
         upload-limit-enabled = true;
         upload-limit = 0;
