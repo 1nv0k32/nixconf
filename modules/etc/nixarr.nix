@@ -13,6 +13,8 @@
       enable = true;
       openFirewall = true;
       extraSettings = {
+        rpc-whitelist-enabled = false;
+        rpc-host-whitelist-enabled = false;
         upload-limit-enabled = true;
         upload-limit = 0;
         speed-limit-up-enabled = true;
