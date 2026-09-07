@@ -11,7 +11,12 @@
 
     transmission = {
       enable = true;
-      peerPort = 50000; # Set this to the port forwarded by your VPN
+      extraSettings = {
+        upload-limit-enabled = true;
+        upload-limit = 0;
+        speed-limit-up-enabled = true;
+        speed-limit-up = 0;
+      };
     };
 
     lidarr.enable = true;
