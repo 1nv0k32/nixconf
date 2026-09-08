@@ -45,8 +45,6 @@ in
     (import "${self}/modules/etc/gitea.nix")
   ];
 
-  users.users.root.initialPassword = "root";
-
   hardware.raspberry-pi = {
     configtxt.settings.all.dtparam = lib.mkAfter [
       "usb_max_current_enable=1"
@@ -71,6 +69,8 @@ in
       };
     };
   };
+
+  users.users.root.initialPassword = "root";
 
   networking = {
     useDHCP = lib.mkForce false;
