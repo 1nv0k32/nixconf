@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  media_dir = "/data/media/library";
+  media_dir = "${config.nixarr.mediaDir}/library";
 in
 {
   services = {

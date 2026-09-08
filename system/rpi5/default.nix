@@ -40,7 +40,7 @@ in
 {
   imports = [
     (import ./disko.nix)
-    # (import "${self}/modules/etc/media.nix")
+    (import "${self}/modules/etc/minidlna.nix")
     (import "${self}/modules/etc/nixarr.nix")
     (import "${self}/modules/etc/gitea.nix")
   ];
