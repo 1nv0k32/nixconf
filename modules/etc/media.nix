@@ -1,16 +1,8 @@
 { config, ... }:
 let
-  media_dir = "/home/media";
-  user = "transmission";
-  group = "users";
+  media_dir = "/data/media/library";
 in
 {
-  users.users.minidlna = {
-    extraGroups = [ group ];
-  };
-
-  systemd.tmpfiles.rules = [ "d ${media_dir} 0775 ${user} ${group}" ];
-
   services = {
     minidlna = {
       enable = true;
