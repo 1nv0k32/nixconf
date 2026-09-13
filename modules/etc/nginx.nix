@@ -14,7 +14,7 @@ let
   mkVirtualHost = alias: port: {
     name = "${alias}.${config.networking.domain}";
     value = {
-      serverAliases = alias;
+      serverAliases = [ alias ];
       locations."/" = {
         proxyPass = "http://127.0.0.1:${toString port}";
         extraConfig = extraConfig;
