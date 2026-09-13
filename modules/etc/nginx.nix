@@ -51,7 +51,7 @@ in
           extraConfig = extraConfig;
         };
       };
-      "seerrPort.${config.networking.domain}" = {
+      "seerr.${config.networking.domain}" = {
         locations."/" = {
           proxyPass = "http://127.0.0.1:${seerrPort}";
           extraConfig = extraConfig;
