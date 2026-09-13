@@ -24,7 +24,6 @@ in
   services.nginx = {
     virtualHosts = lib.mkAfter (
       builtins.listToAttrs [
-        (mkVirtualHost "git" config.services.gitea.settings.server.HTTP_PORT)
         (mkVirtualHost "transmission" config.services.transmission.settings.rpc-port)
         (mkVirtualHost "jellyfin" config.nixarr.jellyfin.port)
         (mkVirtualHost "seerr" config.nixarr.seerr.port)
