@@ -40,10 +40,8 @@ in
 {
   imports = [
     (import ./disko.nix)
-    (import "${self}/modules/etc/minidlna.nix")
-    (import "${self}/modules/etc/nginx.nix")
-    (import "${self}/modules/etc/nixarr.nix")
-    (import "${self}/modules/etc/gitea.nix")
+    (import "${self}/modules/media")
+    (import "${self}/modules/services/gitea.nix")
   ];
 
   hardware.raspberry-pi = {

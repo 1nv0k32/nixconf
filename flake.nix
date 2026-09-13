@@ -143,7 +143,7 @@
               modules = [
                 nixos-mac.nixosModules.apple-silicon-support
                 (import "${self}/system/mac")
-                (import "${self}/system/server.nix")
+                (import "${self}/system/server")
               ]
               ++ nixosMods
               ++ guiModules
@@ -160,7 +160,7 @@
               };
               modules = [
                 nixos-avf.nixosModules.avf
-                (import "${self}/system/server.nix")
+                (import "${self}/system/server")
                 (import "${self}/system/avf")
               ]
               ++ nixosMods
@@ -178,7 +178,7 @@
               };
               modules = [
                 srvos.nixosModules.hardware-hetzner-cloud
-                (import "${self}/system/server.nix")
+                (import "${self}/system/server")
                 (import "${self}/system/hetzner")
               ]
               ++ nixosMods
@@ -195,7 +195,7 @@
               };
               modules = [
                 srvos.nixosModules.hardware-hetzner-cloud-arm
-                (import "${self}/system/server.nix")
+                (import "${self}/system/server")
                 (import "${self}/system/hetzner")
               ]
               ++ nixosMods
@@ -246,7 +246,7 @@
               };
               modules = [
                 nixos-hardware.nixosModules.raspberry-pi-5
-                (import "${self}/system/server.nix")
+                (import "${self}/system/server")
                 (import "${self}/system/rpi5")
               ]
               ++ nixosMods

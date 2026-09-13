@@ -1,7 +1,5 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
-  httpPort = 80;
-  httpsPort = 443;
   extraConfig = ''
     client_max_body_size 512M;
     proxy_set_header Connection $http_connection;
@@ -23,16 +21,8 @@ let
   };
 in
 {
-  networking.firewall.allowedTCPPorts = [
-    httpPort
-    httpsPort
-  ];
-
   services.nginx = {
-    enable = true;
-    defaultHTTPListenPort = httpPort;
-    defaultSSLListenPort = httpsPort;
-    virtualHosts = builtins.listToAttrs [
+    virtualHosts = lib.mkAfter builtins.listToAttrs [
       (mkVirtualHost "git" config.services.gitea.settings.server.HTTP_PORT)
       (mkVirtualHost "transmission" config.services.transmission.settings.rpc-port)
       (mkVirtualHost "jellyfin" config.nixarr.jellyfin.port)
