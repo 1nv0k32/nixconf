@@ -23,7 +23,6 @@ let
   };
 in
 {
-
   networking.firewall.allowedTCPPorts = [
     httpPort
     httpsPort
