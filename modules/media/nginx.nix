@@ -22,17 +22,15 @@ let
 in
 {
   services.nginx = {
-    virtualHosts = lib.mkAfter (
-      builtins.listToAttrs [
-        (mkVirtualHost "transmission" config.services.transmission.settings.rpc-port)
-        (mkVirtualHost "jellyfin" config.nixarr.jellyfin.port)
-        (mkVirtualHost "seerr" config.nixarr.seerr.port)
-        (mkVirtualHost "radarr" config.nixarr.radarr.port)
-        (mkVirtualHost "sonarr" config.nixarr.sonarr.port)
-        (mkVirtualHost "lidarr" config.nixarr.lidarr.port)
-        (mkVirtualHost "bazarr" config.nixarr.bazarr.port)
-        (mkVirtualHost "prowlarr" config.nixarr.prowlarr.port)
-      ]
-    );
+    virtualHosts = builtins.listToAttrs [
+      (mkVirtualHost "transmission" config.services.transmission.settings.rpc-port)
+      (mkVirtualHost "jellyfin" config.nixarr.jellyfin.port)
+      (mkVirtualHost "seerr" config.nixarr.seerr.port)
+      (mkVirtualHost "radarr" config.nixarr.radarr.port)
+      (mkVirtualHost "sonarr" config.nixarr.sonarr.port)
+      (mkVirtualHost "lidarr" config.nixarr.lidarr.port)
+      (mkVirtualHost "bazarr" config.nixarr.bazarr.port)
+      (mkVirtualHost "prowlarr" config.nixarr.prowlarr.port)
+    ];
   };
 }
