@@ -11,7 +11,6 @@
 
     transmission = {
       enable = true;
-      openFirewall = true;
       extraSettings = {
         rpc-whitelist-enabled = false;
         rpc-host-whitelist-enabled = false;
