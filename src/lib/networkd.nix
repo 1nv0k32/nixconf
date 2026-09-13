@@ -17,7 +17,7 @@
           "ww*"
         ];
         DHCP = "yes";
-        UseDomain = "true";
+        UseDomains = "true";
       };
     };
   };
