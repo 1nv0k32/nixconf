@@ -4,7 +4,7 @@ let
 in
 {
   imports = [
-    (import "${self}/modules/services/nginx")
+    (import "${self}/modules/services/nginx.nix")
   ];
 
   users.users."${cfg.user.name}".openssh.authorizedKeys.keys = cfg.user.sshPubKeys;
