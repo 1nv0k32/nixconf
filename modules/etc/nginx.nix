@@ -2,8 +2,8 @@
 let
   httpPort = 80;
   httpsPort = 443;
-  giteaPort = "${config.services.gitea.settings.server.HTTP_PORT}";
-  radarrPort = "${config.nixarr.radarr.port}";
+  giteaPort = "${toString config.services.gitea.settings.server.HTTP_PORT}";
+  radarrPort = "${toString config.nixarr.radarr.port}";
   extraConfig = ''
     client_max_body_size 512M;
     proxy_set_header Connection $http_connection;
