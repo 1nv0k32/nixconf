@@ -42,7 +42,7 @@
   environment = {
     etc = {
       "nixos/flake.nix" = {
-        source = self.outPath;
+        source = "${self}/flakes/flake.nix";
         mode = "0444";
       };
     };
