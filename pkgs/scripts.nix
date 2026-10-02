@@ -33,8 +33,7 @@ let
   '';
   nixup = pkgs.writeShellScriptBin "nixup" ''
     ${bashOpts}
-    sudo nix flake update --flake path:/etc/nixos
-    sudo nixos-rebuild switch
+    sudo nixos-rebuild switch --upgrade --no-write-lock-file -L
   '';
 in
 {

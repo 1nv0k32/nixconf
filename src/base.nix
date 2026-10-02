@@ -8,6 +8,7 @@
 {
   imports = [
     (import ./users.nix)
+    (import ./lib/auto-upgrade.nix)
     (import ./lib/systemd.nix)
     (import ./lib/logind.nix)
     (import ./lib/networking.nix)
@@ -41,7 +42,7 @@
   environment = {
     etc = {
       "nixos/flake.nix" = {
-        source = "${self}/flakes/flake.nix";
+        source = self.outPath;
         mode = "0444";
       };
     };
