@@ -28,7 +28,7 @@ let
       gqrx
       sdrpp
       qradiolink
-      unstable.sdrangel
+      sdrangel
     ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
