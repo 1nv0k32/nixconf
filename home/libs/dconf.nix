@@ -60,6 +60,10 @@ in
         check-alive-timeout = int32 0;
       };
       "org/gnome/desktop/input-sources" = {
+        xkb-options = [
+          "terminate:ctrl_alt_bksp"
+          "altwin:swap_alt_win"
+        ];
         per-window = true;
         sources = [
           (lib.hm.gvariant.mkTuple [
@@ -83,9 +87,9 @@ in
         current-workspace-only = true;
       };
       "org/gnome/desktop/wm/keybindings" = {
-        close = [ "<Super>c" ];
-        switch-windows = [ "<Alt>Tab" ];
-        switch-applications = [ "<Super>Tab" ];
+        close = [ "<Super>q" ];
+        switch-windows = [ "<Super>Tab" ];
+        switch-applications = [ "<Alt>Tab" ];
         activate-window-menu = [ ];
         show-desktop = [ "<Super>d" ];
       };
