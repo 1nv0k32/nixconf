@@ -33,7 +33,7 @@ let
   '';
   nixup = pkgs.writeShellScriptBin "nixup" ''
     ${bashOpts}
-    sudo nixos-rebuild switch --upgrade --no-write-lock-file -L
+    sudo nixos-rebuild switch --no-write-lock-file -L
   '';
 in
 {
