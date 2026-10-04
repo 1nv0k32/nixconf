@@ -60,7 +60,6 @@ in
           }).overrideAttrs
             (old: {
               postPatch = (old.postPatch or "") + ''
-                echo "just a test 01"
                 substituteInPlace board/raspberrypi/rpi/rpi.env \
                   --replace-fail "boot_targets=mmc usb pxe dhcp" \
                   "boot_targets=nvme mmc pxe dhcp"
