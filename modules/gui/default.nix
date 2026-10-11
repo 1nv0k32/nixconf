@@ -6,7 +6,6 @@
     ./ddc.nix
     ./chromium.nix
     ./gnome.nix
-    ./hyprland.nix
     ./gns3.nix
     ./localsend.nix
     ./winbox.nix
