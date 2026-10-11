@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
     gnome-network-displays
@@ -16,62 +16,9 @@
   services = {
     gnome = {
       core-apps.enable = true;
-      gnome-keyring.enable = true;
     };
     desktopManager = {
       gnome.enable = true;
-    };
-    displayManager = {
-      gdm = {
-        enable = true;
-        autoSuspend = false;
-      };
-    };
-    displayManager = {
-      defaultSession = "gnome";
-    };
-  };
-
-  networking.networkmanager.enable = true;
-
-  hardware = {
-    graphics = {
-      enable = true;
-      enable32Bit = lib.mkForce false;
-    };
-  };
-
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    audio.enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-    wireplumber.extraConfig."11-bluetooth-policy" = {
-      "wireplumber.settings" = {
-        "bluetooth.autoswitch-to-headset-profile" = false;
-      };
-    };
-  };
-
-  i18n.defaultLocale = "en_GB.UTF-8";
-
-  fonts = {
-    packages = with pkgs; [
-      ubuntu-classic
-      vazir-fonts
-      nerd-fonts.noto
-    ];
-    enableDefaultPackages = true;
-    fontconfig.defaultFonts = {
-      serif = [
-        "Vazirmatn"
-        "DejaVu Serif"
-      ];
-      sansSerif = [
-        "Vazirmatn"
-        "DejaVu Sans"
-      ];
     };
   };
 }
