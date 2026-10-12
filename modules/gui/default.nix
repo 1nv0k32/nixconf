@@ -6,6 +6,7 @@
     ./ddc.nix
     ./chromium.nix
     ./gnome.nix
+    ./ryoku.nix
     ./gns3.nix
     ./localsend.nix
     ./winbox.nix
@@ -16,13 +17,13 @@
     ./gpu-screen-recorder.nix
   ];
 
-  environment.sysConf.gui.enable = true;
+  environment.sysConf.gui.enable = lib.mkDefault true;
 
-  programs.dconf.enable = true;
+  programs.dconf.enable = lib.mkDefault true;
 
-  networking.networkmanager.enable = true;
+  networking.networkmanager.enable = lib.mkDefault true;
 
-  security.rtkit.enable = true;
+  security.rtkit.enable = lib.mkDefault true;
 
   i18n.defaultLocale = "en_GB.UTF-8";
 

@@ -36,6 +36,7 @@
       url = "github:1nv0k32/openstack-nix";
     };
     nixarr.url = "github:nix-media-server/nixarr";
+    ryoku.url = "github:aethctl/Ryoku-on-NixOS";
     # hardware
     nixos-avf.url = "github:nix-community/nixos-avf";
     nixos-mac = {
@@ -85,6 +86,7 @@
         disko.nixosModules.disko
         nixos-generators.nixosModules.all-formats
         nixarr.nixosModules.default
+        ryoku.nixosModules.default
       ];
       darwinMods = [
         home-manager.darwinModules.home-manager
