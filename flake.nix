@@ -85,7 +85,6 @@
         disko.nixosModules.disko
         nixos-generators.nixosModules.all-formats
         nixarr.nixosModules.default
-        ryoku.nixosModules.default
       ];
       darwinMods = [
         home-manager.darwinModules.home-manager
