@@ -6,7 +6,7 @@
     runGarbageCollection = true;
     flags = [
       "--no-write-lock-file"
-      "-L"
+      "print-build-logs"
     ];
   };
 }
