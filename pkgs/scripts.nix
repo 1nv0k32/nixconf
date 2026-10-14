@@ -33,7 +33,26 @@ let
   '';
   nixup = pkgs.writeShellScriptBin "nixup" ''
     ${bashOpts}
-    sudo nixos-rebuild switch --no-write-lock-file -L
+    if [ $# -eq 0 ]; then
+      sudo nixos-rebuild switch \
+          --no-write-lock-file \
+          --print-build-logs
+      exit 0
+    fi
+    case "$1" in
+      --target)
+        [ $# -eq 2 ] || { echo "usage: nixup [--target HOST]" >&2; exit 1; }
+        nix build \
+          --no-write-lock-file \
+          --print-build-logs \
+          --no-link \
+          "git+https://codeberg.org/1nv0k32/nixconf?dir=flakes#nixosConfigurations.$2.config.system.build.toplevel"
+        ;;
+      *)
+        echo "usage: nixup [--target HOST]" >&2
+        exit 1
+        ;;
+    esac
   '';
 in
 {
