@@ -8,7 +8,6 @@
 {
   imports = [
     (import ./users.nix)
-    (import ./lib/auto-upgrade.nix)
     (import ./lib/systemd.nix)
     (import ./lib/logind.nix)
     (import ./lib/networking.nix)
