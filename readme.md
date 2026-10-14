@@ -18,3 +18,13 @@ nixos-anywhere --build-on remote --flake "git+https://codeberg.org/1nv0k32/nixco
 ```sh
 wget https://codeberg.org/1nv0k32/nixconf/raw/branch/main/flakes/flake.nix
 ```
+
+## Build for other hosts
+
+```sh
+nix build \
+    --no-write-lock-file \
+    --no-link \
+    --print-build-logs \
+    "git+https://codeberg.org/1nv0k32/nixconf?dir=flakes#nixosConfigurations.HOST.config.system.build.toplevel"
+```
