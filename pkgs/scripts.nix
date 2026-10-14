@@ -1,4 +1,4 @@
-{ self, pkgs, ... }:
+{ pkgs, ... }:
 let
   bashOpts = ''
     set -euo pipefail
