@@ -24,7 +24,7 @@ wget https://codeberg.org/1nv0k32/nixconf/raw/branch/main/flakes/flake.nix
 ```sh
 nix build \
     --no-write-lock-file \
-    --no-link \
     --print-build-logs \
+    --no-link \
     "git+https://codeberg.org/1nv0k32/nixconf?dir=flakes#nixosConfigurations.HOST.config.system.build.toplevel"
 ```
