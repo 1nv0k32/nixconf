@@ -3,6 +3,7 @@ let
   bashOpts = ''
     set -euo pipefail
   '';
+  remote = self.nixosModules.remote;
   nixconf = pkgs.writeShellScriptBin "nixconf" ''
     ${bashOpts}
     [ -f flake.nix ] && [ -f flake.lock ] || false
@@ -50,7 +51,7 @@ let
           --no-write-lock-file \
           --print-build-logs \
           --no-link \
-          "${self.nixosModules.remote}?dir=flakes#nixosConfigurations.$2.config.system.build.toplevel"
+          "${remote}?dir=flakes#nixosConfigurations.$2.config.system.build.toplevel"
         ;;
       *)
         echo "usage: nixup [--boot | --target HOST]" >&2
