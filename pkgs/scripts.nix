@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ self, pkgs, ... }:
 let
   bashOpts = ''
     set -euo pipefail
@@ -50,7 +50,7 @@ let
           --no-write-lock-file \
           --print-build-logs \
           --no-link \
-          "git+https://codeberg.org/1nv0k32/nixconf?dir=flakes#nixosConfigurations.$2.config.system.build.toplevel"
+          "${self.nixosModules.remote}?dir=flakes#nixosConfigurations.$2.config.system.build.toplevel"
         ;;
       *)
         echo "usage: nixup [--boot | --target HOST]" >&2

@@ -36,7 +36,6 @@
       discord
       zoom-us
       slack
-      tor-browser
       unstable.devin-desktop
     ];
 }

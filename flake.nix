@@ -112,6 +112,7 @@
     in
     {
       nixosModules = {
+        remote = "git+https://codeberg.org/1nv0k32/nixconf";
         stateVersion = "26.05";
         systemTypes = {
           # Thinkpad Z13 Gen2
