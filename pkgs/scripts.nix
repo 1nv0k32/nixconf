@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ self, pkgs, ... }:
 let
   bashOpts = ''
     set -euo pipefail
@@ -44,13 +44,14 @@ let
         sudo nixos-rebuild boot \
           --no-write-lock-file \
           --print-build-logs
+        ;;
       --target)
         [ $# -eq 2 ] || { echo "usage: nixup [--target HOST]" >&2; exit 1; }
         nix build \
           --no-write-lock-file \
           --print-build-logs \
           --no-link \
-          "?dir=flakes#nixosConfigurations.$2.config.system.build.toplevel"
+          "${self.nixosModules.remote}?dir=flakes#nixosConfigurations.$2.config.system.build.toplevel"
         ;;
       *)
         echo "usage: nixup [--boot | --target HOST]" >&2
