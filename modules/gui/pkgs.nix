@@ -1,4 +1,5 @@
 {
+  self,
   lib,
   pkgs,
   ...
@@ -6,6 +7,7 @@
 {
   environment.systemPackages =
     with pkgs;
+    with self.inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
     [
       kitty
       flameshot
@@ -26,9 +28,10 @@
       bruno
       telegram-desktop
       vscode
-      # AI
+    ]
+    ++ [
       openspec
-      opencode
+      droid
       devin-cli
     ]
     ++ lib.optionals (pkgs.stdenv.hostPlatform.system == "x86_64-linux") [

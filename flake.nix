@@ -29,12 +29,6 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    openstack-nix = {
-      url = "github:cobaltcore-dev/openstack-nix";
-    };
-    openstack-nix-dev = {
-      url = "github:1nv0k32/openstack-nix";
-    };
     nixarr.url = "github:nix-media-server/nixarr";
     llm-agents.url = "github:numtide/llm-agents.nix";
     # hardware
@@ -122,7 +116,7 @@
             lib.nixosSystem {
               system = systems.x86_64-linux;
               specialArgs = {
-                inherit self openstack-nix;
+                inherit self;
                 inherit (attrs) hostName domain;
               };
               modules = [
