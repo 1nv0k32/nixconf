@@ -165,6 +165,7 @@
   };
 
   plugins = {
+    lastplace.enable = true;
     web-devicons.enable = true;
     lualine.enable = true;
     lazygit.enable = true;

@@ -47,7 +47,7 @@ let
         ;;
       --target)
         [ $# -eq 2 ] || { echo "usage: nixup [--target HOST]" >&2; exit 1; }
-        nix build \
+        sudo nix build \
           --no-write-lock-file \
           --print-build-logs \
           --no-link \

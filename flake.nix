@@ -36,6 +36,7 @@
       url = "github:1nv0k32/openstack-nix";
     };
     nixarr.url = "github:nix-media-server/nixarr";
+    llm-agents.url = "github:numtide/llm-agents.nix";
     # hardware
     nixos-avf.url = "github:nix-community/nixos-avf";
     nixos-mac = {
