@@ -13,5 +13,8 @@
 
   services.gnome.gcr-ssh-agent.enable = lib.mkForce false;
 
-  security.pam.services.sudo.sshAgentAuth = true;
+  security.pam = {
+    sshAgentAuth.enable = true;
+    services.sudo.sshAgentAuth = true;
+  };
 }
