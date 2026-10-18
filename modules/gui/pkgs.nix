@@ -32,7 +32,8 @@
     ++ [
       openspec
       droid
-      devin-cli
+      antigravity
+      antigravity-cli
     ]
     ++ lib.optionals (pkgs.stdenv.hostPlatform.system == "x86_64-linux") [
       spotify
