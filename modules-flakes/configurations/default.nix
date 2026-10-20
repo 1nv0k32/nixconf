@@ -16,7 +16,7 @@ let
     ../../pkgs/config.nix
   ];
   defaultModules = pkgsModules ++ [
-    ../default.nix
+    ../../modules
     ../../src
   ];
   baseModules = defaultModules ++ [
