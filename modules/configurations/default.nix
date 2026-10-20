@@ -63,10 +63,7 @@ let
     };
 in
 {
-  # This legacy output contains host constructors and metadata, not NixOS modules.
-  disabledModules = [ inputs.flake-parts.flakeModules.nixosModules ];
-
-  options.flake.nixosModules = {
+  options.flake.lib = {
     remote = lib.mkOption {
       type = lib.types.str;
       description = "Remote flake URL used by the host management scripts.";
@@ -89,8 +86,8 @@ in
       inherit mkSystem systemModules;
     };
 
-    flake.nixosModules = {
-      remote = "git+https://codeberg.org/1nv0k32/nixconf";
+    flake.lib = {
+      remote = "https://codeberg.org/1nv0k32/nixconf";
       stateVersion = "26.05";
     };
   };

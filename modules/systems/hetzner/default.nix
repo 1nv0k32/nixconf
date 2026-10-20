@@ -15,7 +15,7 @@ let
     };
 in
 {
-  flake.nixosModules.systemTypes.hetzner.amd = mkSystem {
+  flake.lib.systemTypes.hetzner.amd = mkSystem {
     system = "x86_64-linux";
     modules = [
       inputs.srvos.nixosModules.hardware-hetzner-cloud
@@ -24,7 +24,7 @@ in
     ];
   };
 
-  flake.nixosModules.systemTypes.hetzner.arm = mkSystem {
+  flake.lib.systemTypes.hetzner.arm = mkSystem {
     modules = [
       inputs.srvos.nixosModules.hardware-hetzner-cloud-arm
       serverModule

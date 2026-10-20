@@ -1,9 +1,12 @@
 {
   perSystem =
-    { pkgs, ... }:
+    { pkgs, self', ... }:
     {
       devShells.default = pkgs.mkShell {
-        nativeBuildInputs = [ ];
+        nativeBuildInputs = [
+          self'.packages.nixconf
+          self'.packages.nixup
+        ];
       };
     };
 }

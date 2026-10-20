@@ -7,7 +7,7 @@
 
   outputs =
     { cfg, ... }:
-    with cfg.nixosModules.systemTypes;
+    with cfg.lib.systemTypes;
     let
       mkHost =
         host: attrib:

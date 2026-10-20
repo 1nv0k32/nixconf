@@ -1,8 +1,5 @@
-{ inputs, ... }:
 {
-  imports = [ inputs.flake-parts.flakeModules.modules ];
-
-  flake.modules.nixos.gui =
+  flake.nixosModules.gui =
     { lib, pkgs, ... }:
     {
       imports = [

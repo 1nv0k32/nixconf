@@ -24,7 +24,7 @@ in
 {
   _module.args = { inherit qemuModule; };
 
-  flake.nixosModules.systemTypes.qemu = mkSystem {
+  flake.lib.systemTypes.qemu = mkSystem {
     system = "x86_64-linux";
     modules = [
       qemuModule

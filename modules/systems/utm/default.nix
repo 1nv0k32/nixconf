@@ -15,15 +15,13 @@ let
     };
 in
 {
-  imports = [ ../../gui ];
-
-  flake.nixosModules.systemTypes.utm = mkSystem {
+  flake.lib.systemTypes.utm = mkSystem {
     modules = [
       qemuModule
       nixosModule
     ];
     sharedModules = systemModules.extra ++ [
-      config.flake.modules.nixos.gui
+      config.flake.nixosModules.gui
     ];
   };
 }

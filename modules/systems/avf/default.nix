@@ -26,7 +26,7 @@ let
     };
 in
 {
-  flake.nixosModules.systemTypes.avf = mkSystem {
+  flake.lib.systemTypes.avf = mkSystem {
     modules = [
       inputs.nixos-avf.nixosModules.avf
       serverModule

@@ -1,7 +1,6 @@
 { ... }:
 {
   imports = [
-    ./shells
     ./tools
   ];
 }

@@ -15,6 +15,7 @@ let
       ];
 
       hardware.asahi = {
+        enable = true;
         avd.enable = false;
       };
 
@@ -29,16 +30,14 @@ let
     };
 in
 {
-  imports = [ ../../gui ];
-
-  flake.nixosModules.systemTypes.mac = mkSystem {
+  flake.lib.systemTypes.mac = mkSystem {
     modules = [
       inputs.nixos-mac.nixosModules.apple-silicon-support
       nixosModule
       serverModule
     ];
     sharedModules = systemModules.extra ++ [
-      config.flake.modules.nixos.gui
+      config.flake.nixosModules.gui
     ];
   };
 }

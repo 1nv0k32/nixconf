@@ -49,7 +49,7 @@ let
     {
       imports = [
         (import ./_disko.nix)
-        config.flake.modules.nixos.media
+        config.flake.nixosModules.media
         (import "${self}/modules/services/gitea.nix")
       ];
 
@@ -104,9 +104,7 @@ let
     };
 in
 {
-  imports = [ ../../media ];
-
-  flake.nixosModules.systemTypes.rpi5 = mkSystem {
+  flake.lib.systemTypes.rpi5 = mkSystem {
     modules = [
       inputs.nixos-hardware.nixosModules.raspberry-pi-5
       serverModule

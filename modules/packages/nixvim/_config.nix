@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   viAlias = true;
   vimAlias = true;
@@ -37,7 +37,10 @@
 
   clipboard = {
     register = "unnamedplus";
-    providers.wl-copy.enable = true;
+    providers = {
+      wl-copy.enable = pkgs.stdenv.hostPlatform.isLinux;
+      pbcopy.enable = pkgs.stdenv.hostPlatform.isDarwin;
+    };
   };
 
   keymaps = [

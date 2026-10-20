@@ -11,7 +11,7 @@ let
     };
 in
 {
-  flake.nixosModules.systemTypes.parallels = mkSystem {
+  flake.lib.systemTypes.parallels = mkSystem {
     modules = [
       nixosModule
     ];

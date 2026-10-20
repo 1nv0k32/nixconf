@@ -9,6 +9,6 @@
   ];
 
   system = {
-    stateVersion = self.nixosModules.stateVersion;
+    stateVersion = self.lib.stateVersion;
   };
 }

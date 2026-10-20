@@ -68,10 +68,13 @@
           inputs.disko.nixosModules.disko
           inputs.nixos-generators.nixosModules.all-formats
           inputs.nixarr.nixosModules.default
+          inputs.self.nixosModules.nixvim
+          inputs.self.nixosModules.shells
         ];
         darwin = [
           inputs.home-manager.darwinModules.home-manager
           inputs.nixvim.nixDarwinModules.nixvim
+          inputs.self.darwinModules.nixvim
         ];
       };
 
@@ -81,6 +84,7 @@
           ./modules/overlays
           ./modules/packages
           ./modules/dev-shells
+          ./modules/features
           ./modules/systems
         ])
       ];

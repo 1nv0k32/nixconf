@@ -44,7 +44,7 @@ in
   home-manager = {
     sharedModules = [ (import "${self}/home/base.nix") ];
     extraSpecialArgs = {
-      inherit (self.nixosModules) stateVersion;
+      inherit (self.lib) stateVersion;
       inherit (config.environment.sysConf) gui;
       inherit pkgs;
     };

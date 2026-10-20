@@ -23,7 +23,7 @@ let
     };
 in
 {
-  flake.nixosModules.systemTypes.darwin = mkSystem {
+  flake.lib.systemTypes.darwin = mkSystem {
     system = "aarch64-darwin";
     modules = [
       nixosModule

@@ -45,7 +45,7 @@ let
     };
 in
 {
-  flake.nixosModules.systemTypes.wsl = mkSystem {
+  flake.lib.systemTypes.wsl = mkSystem {
     system = "x86_64-linux";
     modules = [
       inputs.nixos-wsl.nixosModules.wsl

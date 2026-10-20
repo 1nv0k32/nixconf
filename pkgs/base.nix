@@ -5,23 +5,26 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    openssl
-    nixos-anywhere
-    sops
-    git-crypt
-    tree
-    file
-    htop
     aria2
-    wget
-    iperf3
+    curl
     dig
-    screen
-    unzip
-    kubectl
+    file
+    git
+    git-crypt
+    htop
+    iperf3
     jq
-    yq
-    wireguard-tools
+    kubectl
     nixd
+    nixos-anywhere
+    openssl
+    pre-commit
+    screen
+    sops
+    tree
+    unzip
+    wget
+    wireguard-tools
+    yq
   ];
 }

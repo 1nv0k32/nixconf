@@ -8,7 +8,6 @@
 let
   nixosModule =
     {
-      self,
       ...
     }:
     {
@@ -41,16 +40,14 @@ let
     };
 in
 {
-  imports = [ ../../gui ];
-
-  flake.nixosModules.systemTypes.z13g2 = mkSystem {
+  flake.lib.systemTypes.z13g2 = mkSystem {
     system = "x86_64-linux";
     modules = [
       inputs.nixos-hardware.nixosModules.lenovo-thinkpad-z13-gen2
       nixosModule
     ];
     sharedModules = systemModules.extra ++ [
-      config.flake.modules.nixos.gui
+      config.flake.nixosModules.gui
     ];
   };
 }

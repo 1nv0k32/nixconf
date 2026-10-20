@@ -1,8 +1,5 @@
-{ inputs, ... }:
 {
-  imports = [ inputs.flake-parts.flakeModules.modules ];
-
-  flake.modules.nixos.media =
+  flake.nixosModules.media =
     { ... }:
     {
       imports = [
