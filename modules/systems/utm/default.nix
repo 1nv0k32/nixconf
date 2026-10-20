@@ -1,4 +1,5 @@
 {
+  config,
   mkSystem,
   systemModules,
   qemuModule,
@@ -14,11 +15,15 @@ let
     };
 in
 {
+  imports = [ ../../gui ];
+
   flake.nixosModules.systemTypes.utm = mkSystem {
     modules = [
       qemuModule
       nixosModule
     ];
-    sharedModules = systemModules.gui;
+    sharedModules = systemModules.extra ++ [
+      config.flake.modules.nixos.gui
+    ];
   };
 }

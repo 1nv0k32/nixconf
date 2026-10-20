@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   mkSystem,
   serverModule,
@@ -48,7 +49,7 @@ let
     {
       imports = [
         (import ./_disko.nix)
-        (import "${self}/modules/media")
+        config.flake.modules.nixos.media
         (import "${self}/modules/services/gitea.nix")
       ];
 
@@ -103,6 +104,8 @@ let
     };
 in
 {
+  imports = [ ../../media ];
+
   flake.nixosModules.systemTypes.rpi5 = mkSystem {
     modules = [
       inputs.nixos-hardware.nixosModules.raspberry-pi-5

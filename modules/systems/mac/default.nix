@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   mkSystem,
   systemModules,
@@ -28,12 +29,16 @@ let
     };
 in
 {
+  imports = [ ../../gui ];
+
   flake.nixosModules.systemTypes.mac = mkSystem {
     modules = [
       inputs.nixos-mac.nixosModules.apple-silicon-support
       nixosModule
       serverModule
     ];
-    sharedModules = systemModules.gui;
+    sharedModules = systemModules.extra ++ [
+      config.flake.modules.nixos.gui
+    ];
   };
 }

@@ -60,14 +60,6 @@
   outputs =
     inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ (inputs.import-tree ./flake-modules) ];
-
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
-
       _module.args.inputModules = {
         nixos = [
           inputs.sops-nix.nixosModules.sops
@@ -82,6 +74,22 @@
           inputs.nixvim.nixDarwinModules.nixvim
         ];
       };
+
+      imports = [
+        (inputs.import-tree [
+          ./modules/configurations
+          ./modules/overlays
+          ./modules/packages
+          ./modules/dev-shells
+          ./modules/systems
+        ])
+      ];
+
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
 
       perSystem =
         { pkgs, ... }:

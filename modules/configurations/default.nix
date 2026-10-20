@@ -1,4 +1,8 @@
-{ inputs, inputModules, ... }:
+{
+  inputs,
+  inputModules,
+  ...
+}:
 let
   inherit (inputs) self;
   lib = inputs.nixpkgs.lib;
@@ -9,28 +13,24 @@ let
     builtins.concatLists (map (path: lib.optional (builtins.pathExists path) (import path)) paths);
 
   pkgsModules = [
-    ../pkgs/config.nix
+    ../../pkgs/config.nix
   ];
   defaultModules = pkgsModules ++ [
-    ../modules
-    ../src
+    ../default.nix
+    ../../src
   ];
   baseModules = defaultModules ++ [
-    ../src/base.nix
-    ../pkgs/base.nix
+    ../../src/base.nix
+    ../../pkgs/base.nix
   ];
   extraModules = baseModules ++ [
-    ../overrides/initrd-luks.nix
-    ../src/extra.nix
-    ../pkgs/extra.nix
-  ];
-  guiModules = extraModules ++ [
-    ../modules/gui
+    ../../overrides/initrd-luks.nix
+    ../../src/extra.nix
+    ../../pkgs/extra.nix
   ];
   systemModules = {
     base = baseModules;
     extra = extraModules;
-    gui = guiModules;
     darwin = pkgsModules;
   };
 

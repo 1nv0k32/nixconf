@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   mkSystem,
   systemModules,
@@ -40,12 +41,16 @@ let
     };
 in
 {
+  imports = [ ../../gui ];
+
   flake.nixosModules.systemTypes.z13g2 = mkSystem {
     system = "x86_64-linux";
     modules = [
       inputs.nixos-hardware.nixosModules.lenovo-thinkpad-z13-gen2
       nixosModule
     ];
-    sharedModules = systemModules.gui;
+    sharedModules = systemModules.extra ++ [
+      config.flake.modules.nixos.gui
+    ];
   };
 }
