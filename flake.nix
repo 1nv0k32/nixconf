@@ -75,12 +75,7 @@
 
       imports = [
         (inputs.import-tree [
-          ./modules/configurations
-          ./modules/overlays
-          ./modules/packages
-          ./modules/dev-shells
-          ./modules/features
-          ./modules/systems
+          ./modules-flakes
         ])
       ];
 
