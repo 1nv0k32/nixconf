@@ -1,12 +1,23 @@
-{ self, pkgs, ... }:
+{
+  self,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  commands = self.packages.${pkgs.stdenv.hostPlatform.system};
+  mkCommand =
+    name:
+    pkgs.writeShellScriptBin name ''
+      set -euo pipefail
+      exec ${lib.getExe pkgs.nix} run "git+${self.lib.remote}#${name}" -- "$@"
+    '';
+  nixconf = mkCommand "nixconf";
+  nixup = mkCommand "nixup";
 in
 {
-
   environment.systemPackages = with pkgs; [
-    commands.nixconf
-    commands.nixup
+    nixconf
+    nixup
     aria2
     curl
     dig
