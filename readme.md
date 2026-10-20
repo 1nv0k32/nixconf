@@ -29,8 +29,12 @@ nix build \
     "git+https://codeberg.org/1nv0k32/nixconf?dir=flakes#nixosConfigurations.HOST.config.system.build.toplevel"
 ```
 
-## Run devShells
+## Run devShells or pkgs
 
 ```sh
 nix develop "git+https://codeberg.org/1nv0k32/nixconf#SHELL"
+```
+
+```sh
+nix run "git+https://codeberg.org/1nv0k32/nixconf#PKG"
 ```
