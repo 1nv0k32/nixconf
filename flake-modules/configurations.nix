@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, inputModules, ... }:
 let
   inherit (inputs) self;
   lib = inputs.nixpkgs.lib;
@@ -8,18 +8,6 @@ let
     paths:
     builtins.concatLists (map (path: lib.optional (builtins.pathExists path) (import path)) paths);
 
-  nixosModules = [
-    inputs.sops-nix.nixosModules.sops
-    inputs.home-manager.nixosModules.home-manager
-    inputs.nixvim.nixosModules.nixvim
-    inputs.disko.nixosModules.disko
-    inputs.nixos-generators.nixosModules.all-formats
-    inputs.nixarr.nixosModules.default
-  ];
-  darwinModules = [
-    inputs.home-manager.darwinModules.home-manager
-    inputs.nixvim.nixDarwinModules.nixvim
-  ];
   pkgsModules = [
     ../pkgs/config.nix
   ];
@@ -40,19 +28,30 @@ let
     ../modules/gui
   ];
   systemModules = {
-    base = nixosModules ++ baseModules;
-    extra = nixosModules ++ extraModules;
-    gui = nixosModules ++ guiModules;
-    darwin = darwinModules ++ pkgsModules;
+    base = baseModules;
+    extra = extraModules;
+    gui = guiModules;
+    darwin = pkgsModules;
   };
 
   mkSystem =
     {
       system ? "aarch64-linux",
       modules,
-      sharedModules ? systemModules.base,
-      builder ? lib.nixosSystem,
+      sharedModules ? null,
     }:
+    let
+      isDarwin = (lib.systems.elaborate system).isDarwin;
+      builder = if isDarwin then inputs.nix-darwin.lib.darwinSystem else lib.nixosSystem;
+      platformModules = if isDarwin then inputModules.darwin else inputModules.nixos;
+      profileModules =
+        if sharedModules != null then
+          sharedModules
+        else if isDarwin then
+          systemModules.darwin
+        else
+          systemModules.base;
+    in
     attrs:
     builder {
       inherit system;
@@ -60,7 +59,7 @@ let
         inherit self;
         inherit (attrs) hostName domain;
       };
-      modules = modules ++ sharedModules ++ optionalLocalModules attrs.modules;
+      modules = modules ++ platformModules ++ profileModules ++ optionalLocalModules attrs.modules;
     };
 in
 {

@@ -68,6 +68,21 @@
         "aarch64-darwin"
       ];
 
+      _module.args.inputModules = {
+        nixos = [
+          inputs.sops-nix.nixosModules.sops
+          inputs.home-manager.nixosModules.home-manager
+          inputs.nixvim.nixosModules.nixvim
+          inputs.disko.nixosModules.disko
+          inputs.nixos-generators.nixosModules.all-formats
+          inputs.nixarr.nixosModules.default
+        ];
+        darwin = [
+          inputs.home-manager.darwinModules.home-manager
+          inputs.nixvim.nixDarwinModules.nixvim
+        ];
+      };
+
       perSystem =
         { pkgs, ... }:
         {

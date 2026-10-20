@@ -1,9 +1,4 @@
-{
-  inputs,
-  mkSystem,
-  systemModules,
-  ...
-}:
+{ mkSystem, ... }:
 let
   nixosModule =
     { lib, ... }:
@@ -30,10 +25,8 @@ in
 {
   flake.nixosModules.systemTypes.darwin = mkSystem {
     system = "aarch64-darwin";
-    builder = inputs.nix-darwin.lib.darwinSystem;
     modules = [
       nixosModule
     ];
-    sharedModules = systemModules.darwin;
   };
 }
