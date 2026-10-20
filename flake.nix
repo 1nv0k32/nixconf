@@ -74,9 +74,7 @@
       };
 
       imports = [
-        (inputs.import-tree [
-          ./modules-flakes
-        ])
+        (inputs.import-tree ./modules-flakes)
       ];
 
       systems = [
