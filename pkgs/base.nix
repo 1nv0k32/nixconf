@@ -1,10 +1,12 @@
-{ pkgs, ... }:
+{ self, pkgs, ... }:
+let
+  commands = self.packages.${pkgs.stdenv.hostPlatform.system};
+in
 {
-  imports = [
-    (import ./scripts.nix)
-  ];
 
   environment.systemPackages = with pkgs; [
+    commands.nixconf
+    commands.nixup
     aria2
     curl
     dig
