@@ -9,6 +9,7 @@
   imports = [
     (import ./libs/dconf.nix attrs)
     (import ./libs/terminal.nix attrs)
+    (import ./libs/keepassxc.nix attrs)
   ];
 
   home = {

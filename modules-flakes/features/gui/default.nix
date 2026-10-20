@@ -30,7 +30,7 @@
 
       services = {
         flatpak.enable = true;
-        gnome.gnome-keyring.enable = lib.mkDefault true;
+        gnome.gnome-keyring.enable = lib.mkForce false;
         pipewire = {
           enable = true;
           audio.enable = true;
