@@ -21,7 +21,6 @@ let
     ../../pkgs/base.nix
   ];
   extraModules = baseModules ++ [
-    ../../overrides/initrd-luks.nix
     ../../src/extra.nix
     ../../pkgs/extra.nix
   ];
