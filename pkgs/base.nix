@@ -33,7 +33,6 @@ in
     openssl
     pre-commit
     screen
-    sops
     tree
     unzip
     wget

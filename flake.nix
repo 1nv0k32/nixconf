@@ -19,10 +19,6 @@
     nixvim = {
       url = "github:nix-community/nixvim/nixos-26.05";
     };
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     disko = {
       url = "github:nix-community/disko/latest";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -62,7 +58,6 @@
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       _module.args.inputModules = {
         nixos = [
-          inputs.sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
           inputs.nixvim.nixosModules.nixvim
           inputs.disko.nixosModules.disko
