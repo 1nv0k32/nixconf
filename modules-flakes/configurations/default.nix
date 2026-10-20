@@ -12,10 +12,7 @@ let
     paths:
     builtins.concatLists (map (path: lib.optional (builtins.pathExists path) (import path)) paths);
 
-  pkgsModules = [
-    ../../pkgs/config.nix
-  ];
-  defaultModules = pkgsModules ++ [
+  defaultModules = [
     ../../modules
     ../../src
   ];
@@ -31,7 +28,7 @@ let
   systemModules = {
     base = baseModules;
     extra = extraModules;
-    darwin = pkgsModules;
+    darwin = [ ];
   };
 
   mkSystem =
@@ -63,21 +60,28 @@ let
     };
 in
 {
-  options.flake.lib = {
-    remote = lib.mkOption {
-      type = lib.types.str;
-      description = "Remote flake URL used by the host management scripts.";
-    };
-    stateVersion = lib.mkOption {
-      type = lib.types.str;
-      description = "Default state version for host configurations.";
-    };
-    systemTypes = lib.mkOption {
-      type = lib.types.lazyAttrsOf (
-        lib.types.either constructorType (lib.types.lazyAttrsOf constructorType)
-      );
+  options.flake = {
+    darwinModules = lib.mkOption {
+      type = lib.types.lazyAttrsOf lib.types.deferredModule;
       default = { };
-      description = "Host constructors, optionally grouped by provider.";
+      description = "Darwin modules.";
+    };
+    lib = {
+      remote = lib.mkOption {
+        type = lib.types.str;
+        description = "Remote flake URL used by the host management scripts.";
+      };
+      stateVersion = lib.mkOption {
+        type = lib.types.str;
+        description = "Default state version for host configurations.";
+      };
+      systemTypes = lib.mkOption {
+        type = lib.types.lazyAttrsOf (
+          lib.types.either constructorType (lib.types.lazyAttrsOf constructorType)
+        );
+        default = { };
+        description = "Host constructors, optionally grouped by provider.";
+      };
     };
   };
 
