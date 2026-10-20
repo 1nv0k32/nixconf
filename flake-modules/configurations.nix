@@ -2,6 +2,7 @@
 let
   inherit (inputs) self;
   lib = inputs.nixpkgs.lib;
+  constructorType = lib.types.functionTo lib.types.raw;
 
   optionalLocalModules =
     paths:
@@ -38,12 +39,18 @@ let
   guiModules = extraModules ++ [
     ../modules/gui
   ];
+  systemModules = {
+    base = nixosModules ++ baseModules;
+    extra = nixosModules ++ extraModules;
+    gui = nixosModules ++ guiModules;
+    darwin = darwinModules ++ pkgsModules;
+  };
 
   mkSystem =
     {
       system ? "aarch64-linux",
       modules,
-      sharedModules ? nixosModules ++ baseModules,
+      sharedModules ? systemModules.base,
       builder ? lib.nixosSystem,
     }:
     attrs:
@@ -60,102 +67,32 @@ in
   # This legacy output contains host constructors and metadata, not NixOS modules.
   disabledModules = [ inputs.flake-parts.flakeModules.nixosModules ];
 
-  flake.nixosModules = {
-    remote = "git+https://codeberg.org/1nv0k32/nixconf";
-    stateVersion = "26.05";
-    systemTypes = {
-      # Thinkpad Z13 Gen2
-      z13g2 = mkSystem {
-        system = "x86_64-linux";
-        modules = [
-          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-z13-gen2
-          ../system/z13g2
-        ];
-        sharedModules = nixosModules ++ guiModules;
-      };
-      # Mac
-      mac = mkSystem {
-        modules = [
-          inputs.nixos-mac.nixosModules.apple-silicon-support
-          ../system/mac
-          ../system/server
-        ];
-        sharedModules = nixosModules ++ guiModules;
-      };
-      # AVF
-      avf = mkSystem {
-        modules = [
-          inputs.nixos-avf.nixosModules.avf
-          ../system/server
-          ../system/avf
-        ];
-      };
-      # Hetzner
-      hetzner = {
-        amd = mkSystem {
-          system = "x86_64-linux";
-          modules = [
-            inputs.srvos.nixosModules.hardware-hetzner-cloud
-            ../system/server
-            ../system/hetzner
-          ];
-        };
-        arm = mkSystem {
-          modules = [
-            inputs.srvos.nixosModules.hardware-hetzner-cloud-arm
-            ../system/server
-            ../system/hetzner
-          ];
-        };
-      };
-      # WSL-NixOS
-      wsl = mkSystem {
-        system = "x86_64-linux";
-        modules = [
-          inputs.nixos-wsl.nixosModules.wsl
-          ../system/wsl
-        ];
-      };
-      # Darwin
-      darwin = mkSystem {
-        system = "aarch64-darwin";
-        builder = inputs.nix-darwin.lib.darwinSystem;
-        modules = [
-          ../system/darwin
-        ];
-        sharedModules = darwinModules ++ pkgsModules;
-      };
-      # Raspberry Pi 5
-      rpi5 = mkSystem {
-        modules = [
-          inputs.nixos-hardware.nixosModules.raspberry-pi-5
-          ../system/server
-          ../system/rpi5
-        ];
-      };
-      # QEMU
-      qemu = mkSystem {
-        system = "x86_64-linux";
-        modules = [
-          ../system/qemu.nix
-        ];
-        sharedModules = nixosModules ++ extraModules;
-      };
-      # UTM
-      utm = mkSystem {
-        modules = [
-          ../system/qemu.nix
-          ../system/utm
-        ];
-        sharedModules = nixosModules ++ guiModules;
-      };
-      # Parallels
-      parallels = mkSystem {
-        modules = [
-          ../system/parallels
-        ];
-        sharedModules = nixosModules ++ extraModules;
-      };
+  options.flake.nixosModules = {
+    remote = lib.mkOption {
+      type = lib.types.str;
+      description = "Remote flake URL used by the host management scripts.";
+    };
+    stateVersion = lib.mkOption {
+      type = lib.types.str;
+      description = "Default state version for host configurations.";
+    };
+    systemTypes = lib.mkOption {
+      type = lib.types.lazyAttrsOf (
+        lib.types.either constructorType (lib.types.lazyAttrsOf constructorType)
+      );
+      default = { };
+      description = "Host constructors, optionally grouped by provider.";
+    };
+  };
+
+  config = {
+    _module.args = {
+      inherit mkSystem systemModules;
+    };
+
+    flake.nixosModules = {
+      remote = "git+https://codeberg.org/1nv0k32/nixconf";
+      stateVersion = "26.05";
     };
   };
 }
