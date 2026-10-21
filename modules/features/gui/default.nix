@@ -1,4 +1,13 @@
+{ self, ... }:
 {
+  perSystem =
+    { lib, pkgs, ... }:
+    {
+      packages = lib.optionalAttrs pkgs.stdenv.isLinux {
+        niri = (import ./_modules/niri.nix { inherit self lib pkgs; }).programs.niri.package;
+      };
+    };
+
   flake.nixosModules.gui =
     { lib, pkgs, ... }:
     {
@@ -8,6 +17,7 @@
         ./_modules/ddc.nix
         ./_modules/chromium.nix
         ./_modules/gnome.nix
+        ./_modules/niri.nix
         ./_modules/gns3.nix
         ./_modules/localsend.nix
         ./_modules/winbox.nix
@@ -16,7 +26,6 @@
         ./_modules/appimage.nix
         ./_modules/waydroid.nix
         ./_modules/gpu-screen-recorder.nix
-        ./_modules/dconf.nix
         ./_modules/terminal.nix
       ];
 
@@ -43,8 +52,6 @@
         )
       ];
 
-      programs.dconf.enable = lib.mkDefault true;
-
       networking.networkmanager.enable = lib.mkDefault true;
 
       security.rtkit.enable = lib.mkDefault true;
@@ -54,7 +61,6 @@
       services = {
         flatpak.enable = true;
         passSecretService.enable = lib.mkDefault true;
-        gnome.gnome-keyring.enable = lib.mkForce false;
         pipewire = {
           enable = true;
           audio.enable = true;
