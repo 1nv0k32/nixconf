@@ -10,8 +10,6 @@ in
 {
   flake.nixosModules.base =
     {
-      hostName,
-      domain,
       lib,
       ...
     }:
@@ -31,6 +29,13 @@ in
         ./_modules/pkgs.nix
       ];
 
+      _module.args.self = self;
+
+      fileSystems."/" = lib.mkDefault {
+        device = "none";
+        fsType = "ext4";
+      };
+
       system = {
         stateVersion = self.lib.stateVersion;
       };
@@ -38,10 +43,6 @@ in
       boot = {
         tmp.cleanOnBoot = true;
         blacklistedKernelModules = [ "snd_pcsp" ];
-      };
-
-      networking = {
-        inherit hostName domain;
       };
 
       hardware = {

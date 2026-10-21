@@ -1,42 +1,38 @@
 {
   config,
   inputs,
-  mkSystem,
+  lib,
   ...
 }:
 let
-  nixosModule =
-    { ... }:
-    {
-      imports = [
-        config.flake.nixosModules.nix-serve
-      ];
-
-      hardware.asahi = {
-        enable = true;
-        avd.enable = false;
-      };
-
-      boot = {
-        extraModprobeConfig = ''
-          options hid_apple fnmode=3 iso_layout=-1 swap_opt_cmd=1
-        '';
-      };
-
-      boot.loader.efi.canTouchEfiVariables = false;
-      networking.networkmanager.enable = true;
-    };
+  inherit (config.flake) nixosModules;
 in
 {
-  flake.lib.systemTypes.mac = mkSystem {
-    modules = [
+  flake.nixosModules.mac = {
+    imports = [
       inputs.nixos-mac.nixosModules.apple-silicon-support
-      nixosModule
-      config.flake.nixosModules.server
+      nixosModules.extra
+      nixosModules.gui
+      nixosModules.server
+      nixosModules.nix-serve
     ];
-    sharedModules = [
-      config.flake.nixosModules.extra
-      config.flake.nixosModules.gui
-    ];
+
+    nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
+
+    hardware.asahi = {
+      enable = true;
+      avd.enable = false;
+      extractPeripheralFirmware = lib.mkDefault false;
+      peripheralFirmwareDirectory = lib.mkDefault null;
+    };
+
+    boot = {
+      extraModprobeConfig = ''
+        options hid_apple fnmode=3 iso_layout=-1 swap_opt_cmd=1
+      '';
+      loader.efi.canTouchEfiVariables = false;
+    };
+
+    networking.networkmanager.enable = true;
   };
 }

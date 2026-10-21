@@ -5,32 +5,23 @@
   ...
 }:
 let
-  inherit (inputs) self;
   inherit (config.flake) nixosModules;
-  constructorType = lib.types.functionTo lib.types.raw;
 
-  optionalLocalModules =
-    paths:
-    builtins.concatLists (map (path: lib.optional (builtins.pathExists path) (import path)) paths);
-
-  mkSystem =
+  mkHost =
+    hostName:
     {
-      system ? "aarch64-linux",
-      modules,
-      sharedModules ? [ nixosModules.base ],
+      module,
+      domain ? null,
     }:
-    let
-      isDarwin = (lib.systems.elaborate system).isDarwin;
-      builder = if isDarwin then inputs.nix-darwin.lib.darwinSystem else lib.nixosSystem;
-    in
-    attrs:
-    builder {
-      inherit system;
-      specialArgs = {
-        inherit self;
-        inherit (attrs) hostName domain;
-      };
-      modules = modules ++ sharedModules ++ optionalLocalModules attrs.modules;
+    inputs.nixpkgs.lib.nixosSystem {
+      modules = [
+        module
+        {
+          networking = {
+            inherit hostName domain;
+          };
+        }
+      ];
     };
 in
 {
@@ -44,13 +35,6 @@ in
       type = lib.types.str;
       default = "26.05";
       description = "Default state version for host configurations.";
-    };
-    systemTypes = lib.mkOption {
-      type = lib.types.lazyAttrsOf (
-        lib.types.either constructorType (lib.types.lazyAttrsOf constructorType)
-      );
-      default = { };
-      description = "Host constructors, optionally grouped by provider.";
     };
     user = {
       name = lib.mkOption {
@@ -101,7 +85,33 @@ in
     };
   };
 
-  config._module.args = {
-    inherit mkSystem;
+  config.flake.nixosConfigurations = builtins.mapAttrs mkHost {
+    nyx = {
+      domain = "nyxlan.internal";
+      module = nixosModules.z13g2;
+    };
+    nyxpi = {
+      domain = "nyxlan.internal";
+      module = nixosModules.rpi5;
+    };
+    nyxmac = {
+      module = nixosModules.mac;
+    };
+    nyxdroid = {
+      module = nixosModules.avf;
+    };
+    nyxwsl = {
+      module = nixosModules.wsl;
+    };
+    # VMs
+    nyxvm = {
+      module = nixosModules.qemu;
+    };
+    nyxutm = {
+      module = nixosModules.utm;
+    };
+    nyxprl = {
+      module = nixosModules.parallels;
+    };
   };
 }

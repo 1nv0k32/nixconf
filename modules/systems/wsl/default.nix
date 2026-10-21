@@ -1,16 +1,28 @@
-{ inputs, mkSystem, ... }:
+{
+  config,
+  inputs,
+  self,
+  ...
+}:
 let
-  nixosModule =
+  inherit (config.flake) nixosModules;
+  cfg = self.lib;
+in
+{
+  flake.nixosModules.wsl =
     {
-      self,
       lib,
       pkgs,
       ...
     }:
-    let
-      cfg = self.lib;
-    in
     {
+      imports = [
+        inputs.nixos-wsl.nixosModules.wsl
+        nixosModules.base
+      ];
+
+      nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+
       wsl = {
         enable = true;
         startMenuLaunchers = true;
@@ -43,13 +55,4 @@ let
         binfmt.emulatedSystems = lib.mkForce [ ];
       };
     };
-in
-{
-  flake.lib.systemTypes.wsl = mkSystem {
-    system = "x86_64-linux";
-    modules = [
-      inputs.nixos-wsl.nixosModules.wsl
-      nixosModule
-    ];
-  };
 }

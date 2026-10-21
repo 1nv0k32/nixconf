@@ -1,11 +1,13 @@
 {
   config,
   inputs,
-  mkSystem,
   ...
 }:
 let
-  nixosModule =
+  inherit (config.flake) nixosModules;
+in
+{
+  flake.nixosModules.rpi5 =
     {
       pkgs,
       lib,
@@ -46,10 +48,15 @@ let
     in
     {
       imports = [
+        inputs.nixos-hardware.nixosModules.raspberry-pi-5
+        nixosModules.base
+        nixosModules.server
+        nixosModules.media
+        nixosModules.gitea
         ./_disko.nix
-        config.flake.nixosModules.media
-        config.flake.nixosModules.gitea
       ];
+
+      nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 
       hardware.raspberry-pi = {
         configtxt.settings.all.dtparam = lib.mkAfter [
@@ -100,13 +107,4 @@ let
         ];
       };
     };
-in
-{
-  flake.lib.systemTypes.rpi5 = mkSystem {
-    modules = [
-      inputs.nixos-hardware.nixosModules.raspberry-pi-5
-      config.flake.nixosModules.server
-      nixosModule
-    ];
-  };
 }

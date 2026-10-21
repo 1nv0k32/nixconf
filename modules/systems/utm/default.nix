@@ -1,27 +1,18 @@
 {
   config,
-  mkSystem,
-  qemuModule,
   ...
 }:
 let
-  nixosModule =
-    { ... }:
-    {
-      imports = [
-        ./_disko.nix
-      ];
-    };
+  inherit (config.flake) nixosModules;
 in
 {
-  flake.lib.systemTypes.utm = mkSystem {
-    modules = [
-      qemuModule
-      nixosModule
+  flake.nixosModules.utm = {
+    imports = [
+      nixosModules.qemu
+      nixosModules.gui
+      ./_disko.nix
     ];
-    sharedModules = [
-      config.flake.nixosModules.extra
-      config.flake.nixosModules.gui
-    ];
+
+    nixpkgs.hostPlatform = "aarch64-linux";
   };
 }

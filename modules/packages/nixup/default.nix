@@ -25,7 +25,7 @@
               --no-write-lock-file \
               --print-build-logs \
               --no-link \
-              "git+${self.lib.remote}?dir=flakes#nixosConfigurations.$2.config.system.build.toplevel"
+              "git+${self.lib.remote}#nixosConfigurations.$2.config.system.build.toplevel"
             ;;
           *)
             echo "usage: nixup [--boot | --target HOST]" >&2

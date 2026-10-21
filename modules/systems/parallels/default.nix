@@ -1,26 +1,20 @@
 {
   config,
-  mkSystem,
+  lib,
   ...
 }:
 let
-  nixosModule =
-    { ... }:
-    {
-      imports = [
-        ./_disko.nix
-      ];
-
-      hardware.parallels.enable = true;
-    };
+  inherit (config.flake) nixosModules;
 in
 {
-  flake.lib.systemTypes.parallels = mkSystem {
-    modules = [
-      nixosModule
+  flake.nixosModules.parallels = {
+    imports = [
+      nixosModules.extra
+      ./_disko.nix
     ];
-    sharedModules = [
-      config.flake.nixosModules.extra
-    ];
+
+    nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
+
+    hardware.parallels.enable = true;
   };
 }

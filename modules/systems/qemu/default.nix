@@ -1,15 +1,21 @@
 {
   config,
-  mkSystem,
+  lib,
   ...
 }:
 let
-  qemuModule =
+  inherit (config.flake) nixosModules;
+in
+{
+  flake.nixosModules.qemu =
     { modulesPath, ... }:
     {
       imports = [
         "${modulesPath}/profiles/qemu-guest.nix"
+        nixosModules.extra
       ];
+
+      nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
       boot = {
         initrd.kernelModules = [
@@ -24,17 +30,4 @@ let
         spice-vdagentd.enable = true;
       };
     };
-in
-{
-  _module.args = { inherit qemuModule; };
-
-  flake.lib.systemTypes.qemu = mkSystem {
-    system = "x86_64-linux";
-    modules = [
-      qemuModule
-    ];
-    sharedModules = [
-      config.flake.nixosModules.extra
-    ];
-  };
 }

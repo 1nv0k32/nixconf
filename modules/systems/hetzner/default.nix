@@ -1,34 +1,32 @@
 {
   config,
   inputs,
-  mkSystem,
   ...
 }:
 let
-  nixosModule =
-    { ... }:
-    {
-      imports = [
-        ./_disko.nix
-        config.flake.nixosModules.wg
-      ];
-    };
+  inherit (config.flake) nixosModules;
 in
 {
-  flake.lib.systemTypes.hetzner.amd = mkSystem {
-    system = "x86_64-linux";
-    modules = [
-      inputs.srvos.nixosModules.hardware-hetzner-cloud
-      config.flake.nixosModules.server
-      nixosModule
-    ];
-  };
+  flake.nixosModules.hetzner =
+    { lib, pkgs, ... }:
+    {
+      imports = [
+        inputs.srvos.nixosModules.hardware-hetzner-cloud
+        nixosModules.base
+        nixosModules.server
+        nixosModules.wg
+        ./_disko.nix
+      ];
 
-  flake.lib.systemTypes.hetzner.arm = mkSystem {
-    modules = [
-      inputs.srvos.nixosModules.hardware-hetzner-cloud-arm
-      config.flake.nixosModules.server
-      nixosModule
-    ];
-  };
+      nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
+
+      boot = lib.mkIf pkgs.stdenv.hostPlatform.isAarch64 {
+        loader = {
+          systemd-boot.enable = true;
+          efi.canTouchEfiVariables = true;
+        };
+        kernelParams = [ "console=tty" ];
+        initrd.kernelModules = [ "virtio_gpu" ];
+      };
+    };
 }

@@ -1,35 +1,48 @@
 {
   config,
   inputs,
-  mkSystem,
+  self,
+  lib,
   ...
 }:
 let
-  inherit (inputs.nixpkgs) lib;
   inherit (config.flake) darwinModules;
-
-  darwinModule =
-    { lib, ... }:
-    {
-      system.stateVersion = lib.mkForce 6;
-    };
 in
 {
-  options.flake.darwinModules = lib.mkOption {
-    type = lib.types.lazyAttrsOf lib.types.deferredModule;
-    default = { };
-    description = "Darwin modules.";
+  options.flake = {
+    darwinModules = lib.mkOption {
+      type = lib.types.lazyAttrsOf lib.types.deferredModule;
+      default = { };
+      description = "Darwin modules.";
+    };
+    darwinConfigurations = lib.mkOption {
+      type = lib.types.lazyAttrsOf lib.types.raw;
+      default = { };
+      description = "Darwin system configurations.";
+    };
   };
 
-  config.flake.lib.systemTypes.darwin = mkSystem {
-    system = "aarch64-darwin";
-    modules = [
-      darwinModule
-    ];
-    sharedModules = [
-      inputs.home-manager.darwinModules.home-manager
-      darwinModules.nix
-      darwinModules.nixvim
-    ];
+  config.flake = {
+    darwinModules.darwin = {
+      imports = [
+        inputs.home-manager.darwinModules.home-manager
+        darwinModules.nix
+        darwinModules.nixvim
+      ];
+
+      _module.args.self = self;
+
+      nixpkgs.hostPlatform = lib.mkDefault "aarch64-darwin";
+      system.stateVersion = lib.mkForce 6;
+    };
+
+    darwinConfigurations.nyxdarwin = inputs.nix-darwin.lib.darwinSystem {
+      modules = [
+        darwinModules.darwin
+        {
+          networking.hostName = "nyxdarwin";
+        }
+      ];
+    };
   };
 }
