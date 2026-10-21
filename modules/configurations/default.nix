@@ -1,12 +1,12 @@
 {
   config,
   inputs,
+  lib,
   ...
 }:
 let
   inherit (inputs) self;
   inherit (config.flake) nixosModules;
-  lib = inputs.nixpkgs.lib;
   constructorType = lib.types.functionTo lib.types.raw;
 
   optionalLocalModules =
