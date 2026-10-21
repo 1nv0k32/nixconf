@@ -1,10 +1,11 @@
 {
+  config,
   inputs,
-  inputModules,
   ...
 }:
 let
   inherit (inputs) self;
+  inherit (config.flake) nixosModules darwinModules;
   lib = inputs.nixpkgs.lib;
   constructorType = lib.types.functionTo lib.types.raw;
 
@@ -12,22 +13,11 @@ let
     paths:
     builtins.concatLists (map (path: lib.optional (builtins.pathExists path) (import path)) paths);
 
-  defaultModules = [
-    ../../src
+  darwinBaseModules = [
+    inputs.home-manager.darwinModules.home-manager
+    darwinModules.nix
+    darwinModules.nixvim
   ];
-  baseModules = defaultModules ++ [
-    ../../src/base.nix
-    ../../pkgs/base.nix
-  ];
-  extraModules = baseModules ++ [
-    ../../src/extra.nix
-    ../../pkgs/extra.nix
-  ];
-  systemModules = {
-    base = baseModules;
-    extra = extraModules;
-    darwin = [ ];
-  };
 
   mkSystem =
     {
@@ -38,14 +28,13 @@ let
     let
       isDarwin = (lib.systems.elaborate system).isDarwin;
       builder = if isDarwin then inputs.nix-darwin.lib.darwinSystem else lib.nixosSystem;
-      platformModules = if isDarwin then inputModules.darwin else inputModules.nixos;
       profileModules =
         if sharedModules != null then
           sharedModules
         else if isDarwin then
-          systemModules.darwin
+          darwinBaseModules
         else
-          systemModules.base;
+          [ nixosModules.base ];
     in
     attrs:
     builder {
@@ -54,7 +43,7 @@ let
         inherit self;
         inherit (attrs) hostName domain;
       };
-      modules = modules ++ platformModules ++ profileModules ++ optionalLocalModules attrs.modules;
+      modules = modules ++ profileModules ++ optionalLocalModules attrs.modules;
     };
 in
 {
@@ -85,7 +74,7 @@ in
 
   config = {
     _module.args = {
-      inherit mkSystem systemModules;
+      inherit mkSystem;
     };
 
     flake.lib = {

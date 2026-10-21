@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
+let
+  cfg = config.environment.sysConf;
+in
 {
   environment.systemPackages = with pkgs; [
     git
@@ -22,6 +25,18 @@
       format.signoff = true;
       alias.fpush = "push --force-with-lease";
       alias.acommit = "commit --amend --no-edit --all";
+    };
+  };
+
+  home-manager = {
+    sharedModules = [
+      {
+        programs.git.enable = true;
+      }
+    ];
+    users."${cfg.user.name}".programs.git.settings.user = {
+      name = cfg.git.username;
+      email = cfg.git.email;
     };
   };
 }

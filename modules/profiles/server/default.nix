@@ -3,7 +3,7 @@ let
   inherit (config.flake) nixosModules;
 in
 {
-  _module.args.serverModule =
+  flake.nixosModules.server =
     { config, ... }:
     let
       cfg = config.environment.sysConf;

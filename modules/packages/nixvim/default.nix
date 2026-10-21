@@ -12,13 +12,19 @@ in
 {
   flake = {
     nixosModules.nixvim = {
-      imports = [ nixvimModule ];
+      imports = [
+        inputs.nixvim.nixosModules.nixvim
+        nixvimModule
+      ];
       programs.nixvim.defaultEditor = true;
     };
     darwinModules.nixvim =
       { config, lib, ... }:
       {
-        imports = [ nixvimModule ];
+        imports = [
+          inputs.nixvim.nixDarwinModules.nixvim
+          nixvimModule
+        ];
         environment.variables = lib.mkIf config.programs.nixvim.enable {
           EDITOR = lib.mkOverride 900 "nvim";
           VISUAL = lib.mkOverride 900 "nvim";

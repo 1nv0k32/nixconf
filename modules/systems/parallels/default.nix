@@ -1,10 +1,14 @@
-{ mkSystem, systemModules, ... }:
+{
+  config,
+  mkSystem,
+  ...
+}:
 let
   nixosModule =
     { ... }:
     {
       imports = [
-        (import ./_disko.nix)
+        ./_disko.nix
       ];
 
       hardware.parallels.enable = true;
@@ -15,6 +19,8 @@ in
     modules = [
       nixosModule
     ];
-    sharedModules = systemModules.extra;
+    sharedModules = [
+      config.flake.nixosModules.extra
+    ];
   };
 }

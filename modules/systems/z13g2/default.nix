@@ -2,7 +2,6 @@
   config,
   inputs,
   mkSystem,
-  systemModules,
   ...
 }:
 let
@@ -12,7 +11,7 @@ let
     }:
     {
       imports = [
-        (import ./_disko.nix)
+        ./_disko.nix
       ];
 
       boot = {
@@ -46,7 +45,8 @@ in
       inputs.nixos-hardware.nixosModules.lenovo-thinkpad-z13-gen2
       nixosModule
     ];
-    sharedModules = systemModules.extra ++ [
+    sharedModules = [
+      config.flake.nixosModules.extra
       config.flake.nixosModules.gui
       config.flake.nixosModules.sdr
     ];

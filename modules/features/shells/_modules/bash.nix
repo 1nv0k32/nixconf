@@ -17,4 +17,17 @@
       export HISTFILESIZE=-1
     '';
   };
+
+  home-manager.sharedModules = [
+    {
+      programs.bash = {
+        enable = true;
+        bashrcExtra = ''
+          if test -f ~/.bashrc.local; then
+            . ~/.bashrc.local
+          fi
+        '';
+      };
+    }
+  ];
 }

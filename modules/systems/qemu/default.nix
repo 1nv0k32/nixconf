@@ -1,4 +1,8 @@
-{ mkSystem, systemModules, ... }:
+{
+  config,
+  mkSystem,
+  ...
+}:
 let
   qemuModule =
     { modulesPath, ... }:
@@ -29,6 +33,8 @@ in
     modules = [
       qemuModule
     ];
-    sharedModules = systemModules.extra;
+    sharedModules = [
+      config.flake.nixosModules.extra
+    ];
   };
 }

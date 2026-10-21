@@ -17,4 +17,22 @@
     sshAgentAuth.enable = true;
     services.sudo.sshAgentAuth = true;
   };
+
+  home-manager.sharedModules = [
+    {
+      programs.ssh = {
+        enable = true;
+        enableDefaultConfig = false;
+        includes = [
+          "~/.ssh/*.config"
+          "~/.ssh/config.d/*.config"
+        ];
+        settings."*" = {
+          ControlMaster = "auto";
+          ControlPersist = "yes";
+          ControlPath = "~/.ssh/master-%C";
+        };
+      };
+    }
+  ];
 }

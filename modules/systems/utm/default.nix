@@ -1,7 +1,6 @@
 {
   config,
   mkSystem,
-  systemModules,
   qemuModule,
   ...
 }:
@@ -10,7 +9,7 @@ let
     { ... }:
     {
       imports = [
-        (import ./_disko.nix)
+        ./_disko.nix
       ];
     };
 in
@@ -20,7 +19,8 @@ in
       qemuModule
       nixosModule
     ];
-    sharedModules = systemModules.extra ++ [
+    sharedModules = [
+      config.flake.nixosModules.extra
       config.flake.nixosModules.gui
     ];
   };

@@ -1,7 +1,7 @@
 {
+  config,
   inputs,
   mkSystem,
-  serverModule,
   ...
 }:
 let
@@ -29,7 +29,7 @@ in
   flake.lib.systemTypes.avf = mkSystem {
     modules = [
       inputs.nixos-avf.nixosModules.avf
-      serverModule
+      config.flake.nixosModules.server
       nixosModule
     ];
   };

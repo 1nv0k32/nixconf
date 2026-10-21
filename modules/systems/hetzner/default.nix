@@ -2,7 +2,6 @@
   config,
   inputs,
   mkSystem,
-  serverModule,
   ...
 }:
 let
@@ -10,7 +9,7 @@ let
     { ... }:
     {
       imports = [
-        (import ./_disko.nix)
+        ./_disko.nix
         config.flake.nixosModules.wg
       ];
     };
@@ -20,7 +19,7 @@ in
     system = "x86_64-linux";
     modules = [
       inputs.srvos.nixosModules.hardware-hetzner-cloud
-      serverModule
+      config.flake.nixosModules.server
       nixosModule
     ];
   };
@@ -28,7 +27,7 @@ in
   flake.lib.systemTypes.hetzner.arm = mkSystem {
     modules = [
       inputs.srvos.nixosModules.hardware-hetzner-cloud-arm
-      serverModule
+      config.flake.nixosModules.server
       nixosModule
     ];
   };

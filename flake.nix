@@ -66,26 +66,6 @@
         (inputs.import-tree ./modules)
       ];
 
-      _module.args.inputModules = {
-        nixos = [
-          inputs.home-manager.nixosModules.home-manager
-          inputs.nixvim.nixosModules.nixvim
-          inputs.disko.nixosModules.disko
-          inputs.nixos-generators.nixosModules.all-formats
-          inputs.nixarr.nixosModules.default
-          inputs.self.nixosModules.nix
-          inputs.self.nixosModules.nixvim
-          inputs.self.nixosModules.shells
-          inputs.self.nixosModules.tools
-        ];
-        darwin = [
-          inputs.home-manager.darwinModules.home-manager
-          inputs.nixvim.nixDarwinModules.nixvim
-          inputs.self.darwinModules.nix
-          inputs.self.darwinModules.nixvim
-        ];
-      };
-
       perSystem =
         { pkgs, ... }:
         {

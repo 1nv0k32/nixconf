@@ -22,4 +22,17 @@
     };
     interactiveShellInit = "";
   };
+
+  home-manager.sharedModules = [
+    {
+      programs.zsh = {
+        enable = true;
+        initContent = ''
+          if test -f ~/.zshrc.local; then
+            . ~/.zshrc.local
+          fi
+        '';
+      };
+    }
+  ];
 }

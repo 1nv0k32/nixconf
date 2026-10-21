@@ -2,8 +2,6 @@
   config,
   inputs,
   mkSystem,
-  systemModules,
-  serverModule,
   ...
 }:
 let
@@ -34,9 +32,10 @@ in
     modules = [
       inputs.nixos-mac.nixosModules.apple-silicon-support
       nixosModule
-      serverModule
+      config.flake.nixosModules.server
     ];
-    sharedModules = systemModules.extra ++ [
+    sharedModules = [
+      config.flake.nixosModules.extra
       config.flake.nixosModules.gui
     ];
   };

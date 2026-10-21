@@ -1,8 +1,8 @@
 { lib, ... }:
 {
   imports = [
-    (import ./networkd.nix)
-    (import ./dns.nix)
+    ./networkd.nix
+    ./dns.nix
   ];
 
   networking = {

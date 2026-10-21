@@ -16,6 +16,31 @@
         ./_modules/appimage.nix
         ./_modules/waydroid.nix
         ./_modules/gpu-screen-recorder.nix
+        ./_modules/dconf.nix
+        ./_modules/terminal.nix
+      ];
+
+      home-manager.sharedModules = [
+        (
+          { config, ... }:
+          {
+            home.file = {
+              "${config.home.homeDirectory}/.background-image".source = ./_assets/backgroud-image.jpg;
+              "${config.home.homeDirectory}/.face".source = ./_assets/backgroud-image.jpg;
+            };
+
+            services.flameshot = {
+              enable = true;
+              settings = {
+                General = {
+                  disabledTrayIcon = true;
+                  useGrimAdapter = true;
+                  disabledGrimWarning = true;
+                };
+              };
+            };
+          }
+        )
       ];
 
       environment.sysConf.gui.enable = lib.mkDefault true;
