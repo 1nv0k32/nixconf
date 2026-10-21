@@ -8,10 +8,10 @@
 }:
 let
   nixosModule =
-    { self, ... }:
+    { ... }:
     {
       imports = [
-        (import "${self}/modules/services/nix-serve.nix")
+        config.flake.nixosModules.nix-serve
       ];
 
       hardware.asahi = {

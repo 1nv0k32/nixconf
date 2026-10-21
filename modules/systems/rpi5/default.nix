@@ -8,7 +8,6 @@
 let
   nixosModule =
     {
-      self,
       pkgs,
       lib,
       ...
@@ -50,7 +49,7 @@ let
       imports = [
         (import ./_disko.nix)
         config.flake.nixosModules.media
-        (import "${self}/modules/services/gitea.nix")
+        config.flake.nixosModules.gitea
       ];
 
       hardware.raspberry-pi = {

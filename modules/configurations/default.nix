@@ -13,7 +13,6 @@ let
     builtins.concatLists (map (path: lib.optional (builtins.pathExists path) (import path)) paths);
 
   defaultModules = [
-    ../../modules
     ../../src
   ];
   baseModules = defaultModules ++ [

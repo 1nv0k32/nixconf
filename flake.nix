@@ -56,6 +56,16 @@
   outputs =
     inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
+
+      imports = [
+        (inputs.import-tree ./modules)
+      ];
+
       _module.args.inputModules = {
         nixos = [
           inputs.home-manager.nixosModules.home-manager
@@ -66,6 +76,7 @@
           inputs.self.nixosModules.nix
           inputs.self.nixosModules.nixvim
           inputs.self.nixosModules.shells
+          inputs.self.nixosModules.tools
         ];
         darwin = [
           inputs.home-manager.darwinModules.home-manager
@@ -74,16 +85,6 @@
           inputs.self.darwinModules.nixvim
         ];
       };
-
-      imports = [
-        (inputs.import-tree ./modules-flakes)
-      ];
-
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
 
       perSystem =
         { pkgs, ... }:

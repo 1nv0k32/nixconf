@@ -22,8 +22,6 @@ in
     curl
     dig
     file
-    git
-    git-crypt
     htop
     iperf3
     jq

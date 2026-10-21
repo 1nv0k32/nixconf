@@ -1,12 +1,16 @@
+{ config, ... }:
+let
+  inherit (config.flake) nixosModules;
+in
 {
   _module.args.serverModule =
-    { self, config, ... }:
+    { config, ... }:
     let
       cfg = config.environment.sysConf;
     in
     {
       imports = [
-        (import "${self}/modules/services/nginx.nix")
+        nixosModules.nginx
       ];
 
       users.users."${cfg.user.name}".openssh.authorizedKeys.keys = cfg.user.sshPubKeys;

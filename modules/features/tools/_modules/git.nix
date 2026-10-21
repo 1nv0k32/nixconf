@@ -3,6 +3,7 @@
   environment.systemPackages = with pkgs; [
     git
     git-review
+    git-crypt
   ];
 
   programs.git = {

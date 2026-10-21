@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   mkSystem,
   serverModule,
@@ -6,11 +7,11 @@
 }:
 let
   nixosModule =
-    { self, ... }:
+    { ... }:
     {
       imports = [
         (import ./_disko.nix)
-        (import "${self}/modules/services/wg.nix")
+        config.flake.nixosModules.wg
       ];
     };
 in

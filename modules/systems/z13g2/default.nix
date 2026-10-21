@@ -48,6 +48,7 @@ in
     ];
     sharedModules = systemModules.extra ++ [
       config.flake.nixosModules.gui
+      config.flake.nixosModules.sdr
     ];
   };
 }
