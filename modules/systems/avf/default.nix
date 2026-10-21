@@ -6,9 +6,9 @@
 }:
 let
   nixosModule =
-    { config, lib, ... }:
+    { self, lib, ... }:
     let
-      cfg = config.environment.sysConf;
+      cfg = self.lib;
     in
     {
       users.users."${cfg.user.name}" = {

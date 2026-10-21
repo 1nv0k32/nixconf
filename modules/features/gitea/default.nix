@@ -1,3 +1,4 @@
+{ self, ... }:
 {
   flake.nixosModules.gitea =
     { config, ... }:
@@ -13,7 +14,7 @@
         settings = {
           server.HTTP_ADDR = http_address;
           server.HTTP_PORT = http_port;
-          server.SSH_PORT = config.environment.sysConf.server.sshPort;
+          server.SSH_PORT = self.lib.server.sshPort;
           server.DOMAIN = domain;
           webhook.ALLOWED_HOST_LIST = "*";
         };

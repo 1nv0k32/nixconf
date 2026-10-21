@@ -1,13 +1,11 @@
-{ config, ... }:
+{ config, self, ... }:
 let
   inherit (config.flake) nixosModules;
+  cfg = self.lib;
 in
 {
   flake.nixosModules.server =
-    { config, ... }:
-    let
-      cfg = config.environment.sysConf;
-    in
+    { ... }:
     {
       imports = [
         nixosModules.nginx

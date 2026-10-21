@@ -2,13 +2,13 @@
 let
   nixosModule =
     {
+      self,
       lib,
-      config,
       pkgs,
       ...
     }:
     let
-      cfg = config.environment.sysConf;
+      cfg = self.lib;
     in
     {
       wsl = {

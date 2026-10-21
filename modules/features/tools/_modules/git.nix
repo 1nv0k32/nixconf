@@ -1,6 +1,6 @@
-{ config, pkgs, ... }:
+{ self, pkgs, ... }:
 let
-  cfg = config.environment.sysConf;
+  cfg = self.lib;
 in
 {
   environment.systemPackages = with pkgs; [

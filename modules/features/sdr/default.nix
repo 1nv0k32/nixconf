@@ -7,7 +7,7 @@
       ...
     }:
     let
-      gui = config.environment.sysConf.gui.enable;
+      gui = config.hardware.graphics.enable;
       cliWrapped = pkgs.symlinkJoin {
         name = "sdrCliTools";
         paths = with pkgs; [

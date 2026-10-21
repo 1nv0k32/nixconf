@@ -43,8 +43,6 @@
         )
       ];
 
-      environment.sysConf.gui.enable = lib.mkDefault true;
-
       programs.dconf.enable = lib.mkDefault true;
 
       networking.networkmanager.enable = lib.mkDefault true;

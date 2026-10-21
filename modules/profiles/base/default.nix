@@ -24,7 +24,6 @@ in
         nixosModules.shells
         nixosModules.tools
         nixosModules.users
-        ./_modules/options.nix
         ./_modules/systemd.nix
         ./_modules/logind.nix
         ./_modules/networking.nix

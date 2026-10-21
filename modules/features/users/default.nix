@@ -1,15 +1,14 @@
 { inputs, self, ... }:
+let
+  cfg = self.lib;
+in
 {
   flake.nixosModules.users =
     {
-      config,
       lib,
       pkgs,
       ...
     }:
-    let
-      cfg = config.environment.sysConf;
-    in
     {
       imports = [
         inputs.home-manager.nixosModules.home-manager
