@@ -1,0 +1,163 @@
+@define-color base #1e1e2e;
+@define-color surface #313244;
+@define-color text #cdd6f4;
+@define-color muted #6c7086;
+@define-color accent #89b4fa;
+@define-color green #a6e3a1;
+@define-color yellow #f9e2af;
+@define-color red #f38ba8;
+
+* {
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    font-family: "Ubuntu", "NotoSans Nerd Font", sans-serif;
+    font-size: 13px;
+}
+
+window#waybar {
+    background: transparent;
+    color: @text;
+}
+
+.modules-left,
+.modules-center,
+.modules-right {
+    background: alpha(@base, 0.96);
+    border: 1px solid alpha(@muted, 0.35);
+    border-radius: 12px;
+    padding: 0 5px;
+}
+
+tooltip {
+    background: @base;
+    color: @text;
+    border: 1px solid @surface;
+    border-radius: 10px;
+}
+
+tooltip label {
+    padding: 8px;
+}
+
+#custom-launcher,
+#custom-system,
+#custom-session,
+#idle_inhibitor,
+#network,
+#pulseaudio,
+#backlight,
+#battery,
+#language,
+#tray,
+#cpu,
+#memory,
+#disk,
+#mpris,
+#clock {
+    padding: 0 8px;
+    margin: 3px 0;
+    border-radius: 8px;
+}
+
+#custom-launcher,
+#custom-session {
+    color: @accent;
+    font-size: 18px;
+    padding: 0 10px;
+}
+
+#workspaces button {
+    color: @muted;
+    background: transparent;
+    padding: 0;
+    margin: 4px 2px;
+    min-width: 25px;
+    border-radius: 7px;
+    box-shadow: none;
+    text-shadow: none;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+#workspaces button:not(.empty) {
+    color: @text;
+}
+
+#workspaces button.active {
+    background: @surface;
+    color: @text;
+}
+
+#workspaces button.focused {
+    background: @accent;
+    color: @base;
+    font-weight: bold;
+}
+
+#workspaces button.urgent {
+    background: @red;
+    color: @base;
+}
+
+#workspaces button:hover,
+#custom-launcher:hover,
+#custom-session:hover,
+#network:hover,
+#pulseaudio:hover,
+#backlight:hover,
+#language:hover,
+#idle_inhibitor:hover {
+    background: @surface;
+    color: @text;
+}
+
+#clock {
+    font-weight: bold;
+    padding: 0 12px;
+}
+
+#mpris {
+    color: @green;
+}
+
+#mpris.paused,
+#pulseaudio.muted,
+#idle_inhibitor.deactivated {
+    color: @muted;
+}
+
+#idle_inhibitor.activated,
+#battery.charging,
+#battery.plugged {
+    color: @green;
+}
+
+#battery.warning:not(.charging):not(.plugged) {
+    color: @yellow;
+}
+
+#battery.critical:not(.charging):not(.plugged),
+#network.disconnected {
+    color: @red;
+}
+
+#language {
+    color: @accent;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+#cpu,
+#memory,
+#disk {
+    color: @muted;
+    font-size: 11px;
+}
+
+#tray menu {
+    background: @base;
+    color: @text;
+    border: 1px solid @surface;
+    border-radius: 8px;
+    padding: 4px;
+}

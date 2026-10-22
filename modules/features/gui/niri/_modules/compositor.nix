@@ -6,12 +6,15 @@
 }:
 let
   empty = _: { };
+  shell = import ./shell.nix { inherit self lib pkgs; };
   niriPackage = self.inputs.wrapper-modules.wrappers.niri.wrap {
     inherit pkgs;
     settings = {
       prefer-no-csd = empty;
       input = {
-        focus-follows-mouse = empty;
+        focus-follows-mouse = _: {
+          props.max-scroll-amount = "0%";
+        };
         keyboard = {
           xkb = {
             layout = "us,ir";
@@ -36,14 +39,23 @@ let
       binds = {
         "Mod+Return".spawn = lib.getExe pkgs.kitty;
         "Mod+Q".close-window = empty;
-        "Mod+S".spawn = lib.getExe pkgs.fuzzel;
+        "Mod+S".spawn = lib.getExe shell.launcher;
         "Mod+E".spawn = lib.getExe pkgs.nautilus;
         "Mod+Tab".toggle-overview = empty;
+        "Mod+Shift+Tab".switch-focus-between-floating-and-tiling = empty;
+        "Mod+Shift+Slash".show-hotkey-overlay = empty;
+        "Mod+Escape".spawn = lib.getExe shell.sessionMenu;
+        "Mod+Alt+L".spawn = lib.getExe shell.lock;
 
         "Mod+F".maximize-column = empty;
         "Mod+G".fullscreen-window = empty;
         "Mod+Shift+F".toggle-window-floating = empty;
         "Mod+C".center-column = empty;
+        "Mod+R".switch-preset-column-width = empty;
+        "Mod+Shift+R".reset-window-height = empty;
+        "Mod+W".toggle-column-tabbed-display = empty;
+        "Mod+BracketLeft".consume-or-expel-window-left = empty;
+        "Mod+BracketRight".consume-or-expel-window-right = empty;
 
         "Mod+H".focus-column-left = empty;
         "Mod+L".focus-column-right = empty;
@@ -64,6 +76,15 @@ let
         "Mod+Shift+Right".move-column-right = empty;
         "Mod+Shift+Up".move-window-up = empty;
         "Mod+Shift+Down".move-window-down = empty;
+
+        "Mod+Page_Up".focus-workspace-up = empty;
+        "Mod+Page_Down".focus-workspace-down = empty;
+        "Mod+Shift+Page_Up".move-column-to-workspace-up = empty;
+        "Mod+Shift+Page_Down".move-column-to-workspace-down = empty;
+        "Mod+Alt+Left".focus-monitor-left = empty;
+        "Mod+Alt+Right".focus-monitor-right = empty;
+        "Mod+Shift+Alt+Left".move-column-to-monitor-left = empty;
+        "Mod+Shift+Alt+Right".move-column-to-monitor-right = empty;
 
         "Mod+1".focus-workspace = "w0";
         "Mod+2".focus-workspace = "w1";
@@ -97,14 +118,16 @@ let
         "Mod+Ctrl+WheelScrollDown".focus-workspace-down = empty;
         "Mod+Ctrl+WheelScrollUp".focus-workspace-up = empty;
 
-        # Screenshots & suspend (matching dconf.nix)
-        "Print".spawn-sh =
-          "${pkgs.util-linux}/bin/script --command ' ${lib.getExe pkgs.flameshot} gui --raw | ${pkgs.wl-clipboard}/bin/wl-copy ' /dev/null";
-        "Mod+Print".screenshot = empty;
-        "Mod+Shift+S".spawn-sh = "${pkgs.systemd}/bin/systemctl suspend";
+        # Native screenshots support selection and copy directly to the clipboard.
+        "Print".screenshot = empty;
+        "Mod+Print".screenshot-screen = empty;
+        "Mod+Shift+Print".screenshot-window = empty;
+        "Mod+Shift+S".spawn = lib.getExe shell.suspend;
 
         # Audio & Media (dconf.nix + XF86Audio* keys)
-        "Mod+V".spawn-sh = "${pkgs.alsa-utils}/bin/amixer sset Capture toggle";
+        "Mod+V".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+        "XF86AudioMicMute".spawn-sh =
+          "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
         "Mod+F12".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+";
         "Mod+F11".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-";
         "Mod+F10".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
@@ -113,6 +136,8 @@ let
         "XF86AudioLowerVolume".spawn-sh =
           "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-";
         "XF86AudioMute".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+        "XF86MonBrightnessUp".spawn-sh = "${lib.getExe pkgs.brightnessctl} set +5%";
+        "XF86MonBrightnessDown".spawn-sh = "${lib.getExe pkgs.brightnessctl} --min-value=1 set 5%-";
 
         "Mod+Ctrl+Right".spawn-sh = "${lib.getExe pkgs.playerctl} next";
         "Mod+Ctrl+Down".spawn-sh = "${lib.getExe pkgs.playerctl} play-pause";
@@ -125,39 +150,76 @@ let
       };
 
       layout = {
-        gaps = 5;
+        gaps = 10;
+        background-color = shell.colors.background;
+        center-focused-column = "on-overflow";
+        always-center-single-column = empty;
+        default-column-width.proportion = 0.5;
+        preset-column-widths = [
+          { proportion = 0.333333; }
+          { proportion = 0.5; }
+          { proportion = 0.666667; }
+        ];
         focus-ring = {
           width = 2;
-          active-color = "#7fc8ff";
+          active-color = shell.colors.accent;
+          inactive-color = shell.colors.surface;
+        };
+        border.off = empty;
+        shadow = {
+          on = empty;
+          softness = 20;
+          spread = 2;
+          offset = _: {
+            props = {
+              x = 0;
+              y = 4;
+            };
+          };
+          color = "#00000040";
         };
       };
 
-      workspaces =
-        let
-          settings = {
-            layout.gaps = 5;
-          };
-        in
+      window-rules = [
         {
-          "w0" = settings;
-          "w1" = settings;
-          "w2" = settings;
-          "w3" = settings;
-          "w4" = settings;
-          "w5" = settings;
-          "w6" = settings;
-          "w7" = settings;
-          "w8" = settings;
-          "w9" = settings;
-        };
+          geometry-corner-radius = 12;
+          clip-to-geometry = true;
+        }
+        {
+          matches = [
+            { app-id = "^(org\\.pulseaudio\\.pavucontrol|com\\.saivert\\.pwvucontrol)$"; }
+            { app-id = "^nm-connection-editor$"; }
+            { app-id = "^org\\.gnome\\.Calculator$"; }
+            { app-id = "^floating\\."; }
+          ];
+          open-floating = true;
+        }
+        {
+          matches = [
+            {
+              app-id = "^org\\.gnome\\.Nautilus$";
+              title = "^(Properties|.* Properties)$";
+            }
+          ];
+          open-floating = true;
+        }
+      ];
+
+      workspaces = lib.genAttrs (map (i: "w${toString i}") (lib.range 0 9)) (_: { });
 
       xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
 
       spawn-at-startup = [
-        (lib.getExe pkgs.waybar)
-        (lib.getExe (
-          pkgs.writeShellScriptBin "wallpaper" "${lib.getExe pkgs.swaybg} -i ${../_assets/backgroud-image.jpg} -m fill"
-        ))
+        (lib.getExe shell.waybar)
+        (lib.getExe shell.notifications)
+        (lib.getExe shell.idle)
+        [
+          (lib.getExe pkgs.swaybg)
+          "-i"
+          "${../../_assets/backgroud-image.jpg}"
+          "-m"
+          "center"
+        ]
       ];
     };
   };
@@ -168,11 +230,18 @@ in
     package = niriPackage;
   };
 
+  security.pam.services.swaylock = { };
+  programs.dconf.enable = lib.mkDefault true;
+  services.upower.enable = true;
+
   environment.systemPackages = with pkgs; [
-    fuzzel
-    waybar
+    shell.launcher
+    shell.waybar
+    shell.sessionMenu
+    shell.lock
     swaybg
     playerctl
+    brightnessctl
     xwayland-satellite
   ];
 }

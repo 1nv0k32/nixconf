@@ -7,7 +7,6 @@
     efibootmgr
     nload
     ncdu
-    tpm2-tss
     tldr
     pass
     parted
@@ -17,9 +16,11 @@
     wireguard-tools
     conntrack-tools
     nftables
-    openvpn
     ubridge
     iw
+
+    nixpkgs-review
+    github-cli
 
     kubernetes-helm
     k9s
