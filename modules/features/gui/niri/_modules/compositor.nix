@@ -9,8 +9,20 @@ let
   shell = import ./shell.nix { inherit self lib pkgs; };
   niriPackage = self.inputs.wrapper-modules.wrappers.niri.wrap {
     inherit pkgs;
+    prefixVar = [
+      [
+        "XCURSOR_PATH"
+        ":"
+        "${pkgs.adwaita-icon-theme}/share/icons"
+      ]
+    ];
     settings = {
       prefer-no-csd = empty;
+      hotkey-overlay.skip-at-startup = empty;
+      cursor = {
+        xcursor-theme = "Adwaita";
+        xcursor-size = 24;
+      };
       input = {
         focus-follows-mouse = _: {
           props.max-scroll-amount = "0%";
@@ -45,7 +57,7 @@ let
         "Mod+Shift+Tab".switch-focus-between-floating-and-tiling = empty;
         "Mod+Shift+Slash".show-hotkey-overlay = empty;
         "Mod+Escape".spawn = lib.getExe shell.sessionMenu;
-        "Mod+Alt+L".spawn = lib.getExe shell.lock;
+        "Mod+Ctrl+Escape".spawn = lib.getExe shell.lock;
 
         "Mod+F".maximize-column = empty;
         "Mod+G".fullscreen-window = empty;
@@ -57,34 +69,29 @@ let
         "Mod+BracketLeft".consume-or-expel-window-left = empty;
         "Mod+BracketRight".consume-or-expel-window-right = empty;
 
+        # Vim directions: left, down, up, right.
         "Mod+H".focus-column-left = empty;
-        "Mod+L".focus-column-right = empty;
-        "Mod+K".focus-window-up = empty;
         "Mod+J".focus-window-down = empty;
+        "Mod+K".focus-window-up = empty;
+        "Mod+L".focus-column-right = empty;
 
-        "Mod+Left".focus-column-left = empty;
-        "Mod+Right".focus-column-right = empty;
-        "Mod+Up".focus-window-up = empty;
-        "Mod+Down".focus-window-down = empty;
-
+        # Shift moves the focused window or column in the same direction.
         "Mod+Shift+H".move-column-left = empty;
-        "Mod+Shift+L".move-column-right = empty;
-        "Mod+Shift+K".move-window-up = empty;
         "Mod+Shift+J".move-window-down = empty;
+        "Mod+Shift+K".move-window-up = empty;
+        "Mod+Shift+L".move-column-right = empty;
 
-        "Mod+Shift+Left".move-column-left = empty;
-        "Mod+Shift+Right".move-column-right = empty;
-        "Mod+Shift+Up".move-window-up = empty;
-        "Mod+Shift+Down".move-window-down = empty;
+        # Vim paging: U/D changes workspace; Shift sends the column.
+        "Mod+U".focus-workspace-up = empty;
+        "Mod+D".focus-workspace-down = empty;
+        "Mod+Shift+U".move-column-to-workspace-up = empty;
+        "Mod+Shift+D".move-column-to-workspace-down = empty;
 
-        "Mod+Page_Up".focus-workspace-up = empty;
-        "Mod+Page_Down".focus-workspace-down = empty;
-        "Mod+Shift+Page_Up".move-column-to-workspace-up = empty;
-        "Mod+Shift+Page_Down".move-column-to-workspace-down = empty;
-        "Mod+Alt+Left".focus-monitor-left = empty;
-        "Mod+Alt+Right".focus-monitor-right = empty;
-        "Mod+Shift+Alt+Left".move-column-to-monitor-left = empty;
-        "Mod+Shift+Alt+Right".move-column-to-monitor-right = empty;
+        # Previous/next monitor; Shift sends the column.
+        "Mod+Ctrl+P".focus-monitor-previous = empty;
+        "Mod+Ctrl+N".focus-monitor-next = empty;
+        "Mod+Ctrl+Shift+P".move-column-to-monitor-previous = empty;
+        "Mod+Ctrl+Shift+N".move-column-to-monitor-next = empty;
 
         "Mod+1".focus-workspace = "w0";
         "Mod+2".focus-workspace = "w1";
@@ -108,10 +115,11 @@ let
         "Mod+Shift+9".move-column-to-workspace = "w8";
         "Mod+Shift+0".move-column-to-workspace = "w9";
 
+        # Ctrl resizes: grow right/down, shrink left/up.
         "Mod+Ctrl+H".set-column-width = "-5%";
+        "Mod+Ctrl+J".set-window-height = "+5%";
+        "Mod+Ctrl+K".set-window-height = "-5%";
         "Mod+Ctrl+L".set-column-width = "+5%";
-        "Mod+Ctrl+J".set-window-height = "-5%";
-        "Mod+Ctrl+K".set-window-height = "+5%";
 
         "Mod+WheelScrollDown".focus-column-left = empty;
         "Mod+WheelScrollUp".focus-column-right = empty;
