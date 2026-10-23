@@ -2,7 +2,6 @@ import argparse
 import fcntl
 import json
 import os
-import re
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -37,22 +36,8 @@ def run(*command):
 
 def read_displays():
     displays = []
-    detected = run("ddcutil", "detect", "--brief") or ""
-    for number in re.findall(r"^Display (\d+)\s*$", detected, re.MULTILINE):
-        value = run("ddcutil", "--display", number, "--brief", "getvcp", "10")
-        match = re.fullmatch(r"VCP 10 C (\d+) (\d+)", value or "")
-        if match and int(match[2]) > 0:
-            displays.append(
-                Display(
-                    f"External {number} (DDC)",
-                    int(match[1]),
-                    int(match[2]),
-                    ("ddcutil", "--display", number, "setvcp", "10"),
-                )
-            )
-
     backlight = run(
-        "brightnessctl", "--class=backlight", "--machine-readable", "info"
+        "brightnessctl", "--class=backlight", "--machine-readable", "--list"
     )
     for line in (backlight or "").splitlines():
         fields = line.split(",")
@@ -65,10 +50,24 @@ def read_displays():
         ):
             displays.append(
                 Display(
-                    "Built-in display",
+                    (
+                        f"External monitor ({fields[0]})"
+                        if fields[0].startswith("ddcci")
+                        else f"Built-in display ({fields[0]})"
+                    ),
                     int(fields[2]),
                     int(fields[4]),
-                    ("brightnessctl", "--device", fields[0], "set"),
+                    (
+                        "busctl",
+                        "call",
+                        "org.freedesktop.login1",
+                        "/org/freedesktop/login1/session/auto",
+                        "org.freedesktop.login1.Session",
+                        "SetBrightness",
+                        "ssu",
+                        "backlight",
+                        fields[0],
+                    ),
                 )
             )
     return displays
@@ -78,7 +77,7 @@ def status(displays):
     if not displays:
         return {
             "text": "—",
-            "tooltip": "No brightness controls found. Enable DDC/CI on external monitors.",
+            "tooltip": "No backlights found. External monitors need the DDC backlight driver.",
             "class": "unavailable",
         }
     return {

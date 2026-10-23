@@ -136,17 +136,14 @@ let
     name = "niri-brightness";
     runtimeInputs = [
       pkgs.brightnessctl
-      pkgs.ddcutil
+      pkgs.systemd
     ];
     text = ''
-      ${lib.getExe pkgs.python3} ${../_assets/brightness.py} "$@"
-      if [[ "''${1:-status}" != status ]]; then
-        ${pkgs.procps}/bin/pkill -RTMIN+8 -x waybar || true
-      fi
+      exec ${lib.getExe pkgs.python3} ${../_assets/brightness.py} "$@"
     '';
   };
 
-  waybar = wrappers.waybar.wrap {
+  waybarTemplate = wrappers.waybar.wrap {
     inherit pkgs;
     "style.css".path = ../_assets/waybar.css;
     settings = {
@@ -158,6 +155,7 @@ let
       margin-right = 10;
       spacing = 4;
       reload_style_on_change = true;
+      on-sigusr2 = "reload";
       modules-left = [
         "custom/launcher"
         "niri/workspaces"
@@ -168,8 +166,8 @@ let
         "group/system"
         "idle_inhibitor"
         "network"
-        "pulseaudio"
-        "custom/brightness"
+        "group/audio"
+        "group/brightness"
         "battery"
         "niri/language"
         "tray"
@@ -275,9 +273,31 @@ let
         on-click = "${lib.getExe pkgs.kitty} --class floating.network -e ${pkgs.networkmanager}/bin/nmtui";
         on-click-right = "${pkgs.networkmanagerapplet}/bin/nm-connection-editor";
       };
+      "group/audio" = {
+        orientation = "horizontal";
+        drawer = {
+          click-to-reveal = true;
+          transition-duration = 200;
+          children-class = "audio-detail";
+        };
+        modules = [
+          "custom/audio"
+          "pulseaudio"
+          "pulseaudio/slider"
+          "custom/audio-settings"
+        ];
+      };
+      "custom/audio" = {
+        format = "󰕾";
+        tooltip-format = "Click: volume controls · Right: mute output · Middle: mute microphone";
+        on-click-right = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+        on-click-middle = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+        on-scroll-up = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+";
+        on-scroll-down = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-";
+      };
       pulseaudio = {
-        format = "{icon} {volume}%  {format_source}";
-        format-muted = "󰝟  {format_source}";
+        format = "{volume}%  {format_source}";
+        format-muted = "Muted  {format_source}";
         format-source = "󰍬";
         format-source-muted = "󰍭";
         format-icons.default = [
@@ -287,20 +307,33 @@ let
         ];
         scroll-step = 5;
         max-volume = 140;
-        tooltip-format = "{desc}\nClick: audio settings · Right: mute output · Middle: mute microphone";
-        on-click = lib.getExe pkgs.pwvucontrol;
+        tooltip-format = "{desc}\nRight: mute output · Middle: mute microphone";
         on-click-right = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
         on-click-middle = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
       };
+      "pulseaudio/slider" = {
+        min = 0;
+        max = 140;
+        orientation = "horizontal";
+        target = "sink";
+      };
+      "custom/audio-settings" = {
+        format = "󰒓";
+        tooltip-format = "Audio settings";
+        on-click = lib.getExe pkgs.pwvucontrol;
+      };
+      "group/brightness" = {
+        orientation = "horizontal";
+        drawer = {
+          click-to-reveal = true;
+          transition-duration = 200;
+          children-class = "brightness-detail";
+        };
+        modules = [ "custom/brightness" ];
+      };
       "custom/brightness" = {
-        format = "󰃠 {}";
-        return-type = "json";
-        exec = "${lib.getExe brightness} status";
-        interval = 30;
-        signal = 8;
-        exec-on-event = false;
-        on-click = "${lib.getExe brightness} up";
-        on-click-right = "${lib.getExe brightness} down";
+        format = "󰃠";
+        tooltip-format = "Click: brightness sliders · Scroll: adjust all displays";
         on-scroll-up = "${lib.getExe brightness} up";
         on-scroll-down = "${lib.getExe brightness} down";
       };
@@ -341,6 +374,17 @@ let
         on-click-right = lib.getExe lock;
       };
     };
+  };
+
+  waybar = pkgs.writeShellApplication {
+    name = "waybar";
+    text = ''
+      exec ${pkgs.python3.withPackages (ps: [ ps.pyudev ])}/bin/python3 \
+        ${../_assets/waybar.py} \
+        --template ${waybarTemplate}/waybar-config.json \
+        --binary ${lib.getExe pkgs.waybar} \
+        --style ${../_assets/waybar.css} "$@"
+    '';
   };
 in
 {

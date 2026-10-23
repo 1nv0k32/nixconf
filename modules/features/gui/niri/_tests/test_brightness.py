@@ -16,30 +16,38 @@ class BrightnessTests(unittest.TestCase):
         with patch.object(
             brightness,
             "run",
-            side_effect=[
-                "Invalid display\nDisplay 1\nDisplay 2\n",
-                "VCP 10 C 40 100",
-                "VCP 10 C 128 255",
-                "panel,backlight,500,50%,1000",
-            ],
+            return_value=(
+                "ddcci19,backlight,40,40%,100\n"
+                "ddcci20,backlight,128,50%,255\n"
+                "panel,backlight,500,50%,1000"
+            ),
         ):
             displays = brightness.read_displays()
         self.assertEqual([d.percent for d in displays], [40, 50, 50])
         self.assertEqual(brightness.status(displays)["text"], "40% / 50% / 50%")
 
-    def test_unsupported_external_does_not_hide_builtin(self):
+    def test_invalid_backlights_do_not_hide_builtin(self):
         with patch.object(
             brightness,
             "run",
-            side_effect=[
-                "Display 1\n",
-                None,
-                "panel,backlight,30,30%,100",
-            ],
+            return_value=(
+                "invalid,backlight,0,0%,0\n"
+                "led,leds,1,100%,1\n"
+                "panel,backlight,30,30%,100"
+            ),
         ):
             displays = brightness.read_displays()
         self.assertEqual(len(displays), 1)
-        self.assertEqual(displays[0].label, "Built-in display")
+        self.assertEqual(displays[0].label, "Built-in display (panel)")
+
+    def test_uses_native_logind_brightness_api(self):
+        with patch.object(
+            brightness, "run", return_value="ddcci19,backlight,40,40%,100"
+        ):
+            display = brightness.read_displays()[0]
+        self.assertEqual(display.command[0], "busctl")
+        self.assertIn("SetBrightness", display.command)
+        self.assertEqual(display.command[-2:], ("backlight", "ddcci19"))
 
     def test_no_displays(self):
         with patch.object(brightness, "run", return_value=None):
@@ -58,8 +66,8 @@ class BrightnessTests(unittest.TestCase):
 
     def test_adjusts_every_display_even_after_failure(self):
         displays = [
-            brightness.Display("External", 40, 100, ("ddcutil", "setvcp", "10")),
-            brightness.Display("Built-in", 500, 1000, ("brightnessctl", "set")),
+            brightness.Display("External", 40, 100, ("busctl", "ddcci19")),
+            brightness.Display("Built-in", 500, 1000, ("busctl", "panel")),
         ]
         with patch.object(brightness, "run", side_effect=[None, ""]) as run:
             self.assertFalse(brightness.adjust(displays, 5))
@@ -70,9 +78,9 @@ class BrightnessTests(unittest.TestCase):
         with patch.object(
             brightness.subprocess,
             "run",
-            side_effect=subprocess.TimeoutExpired("ddcutil", 10),
+            side_effect=subprocess.TimeoutExpired("brightnessctl", 10),
         ):
-            self.assertIsNone(brightness.run("ddcutil", "detect"))
+            self.assertIsNone(brightness.run("brightnessctl", "--list"))
 
 
 if __name__ == "__main__":
