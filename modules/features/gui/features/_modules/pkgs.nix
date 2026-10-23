@@ -10,9 +10,7 @@
     with self.inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
     [
       kitty
-      flameshot
       wl-clipboard
-      grim
       stirling-pdf-desktop
       libreoffice
       transmission_4
@@ -21,7 +19,6 @@
       pwvucontrol
       alsa-utils
       virt-manager
-      networkmanagerapplet
       obs-studio
       gimp
       freecad
@@ -32,8 +29,6 @@
     ++ [
       openspec
       droid
-      antigravity
-      antigravity-cli
     ]
     ++ lib.optionals (pkgs.stdenv.hostPlatform.system == "x86_64-linux") [
       spotify

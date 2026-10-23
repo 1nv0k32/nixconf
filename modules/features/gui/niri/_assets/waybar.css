@@ -46,7 +46,7 @@ tooltip label {
 #idle_inhibitor,
 #network,
 #pulseaudio,
-#backlight,
+#custom-brightness,
 #battery,
 #language,
 #tray,
@@ -104,11 +104,15 @@ tooltip label {
 #custom-session:hover,
 #network:hover,
 #pulseaudio:hover,
-#backlight:hover,
+#custom-brightness:hover,
 #language:hover,
 #idle_inhibitor:hover {
     background: @surface;
     color: @text;
+}
+
+#custom-brightness.unavailable {
+    color: @muted;
 }
 
 #clock {

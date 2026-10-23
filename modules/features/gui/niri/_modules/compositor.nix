@@ -19,6 +19,11 @@ let
     settings = {
       prefer-no-csd = empty;
       hotkey-overlay.skip-at-startup = empty;
+      environment = {
+        GTK_IM_MODULE = null;
+        QT_IM_MODULE = null;
+        XMODIFIERS = null;
+      };
       cursor = {
         xcursor-theme = "Adwaita";
         xcursor-size = 24;
@@ -98,22 +103,12 @@ let
         "Mod+3".focus-workspace = "w2";
         "Mod+4".focus-workspace = "w3";
         "Mod+5".focus-workspace = "w4";
-        "Mod+6".focus-workspace = "w5";
-        "Mod+7".focus-workspace = "w6";
-        "Mod+8".focus-workspace = "w7";
-        "Mod+9".focus-workspace = "w8";
-        "Mod+0".focus-workspace = "w9";
 
         "Mod+Shift+1".move-column-to-workspace = "w0";
         "Mod+Shift+2".move-column-to-workspace = "w1";
         "Mod+Shift+3".move-column-to-workspace = "w2";
         "Mod+Shift+4".move-column-to-workspace = "w3";
         "Mod+Shift+5".move-column-to-workspace = "w4";
-        "Mod+Shift+6".move-column-to-workspace = "w5";
-        "Mod+Shift+7".move-column-to-workspace = "w6";
-        "Mod+Shift+8".move-column-to-workspace = "w7";
-        "Mod+Shift+9".move-column-to-workspace = "w8";
-        "Mod+Shift+0".move-column-to-workspace = "w9";
 
         # Ctrl resizes: grow right/down, shrink left/up.
         "Mod+Ctrl+H".set-column-width = "-5%";
@@ -144,8 +139,14 @@ let
         "XF86AudioLowerVolume".spawn-sh =
           "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-";
         "XF86AudioMute".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-        "XF86MonBrightnessUp".spawn-sh = "${lib.getExe pkgs.brightnessctl} set +5%";
-        "XF86MonBrightnessDown".spawn-sh = "${lib.getExe pkgs.brightnessctl} --min-value=1 set 5%-";
+        "XF86MonBrightnessUp".spawn = [
+          (lib.getExe shell.brightness)
+          "up"
+        ];
+        "XF86MonBrightnessDown".spawn = [
+          (lib.getExe shell.brightness)
+          "down"
+        ];
 
         "Mod+Ctrl+Right".spawn-sh = "${lib.getExe pkgs.playerctl} next";
         "Mod+Ctrl+Down".spawn-sh = "${lib.getExe pkgs.playerctl} play-pause";
@@ -195,6 +196,16 @@ let
         }
         {
           matches = [
+            { app-id = "^(kitty|net\\.kovidgoyal\\.kitty)$"; }
+            { app-id = "^(chromium|chromium-browser|org\\.chromium\\.Chromium)$"; }
+          ];
+          open-floating = false;
+          open-maximized = false;
+          open-fullscreen = false;
+          default-column-width.proportion = 0.5;
+        }
+        {
+          matches = [
             { app-id = "^(org\\.pulseaudio\\.pavucontrol|com\\.saivert\\.pwvucontrol)$"; }
             { app-id = "^nm-connection-editor$"; }
             { app-id = "^org\\.gnome\\.Calculator$"; }
@@ -213,7 +224,7 @@ let
         }
       ];
 
-      workspaces = lib.genAttrs (map (i: "w${toString i}") (lib.range 0 9)) (_: { });
+      workspaces = lib.genAttrs (map (i: "w${toString i}") (lib.range 0 4)) (_: { });
 
       xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
 
@@ -247,9 +258,12 @@ in
     shell.waybar
     shell.sessionMenu
     shell.lock
+    shell.brightness
     swaybg
     playerctl
     brightnessctl
     xwayland-satellite
+    adwaita-icon-theme
+    papirus-icon-theme
   ];
 }

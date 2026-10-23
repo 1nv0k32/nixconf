@@ -26,17 +26,6 @@
               "${config.home.homeDirectory}/.background-image".source = ../_assets/backgroud-image.jpg;
               "${config.home.homeDirectory}/.face".source = ../_assets/backgroud-image.jpg;
             };
-
-            services.flameshot = {
-              enable = true;
-              settings = {
-                General = {
-                  disabledTrayIcon = true;
-                  useGrimAdapter = true;
-                  disabledGrimWarning = true;
-                };
-              };
-            };
           }
         )
       ];

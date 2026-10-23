@@ -14,6 +14,7 @@ in
           size = fontSize;
         };
         settings = {
+          remember_window_size = false;
           cursor_shape = "block";
           cursor_blink_interval = 0;
           enable_audio_bell = "no";

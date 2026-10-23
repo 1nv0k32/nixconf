@@ -16,13 +16,25 @@ let
 
   launcher = wrappers.fuzzel.wrap {
     inherit pkgs;
+    prefixVar = [
+      [
+        "XDG_DATA_DIRS"
+        ":"
+        (lib.makeSearchPath "share" [
+          pkgs.papirus-icon-theme
+          pkgs.kdePackages.breeze-icons
+          pkgs.adwaita-icon-theme
+          pkgs.hicolor-icon-theme
+        ])
+      ]
+    ];
     settings = {
       main = {
         font = "Ubuntu:size=12";
         terminal = "${lib.getExe pkgs.kitty} -e";
         prompt = ''"Search  "'';
         placeholder = "Applications";
-        icon-theme = "Adwaita";
+        icon-theme = "Papirus-Dark";
         layer = "overlay";
         lines = 8;
         width = 40;
@@ -120,6 +132,20 @@ let
       before-sleep '${lib.getExe lock}'
   '';
 
+  brightness = pkgs.writeShellApplication {
+    name = "niri-brightness";
+    runtimeInputs = [
+      pkgs.brightnessctl
+      pkgs.ddcutil
+    ];
+    text = ''
+      ${lib.getExe pkgs.python3} ${../_assets/brightness.py} "$@"
+      if [[ "''${1:-status}" != status ]]; then
+        ${pkgs.procps}/bin/pkill -RTMIN+8 -x waybar || true
+      fi
+    '';
+  };
+
   waybar = wrappers.waybar.wrap {
     inherit pkgs;
     "style.css".path = ../_assets/waybar.css;
@@ -143,7 +169,7 @@ let
         "idle_inhibitor"
         "network"
         "pulseaudio"
-        "backlight"
+        "custom/brightness"
         "battery"
         "niri/language"
         "tray"
@@ -162,8 +188,8 @@ let
           builtins.listToAttrs (
             map (i: {
               name = "w${toString i}";
-              value = if i == 9 then "0" else toString (i + 1);
-            }) (lib.range 0 9)
+              value = toString (i + 1);
+            }) (lib.range 0 4)
           )
           // {
             default = "·";
@@ -266,11 +292,17 @@ let
         on-click-right = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
         on-click-middle = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
       };
-      backlight = {
-        format = "󰃠 {percent}%";
-        tooltip-format = "Brightness · Scroll to adjust";
-        on-scroll-up = "${lib.getExe pkgs.brightnessctl} set +5%";
-        on-scroll-down = "${lib.getExe pkgs.brightnessctl} --min-value=1 set 5%-";
+      "custom/brightness" = {
+        format = "󰃠 {}";
+        return-type = "json";
+        exec = "${lib.getExe brightness} status";
+        interval = 30;
+        signal = 8;
+        exec-on-event = false;
+        on-click = "${lib.getExe brightness} up";
+        on-click-right = "${lib.getExe brightness} down";
+        on-scroll-up = "${lib.getExe brightness} up";
+        on-scroll-down = "${lib.getExe brightness} down";
       };
       battery = {
         format = "{icon} {capacity}%";
@@ -320,6 +352,7 @@ in
     sessionMenu
     notifications
     idle
+    brightness
     waybar
     ;
 }
