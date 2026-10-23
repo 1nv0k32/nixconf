@@ -62,12 +62,7 @@ let
     };
   };
 
-  lock = pkgs.writeShellScriptBin "niri-lock" ''
-    exec ${lib.getExe pkgs.swaylock} --daemonize --color 1e1e2e \
-      --indicator-radius 80 --indicator-thickness 6 \
-      --ring-color 313244 --key-hl-color 89b4fa \
-      --inside-color 1e1e2e --text-color cdd6f4
-  '';
+  lock = import ./lock.nix { inherit lib pkgs; };
 
   suspend = pkgs.writeShellScriptBin "niri-suspend" ''
     ${lib.getExe lock} || exit $?
@@ -126,6 +121,7 @@ let
 
   idle = pkgs.writeShellScriptBin "niri-idle" ''
     exec ${lib.getExe pkgs.swayidle} -w \
+      lock '${lib.getExe lock}' \
       timeout 600 '${lib.getExe lock}' \
       timeout 900 '${lib.getExe pkgs.niri} msg action power-off-monitors' \
       resume '${lib.getExe pkgs.niri} msg action power-on-monitors' \
@@ -149,7 +145,7 @@ let
     settings = {
       layer = "top";
       position = "top";
-      height = 36;
+      height = 40;
       margin-top = 8;
       margin-left = 10;
       margin-right = 10;
@@ -169,7 +165,6 @@ let
         "group/audio"
         "group/brightness"
         "battery"
-        "niri/language"
         "tray"
         "custom/session"
       ];
@@ -356,15 +351,8 @@ let
         };
         tooltip-format = "{timeTo} · {power:0.1f} W";
       };
-      "niri/language" = {
-        format = "{short}";
-        format-en = "EN";
-        format-fa = "FA";
-        on-click = "${lib.getExe pkgs.niri} msg action switch-layout next";
-        tooltip = false;
-      };
       tray = {
-        icon-size = 16;
+        icon-size = 22;
         spacing = 8;
       };
       "custom/session" = {

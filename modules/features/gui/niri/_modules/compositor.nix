@@ -249,7 +249,6 @@ in
     package = niriPackage;
   };
 
-  security.pam.services.swaylock = { };
   programs.dconf.enable = lib.mkDefault true;
   services.upower.enable = true;
 

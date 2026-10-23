@@ -8,6 +8,7 @@ in
     {
       imports = [
         nixosModules.base
+        ./_modules/networking.nix
         ./_modules/pkgs.nix
       ];
 

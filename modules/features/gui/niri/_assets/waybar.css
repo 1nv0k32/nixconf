@@ -12,7 +12,7 @@
     border-radius: 0;
     min-height: 0;
     font-family: "Ubuntu", "NotoMono Nerd Font Mono", sans-serif;
-    font-size: 13px;
+    font-size: 15px;
 }
 
 window#waybar {
@@ -51,7 +51,6 @@ tooltip label {
 #backlight,
 #custom-brightness,
 #battery,
-#language,
 #tray,
 #cpu,
 #memory,
@@ -68,8 +67,21 @@ tooltip label {
 #custom-audio,
 #custom-brightness {
     color: @accent;
-    font-size: 18px;
+    font-size: 22px;
     padding: 0 10px;
+}
+
+#custom-system,
+#custom-audio-settings,
+#idle_inhibitor,
+#network {
+    font-size: 22px;
+}
+
+#battery,
+#pulseaudio,
+#backlight {
+    font-size: 17px;
 }
 
 #workspaces button {
@@ -77,7 +89,7 @@ tooltip label {
     background: transparent;
     padding: 0;
     margin: 4px 2px;
-    min-width: 25px;
+    min-width: 30px;
     border-radius: 7px;
     box-shadow: none;
     text-shadow: none;
@@ -112,7 +124,6 @@ tooltip label {
 #network:hover,
 #pulseaudio:hover,
 #custom-brightness:hover,
-#language:hover,
 #idle_inhibitor:hover {
     background: @surface;
     color: @text;
@@ -176,12 +187,6 @@ tooltip label {
 #battery.critical:not(.charging):not(.plugged),
 #network.disconnected {
     color: @red;
-}
-
-#language {
-    color: @accent;
-    font-size: 11px;
-    font-weight: bold;
 }
 
 #cpu,

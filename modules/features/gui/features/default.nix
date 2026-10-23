@@ -30,7 +30,6 @@
         )
       ];
 
-      networking.networkmanager.enable = lib.mkDefault true;
       security.rtkit.enable = lib.mkDefault true;
       i18n.defaultLocale = "en_GB.UTF-8";
 
