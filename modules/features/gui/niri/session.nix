@@ -52,10 +52,6 @@ in
         initial_info_text = "Password, or empty+Enter then key/fingerprint";
         input_len = 48;
         shell = false;
-        animation = "dur_file";
-        dur_file_path = "${shell.loginArt}";
-        # The art is a single still frame, so redrawing every 5 ms (the default) only burns CPU.
-        animation_frame_delay = 1000;
       };
     };
   };

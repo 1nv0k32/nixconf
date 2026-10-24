@@ -250,15 +250,6 @@ let
     '';
   };
 
-  # Ly draws on the console, where the ter-v24b font gives 12x24 px cells on the 1920 px panel.
-  # Half-blocks make each image pixel a 12x12 px square, matching swaybg's unscaled placement.
-  loginArt =
-    pkgs.runCommand "niri-login-art.dur"
-      { nativeBuildInputs = [ (pkgs.python3.withPackages (ps: [ ps.pillow ])) ]; }
-      ''
-        python3 ${./assets/login-art.py} --image ${wallpaper} --columns 160 --output $out
-      '';
-
   waybar = import ./waybar.nix {
     inherit
       lib
@@ -279,7 +270,6 @@ in
     colors
     workspaces
     wallpaper
-    loginArt
     launcher
     lockDaemon
     lock
