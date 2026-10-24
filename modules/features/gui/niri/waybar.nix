@@ -11,6 +11,7 @@
   brightness,
 }:
 let
+  python = lib.getExe pkgs.python3;
   template = wrappers.waybar.wrap {
     inherit pkgs;
     "style.css".path = ./assets/waybar.css;
@@ -33,6 +34,7 @@ let
       modules-right = [
         "group/system"
         "idle_inhibitor"
+        "custom/language"
         "network"
         "group/audio"
         "group/brightness"
@@ -87,6 +89,7 @@ let
       "group/system" = {
         orientation = "horizontal";
         drawer = {
+          click-to-reveal = true;
           transition-duration = 200;
         };
         modules = [
@@ -98,7 +101,9 @@ let
       };
       "custom/system" = {
         format = "󰍛";
-        tooltip-format = "Hover for CPU, memory, and disk usage";
+        exec = "${python} ${./assets/system-status.py}";
+        return-type = "json";
+        restart-interval = 2;
       };
       cpu = {
         interval = 5;
@@ -123,6 +128,23 @@ let
         tooltip-format-activated = "Keep awake enabled · Click to allow automatic locking";
         tooltip-format-deactivated = "Auto-lock after 10 minutes · Click to keep awake";
       };
+      "custom/language" = {
+        exec = lib.escapeShellArgs [
+          python
+          ./assets/keyboard-layout.py
+          "--niri"
+          (lib.getExe pkgs.niri)
+          "--label"
+          "English (US)=EN"
+          "--label"
+          "Persian=FA"
+        ];
+        return-type = "json";
+        restart-interval = 2;
+        # The script follows niri's event stream itself; re-running it on click would just restart it.
+        exec-on-event = false;
+        on-click = "${lib.getExe pkgs.niri} msg action switch-layout next";
+      };
       network = {
         format-wifi = "󰤨";
         format-ethernet = "󰈀";
@@ -134,39 +156,42 @@ let
         on-click = "${lib.getExe pkgs.kitty} --class floating.network -e ${pkgs.networkmanager}/bin/nmtui";
         on-click-right = "${pkgs.networkmanagerapplet}/bin/nm-connection-editor";
       };
+      # Drawer leaders must not have click actions: Waybar's click handler swallows every button,
+      # which would stop the group from receiving the click that reveals it.
       "group/audio" = {
         orientation = "horizontal";
         drawer = {
+          click-to-reveal = true;
           transition-duration = 200;
         };
         modules = [
-          "custom/audio"
-          "pulseaudio"
+          "pulseaudio#audio"
+          "pulseaudio#level"
           "pulseaudio/slider"
         ];
       };
-      "custom/audio" = {
-        format = "󰕾";
-        tooltip-format = "Click: audio settings · Right: mute output · Middle: mute microphone";
-        on-click = lib.getExe pkgs.pwvucontrol;
-        on-click-right = "${lib.getExe volume} mute";
-        on-click-middle = "${lib.getExe volume} mic-mute";
-        on-scroll-up = "${lib.getExe volume} up";
-        on-scroll-down = "${lib.getExe volume} down";
-      };
-      pulseaudio = {
-        format = "{volume}%  {format_source}";
-        format-muted = "Muted  {format_source}";
-        format-source = "󰍬";
-        format-source-muted = "󰍭";
+      "pulseaudio#audio" = {
+        format = "{icon}";
+        format-muted = "󰝟";
         format-icons.default = [
           "󰕿"
           "󰖀"
           "󰕾"
         ];
+        format-source = "{volume}%";
+        format-source-muted = "muted";
+        tooltip-format = "{desc}\nVolume {volume}% · Microphone {format_source}\nClick: sliders · Scroll: adjust volume";
+        on-scroll-up = "${lib.getExe volume} up";
+        on-scroll-down = "${lib.getExe volume} down";
+      };
+      "pulseaudio#level" = {
+        format = "{volume}%  {format_source}";
+        format-muted = "Muted  {format_source}";
+        format-source = "󰍬";
+        format-source-muted = "󰍭";
         scroll-step = 5;
         max-volume = 100;
-        tooltip-format = "{desc}\nClick: audio settings · Right: mute output · Middle: mute microphone";
+        tooltip-format = "{desc} · {volume}%\nClick: audio settings · Right: mute output · Middle: mute microphone";
         on-click = lib.getExe pkgs.pwvucontrol;
         on-click-right = "${lib.getExe volume} mute";
         on-click-middle = "${lib.getExe volume} mic-mute";
@@ -187,7 +212,9 @@ let
       };
       "custom/brightness" = {
         format = "󰃠";
-        tooltip-format = "Click: brightness sliders · Scroll: adjust all displays";
+        exec = "${lib.getExe brightness} status";
+        return-type = "json";
+        interval = 5;
         on-scroll-up = "${lib.getExe brightness} up";
         on-scroll-down = "${lib.getExe brightness} down";
       };
@@ -208,7 +235,7 @@ let
           warning = 25;
           critical = 10;
         };
-        tooltip-format = "{timeTo} · {power:0.1f} W";
+        tooltip-format = "{capacity}% · {timeTo} · {power:0.1f} W";
       };
       tray = {
         icon-size = 22;

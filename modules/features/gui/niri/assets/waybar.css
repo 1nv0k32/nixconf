@@ -43,7 +43,7 @@ tooltip label {
 #custom-launcher,
 #custom-system,
 #custom-session,
-#custom-audio,
+#custom-language,
 #idle_inhibitor,
 #network,
 #pulseaudio,
@@ -63,7 +63,7 @@ tooltip label {
 
 #custom-launcher,
 #custom-session,
-#custom-audio,
+#pulseaudio.audio,
 #custom-brightness {
     color: @accent;
     font-size: 22px;
@@ -116,12 +116,20 @@ tooltip label {
 
 #workspaces button:hover,
 #custom-launcher:hover,
+#custom-system:hover,
 #custom-session:hover,
-#custom-audio:hover,
+#custom-language:hover,
+#custom-brightness:hover,
+#idle_inhibitor:hover,
 #network:hover,
 #pulseaudio:hover,
-#custom-brightness:hover,
-#idle_inhibitor:hover {
+#backlight:hover,
+#battery:hover,
+#cpu:hover,
+#memory:hover,
+#disk:hover,
+#mpris:hover,
+#clock:hover {
     background: @surface;
     color: @text;
 }
@@ -159,6 +167,11 @@ tooltip label {
 #clock {
     font-weight: bold;
     padding: 0 12px;
+}
+
+#custom-language {
+    font-weight: bold;
+    min-width: 28px;
 }
 
 #mpris {

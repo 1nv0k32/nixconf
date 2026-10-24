@@ -66,15 +66,10 @@ let
     };
   };
 
-  # Matches swaybg's centered, unscaled wallpaper so locking does not visibly change the background.
   lockConfig = (pkgs.formats.toml { }).generate "veila-config.toml" {
     background = {
-      mode = "file";
-      path = wallpaper;
-      scaling = "center";
+      mode = "solid";
       color = "#000000";
-      blur_strength = 0;
-      dim_strength = 0;
     };
   };
 

@@ -84,7 +84,7 @@ def status(displays):
         "text": " / ".join(f"{display.percent}%" for display in displays),
         "tooltip": "\n".join(
             [f"{display.label}: {display.percent}%" for display in displays]
-            + ["Scroll/click: brighter · Scroll down/right-click: dimmer"]
+            + ["Click: sliders · Scroll: adjust all displays"]
         ),
     }
 
