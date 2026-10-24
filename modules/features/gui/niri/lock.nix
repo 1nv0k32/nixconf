@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{
+  lib,
+  pkgs,
+  lockDaemon,
+}:
 pkgs.writeShellApplication {
   name = "niri-lock";
   runtimeInputs = [
@@ -21,7 +25,7 @@ pkgs.writeShellApplication {
           --setenv="WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
           --setenv=XDG_SESSION_TYPE=wayland \
           --setenv="XDG_CURRENT_DESKTOP=''${XDG_CURRENT_DESKTOP:-niri}" \
-          veilad
+          ${lib.getExe lockDaemon}
       for _ in $(seq 1 50); do
         veila health >/dev/null 2>&1 && break
         sleep 0.1
