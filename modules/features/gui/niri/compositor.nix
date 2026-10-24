@@ -39,7 +39,7 @@ let
           };
           track-layout = "window";
           repeat-rate = 40;
-          repeat-delay = 250;
+          repeat-delay = 600;
         };
         touchpad = {
           tap = empty;
