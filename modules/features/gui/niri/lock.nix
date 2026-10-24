@@ -1,13 +1,14 @@
 {
   lib,
   pkgs,
+  veila,
   lockDaemon,
 }:
 pkgs.writeShellApplication {
   name = "niri-lock";
   runtimeInputs = [
     pkgs.systemd
-    pkgs.veila
+    veila
   ];
   text = ''
     if [ -z "''${WAYLAND_DISPLAY:-}" ]; then

@@ -2,9 +2,12 @@
   self,
   lib,
   pkgs,
+  fingerprint,
 }:
 let
   wrappers = self.inputs.wrapper-modules.wrappers;
+  # 0.4.4 adds native fprintd support that reports reader status on the lock screen.
+  veila = pkgs.unstable.veila;
   colors = {
     base = "#1e1e2e";
     surface = "#313244";
@@ -71,14 +74,21 @@ let
       mode = "solid";
       color = "#000000";
     };
+    fingerprint.enabled = fingerprint;
   };
 
   lockDaemon = pkgs.writeShellScriptBin "niri-lock-daemon" ''
-    exec ${pkgs.veila}/bin/veilad --config=${lockConfig} "$@"
+    exec ${veila}/bin/veilad --config=${lockConfig} "$@"
   '';
 
-  lock = import ./lock.nix { inherit lib pkgs lockDaemon; };
-  fingerprintUnlock = import ./fingerprint-unlock.nix { inherit pkgs; };
+  lock = import ./lock.nix {
+    inherit
+      lib
+      pkgs
+      veila
+      lockDaemon
+      ;
+  };
 
   suspend = pkgs.writeShellScriptBin "niri-suspend" ''
     ${lib.getExe lock} || exit $?
@@ -268,7 +278,6 @@ in
     launcher
     lockDaemon
     lock
-    fingerprintUnlock
     suspend
     sessionMenu
     notifications

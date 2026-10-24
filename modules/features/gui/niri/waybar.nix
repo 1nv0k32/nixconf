@@ -38,6 +38,7 @@ let
         "network"
         "group/audio"
         "group/brightness"
+        "power-profiles-daemon"
         "battery"
         "tray"
         "custom/session"
@@ -217,6 +218,16 @@ let
         interval = 5;
         on-scroll-up = "${lib.getExe brightness} up";
         on-scroll-down = "${lib.getExe brightness} down";
+      };
+      power-profiles-daemon = {
+        format = "{icon}";
+        tooltip-format = "Power profile: {profile}\nDriver: {driver}\nClick to switch";
+        format-icons = {
+          default = "󰾅";
+          performance = "󰓅";
+          balanced = "󰾅";
+          power-saver = "󰾆";
+        };
       };
       battery = {
         format = "{icon} {capacity}%";

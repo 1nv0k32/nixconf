@@ -21,7 +21,12 @@
     };
 
   flake.nixosModules.gui-niri =
-    { lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     {
       imports = [
         ./compositor.nix
@@ -30,6 +35,7 @@
 
       _module.args.niriShell = import ./shell.nix {
         inherit self lib pkgs;
+        fingerprint = config.services.fprintd.enable;
       };
     };
 }

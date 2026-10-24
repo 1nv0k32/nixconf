@@ -39,6 +39,8 @@ in
   services.gnome.gnome-keyring.enable = false;
   # Waybar's battery module reads from UPower.
   services.upower.enable = true;
+  # Waybar's power profile toggle uses the power-profiles-daemon D-Bus API, which TLP provides via tlp-pd.
+  services.tlp.pd.enable = lib.mkDefault config.services.tlp.enable;
 
   services.displayManager = {
     defaultSession = "niri";
@@ -58,7 +60,7 @@ in
 
   security.pam.services = {
     ly = pamAuth config.security.pam.services.ly true;
-    # niri-fingerprint-unlock holds the reader while locked, so PAM must not wait on it.
+    # Veila drives the reader itself over fprintd's D-Bus API, so PAM must not wait on it.
     veila = pamAuth config.security.pam.services.veila false;
   };
 
@@ -69,13 +71,6 @@ in
     niri-idle = sessionService "Niri idle locking" (lib.getExe shell.idle);
     niri-wallpaper = sessionService "Niri wallpaper" "${lib.getExe pkgs.swaybg} -i ${shell.wallpaper} -m center -c 000000";
     veilad = sessionService "Veila screen locker daemon" (lib.getExe shell.lockDaemon);
-
-    niri-fingerprint-unlock = lib.mkIf config.services.fprintd.enable (
-      sessionService "Unlock Veila with a fingerprint" (lib.getExe shell.fingerprintUnlock)
-      // {
-        after = [ "veilad.service" ];
-      }
-    );
   };
 
   # Password storage uses pass-secret-service, not GNOME Keyring's portal.

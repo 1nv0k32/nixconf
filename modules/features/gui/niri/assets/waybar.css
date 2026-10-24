@@ -49,6 +49,7 @@ tooltip label {
 #pulseaudio,
 #backlight,
 #custom-brightness,
+#power-profiles-daemon,
 #battery,
 #tray,
 #cpu,
@@ -72,7 +73,8 @@ tooltip label {
 
 #custom-system,
 #idle_inhibitor,
-#network {
+#network,
+#power-profiles-daemon {
     font-size: 22px;
 }
 
@@ -124,6 +126,7 @@ tooltip label {
 #network:hover,
 #pulseaudio:hover,
 #backlight:hover,
+#power-profiles-daemon:hover,
 #battery:hover,
 #cpu:hover,
 #memory:hover,
@@ -185,11 +188,13 @@ tooltip label {
 }
 
 #idle_inhibitor.activated,
+#power-profiles-daemon.power-saver,
 #battery.charging,
 #battery.plugged {
     color: @green;
 }
 
+#power-profiles-daemon.performance,
 #battery.warning:not(.charging):not(.plugged) {
     color: @yellow;
 }
