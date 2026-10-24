@@ -41,9 +41,8 @@ tooltip label {
 }
 
 #custom-launcher,
-#custom-system,
 #custom-session,
-#custom-language,
+#language,
 #idle_inhibitor,
 #network,
 #pulseaudio,
@@ -71,7 +70,6 @@ tooltip label {
     padding: 0 10px;
 }
 
-#custom-system,
 #idle_inhibitor,
 #network,
 #power-profiles-daemon {
@@ -118,9 +116,8 @@ tooltip label {
 
 #workspaces button:hover,
 #custom-launcher:hover,
-#custom-system:hover,
 #custom-session:hover,
-#custom-language:hover,
+#language:hover,
 #custom-brightness:hover,
 #idle_inhibitor:hover,
 #network:hover,
@@ -172,7 +169,7 @@ tooltip label {
     padding: 0 12px;
 }
 
-#custom-language {
+#language {
     font-weight: bold;
     min-width: 28px;
 }
@@ -209,6 +206,11 @@ tooltip label {
 #disk {
     color: @muted;
     font-size: 11px;
+}
+
+#cpu.icon {
+    color: @text;
+    font-size: 22px;
 }
 
 #tray menu {

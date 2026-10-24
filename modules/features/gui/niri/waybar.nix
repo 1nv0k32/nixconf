@@ -11,7 +11,6 @@
   brightness,
 }:
 let
-  python = lib.getExe pkgs.python3;
   template = wrappers.waybar.wrap {
     inherit pkgs;
     "style.css".path = ./assets/waybar.css;
@@ -34,7 +33,7 @@ let
       modules-right = [
         "group/system"
         "idle_inhibitor"
-        "custom/language"
+        "niri/language"
         "network"
         "group/audio"
         "group/brightness"
@@ -94,17 +93,15 @@ let
           transition-duration = 200;
         };
         modules = [
-          "custom/system"
+          "cpu#icon"
           "cpu"
           "memory"
           "disk"
         ];
       };
-      "custom/system" = {
+      "cpu#icon" = {
+        interval = 5;
         format = "󰍛";
-        exec = "${python} ${./assets/system-status.py}";
-        return-type = "json";
-        restart-interval = 2;
       };
       cpu = {
         interval = 5;
@@ -129,21 +126,10 @@ let
         tooltip-format-activated = "Keep awake enabled · Click to allow automatic locking";
         tooltip-format-deactivated = "Auto-lock after 10 minutes · Click to keep awake";
       };
-      "custom/language" = {
-        exec = lib.escapeShellArgs [
-          python
-          ./assets/keyboard-layout.py
-          "--niri"
-          (lib.getExe pkgs.niri)
-          "--label"
-          "English (US)=EN"
-          "--label"
-          "Persian=FA"
-        ];
-        return-type = "json";
-        restart-interval = 2;
-        # The script follows niri's event stream itself; re-running it on click would just restart it.
-        exec-on-event = false;
+      "niri/language" = {
+        format = "{short}";
+        format-en = "EN";
+        format-fa = "FA";
         on-click = "${lib.getExe pkgs.niri} msg action switch-layout next";
       };
       network = {

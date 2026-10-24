@@ -16,12 +16,9 @@
       patches = (old.patches or [ ]) ++ [ ./assets/ddcci-remove.patch ];
     }))
   ];
-  boot.kernelModules = [
-    "i2c-dev"
-    "ddcci_backlight"
-  ];
+  hardware.i2c.enable = true;
+  boot.kernelModules = [ "ddcci_backlight" ];
   services.udev.extraRules = lib.mkAfter ''
-    KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"
     SUBSYSTEM=="drm", ACTION=="add|change|remove", RUN+="${pkgs.systemd}/bin/systemctl --no-block start ddcci-bind.service"
   '';
 
