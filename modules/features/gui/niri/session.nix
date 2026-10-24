@@ -5,11 +5,13 @@
   ...
 }:
 let
-  pamAuth = service: {
+  fingerprintUnlock = import ./fingerprint-unlock.nix { inherit pkgs; };
+
+  pamAuth = service: fingerprint: {
     allowNullPassword = false;
     u2f.enable = config.security.pam.services.login.u2f.enable;
     u2f.control = config.security.pam.services.login.u2f.control;
-    fprintAuth = config.services.fprintd.enable;
+    fprintAuth = fingerprint && config.services.fprintd.enable;
     # A supplied password should not wait for hardware authentication.
     rules.auth.unix.order = lib.mkIf (service.u2f.control == "sufficient") (
       service.rules.auth.u2f.order - 10
@@ -42,8 +44,9 @@ in
   };
 
   security.pam.services = {
-    ly = pamAuth config.security.pam.services.ly;
-    veila = pamAuth config.security.pam.services.veila;
+    ly = pamAuth config.security.pam.services.ly true;
+    # niri-fingerprint-unlock holds the reader while locked, so PAM must not wait on it.
+    veila = pamAuth config.security.pam.services.veila false;
   };
 
   systemd.user.services = {
@@ -65,6 +68,18 @@ in
       partOf = [ "niri.service" ];
       serviceConfig = {
         ExecStart = "${pkgs.veila}/bin/veilad";
+        Restart = "on-failure";
+        RestartSec = 2;
+      };
+    };
+
+    niri-fingerprint-unlock = lib.mkIf config.services.fprintd.enable {
+      description = "Unlock Veila with a fingerprint";
+      wantedBy = [ "niri.service" ];
+      after = [ "veilad.service" ];
+      partOf = [ "niri.service" ];
+      serviceConfig = {
+        ExecStart = lib.getExe fingerprintUnlock;
         Restart = "on-failure";
         RestartSec = 2;
       };
