@@ -3,8 +3,8 @@
     { lib, pkgs, ... }:
     {
       imports = [
-        ./_modules/bash.nix
-        ./_modules/zsh.nix
+        ./bash.nix
+        ./zsh.nix
       ];
 
       users.defaultUserShell = pkgs.zsh;

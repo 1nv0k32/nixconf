@@ -6,7 +6,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, Mock, patch
 
 
-path = Path(__file__).resolve().parents[1] / "_assets" / "ddcci.py"
+path = Path(__file__).resolve().parents[1] / "assets" / "ddcci.py"
 spec = importlib.util.spec_from_file_location("ddcci", path)
 ddcci = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ddcci)

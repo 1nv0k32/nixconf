@@ -4,7 +4,7 @@ let
     programs.nixvim = {
       enable = true;
       imports = [
-        ./_config.nix
+        ./config.nix
       ];
     };
   };
@@ -37,7 +37,7 @@ in
     {
       packages.nvim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
         inherit pkgs;
-        module = ./_config.nix;
+        module = ./config.nix;
       };
     };
 }

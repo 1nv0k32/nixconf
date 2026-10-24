@@ -235,7 +235,7 @@ let
         [
           (lib.getExe pkgs.swaybg)
           "-i"
-          "${../../_assets/backgroud-image.jpg}"
+          "${../assets/backgroud-image.jpg}"
           "-m"
           "center"
         ]

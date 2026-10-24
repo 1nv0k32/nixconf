@@ -53,7 +53,7 @@ in
         nixosModules.server
         nixosModules.media
         nixosModules.gitea
-        ./_disko.nix
+        ./disko.nix
       ];
 
       nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";

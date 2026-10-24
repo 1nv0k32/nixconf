@@ -4,14 +4,14 @@
     { lib, pkgs, ... }:
     {
       packages = lib.optionalAttrs pkgs.stdenv.isLinux {
-        niri = (import ./_modules/compositor.nix { inherit self lib pkgs; }).programs.niri.package;
+        niri = (import ./compositor.nix { inherit self lib pkgs; }).programs.niri.package;
       };
     };
 
   flake.nixosModules.gui-niri = {
     imports = [
-      ./_modules/compositor.nix
-      ./_modules/session.nix
+      ./compositor.nix
+      ./session.nix
     ];
   };
 }

@@ -59,6 +59,9 @@
 
   outputs =
     inputs:
+    let
+      inherit (inputs.nixpkgs) lib;
+    in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "x86_64-linux"
@@ -67,7 +70,7 @@
       ];
 
       imports = [
-        (inputs.import-tree ./modules)
+        (inputs.import-tree.filter (lib.hasInfix ".mod.") ./modules)
       ];
 
       perSystem =

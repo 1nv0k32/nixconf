@@ -135,13 +135,13 @@ let
       pkgs.systemd
     ];
     text = ''
-      exec ${lib.getExe pkgs.python3} ${../_assets/brightness.py} "$@"
+      exec ${lib.getExe pkgs.python3} ${./assets/brightness.py} "$@"
     '';
   };
 
   waybarTemplate = wrappers.waybar.wrap {
     inherit pkgs;
-    "style.css".path = ../_assets/waybar.css;
+    "style.css".path = ./assets/waybar.css;
     settings = {
       layer = "top";
       position = "top";
@@ -368,10 +368,10 @@ let
     name = "waybar";
     text = ''
       exec ${pkgs.python3.withPackages (ps: [ ps.pyudev ])}/bin/python3 \
-        ${../_assets/waybar.py} \
+        ${./assets/waybar.py} \
         --template ${waybarTemplate}/waybar-config.json \
         --binary ${lib.getExe pkgs.waybar} \
-        --style ${../_assets/waybar.css} "$@"
+        --style ${./assets/waybar.css} "$@"
     '';
   };
 in

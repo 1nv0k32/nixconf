@@ -2,7 +2,7 @@
 let
   # Keep swaylock -f's guarantee: return only once the compositor is locked.
   hyprlock = pkgs.hyprlock.overrideAttrs (old: {
-    patches = (old.patches or [ ]) ++ [ ../_assets/hyprlock-notify.patch ];
+    patches = (old.patches or [ ]) ++ [ ./assets/hyprlock-notify.patch ];
   });
 in
 pkgs.writeShellApplication {
@@ -29,7 +29,7 @@ pkgs.writeShellApplication {
       --setenv="WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
       --setenv=XDG_SESSION_TYPE=wayland \
       --setenv="XDG_CURRENT_DESKTOP=''${XDG_CURRENT_DESKTOP:-niri}" \
-      ${lib.getExe hyprlock} --config ${../_assets/hyprlock.conf} \
+      ${lib.getExe hyprlock} --config ${./assets/hyprlock.conf} \
       --grace 0 --immediate-render
   '';
 }

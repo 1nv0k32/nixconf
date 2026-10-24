@@ -22,11 +22,11 @@ in
         nixosModules.shells
         nixosModules.tools
         nixosModules.users
-        ./_modules/systemd.nix
-        ./_modules/logind.nix
-        ./_modules/networking.nix
-        ./_modules/console.nix
-        ./_modules/pkgs.nix
+        ./systemd.nix
+        ./logind.nix
+        ./networking.nix
+        ./console.nix
+        ./pkgs.nix
       ];
 
       _module.args.self = self;

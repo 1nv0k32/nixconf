@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 
-path = Path(__file__).resolve().parents[1] / "_assets" / "waybar.py"
+path = Path(__file__).resolve().parents[1] / "assets" / "waybar.py"
 spec = importlib.util.spec_from_file_location("native_waybar", path)
 waybar = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(waybar)

@@ -28,7 +28,7 @@
     after = [ "systemd-modules-load.service" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.python3.withPackages (ps: [ ps.smbus2 ])}/bin/python3 ${../_assets/ddcci.py}";
+      ExecStart = "${pkgs.python3.withPackages (ps: [ ps.smbus2 ])}/bin/python3 ${./assets/ddcci.py}";
       TimeoutStartSec = 60;
       NoNewPrivileges = true;
       PrivateTmp = true;

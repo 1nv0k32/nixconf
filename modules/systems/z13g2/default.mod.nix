@@ -14,7 +14,7 @@ in
       nixosModules.extra
       nixosModules.gui
       nixosModules.sdr
-      ./_disko.nix
+      ./disko.nix
     ];
 
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

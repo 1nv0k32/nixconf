@@ -15,7 +15,7 @@ in
         nixosModules.base
         nixosModules.server
         nixosModules.wg
-        ./_disko.nix
+        ./disko.nix
       ];
 
       nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";

@@ -3,19 +3,19 @@
     { lib, pkgs, ... }:
     {
       imports = [
-        ./_modules/pkgs.nix
-        ./_modules/xdg.nix
-        ./_modules/ddc.nix
-        ./_modules/chromium.nix
-        ./_modules/gns3.nix
-        ./_modules/localsend.nix
-        ./_modules/winbox.nix
-        ./_modules/wireshark.nix
-        ./_modules/steam.nix
-        ./_modules/appimage.nix
-        ./_modules/waydroid.nix
-        ./_modules/gpu-screen-recorder.nix
-        ./_modules/terminal.nix
+        ./pkgs.nix
+        ./xdg.nix
+        ./ddc.nix
+        ./chromium.nix
+        ./gns3.nix
+        ./localsend.nix
+        ./winbox.nix
+        ./wireshark.nix
+        ./steam.nix
+        ./appimage.nix
+        ./waydroid.nix
+        ./gpu-screen-recorder.nix
+        ./terminal.nix
       ];
 
       home-manager.sharedModules = [
@@ -23,8 +23,8 @@
           { config, ... }:
           {
             home.file = {
-              "${config.home.homeDirectory}/.background-image".source = ../_assets/backgroud-image.jpg;
-              "${config.home.homeDirectory}/.face".source = ../_assets/backgroud-image.jpg;
+              "${config.home.homeDirectory}/.background-image".source = ../assets/backgroud-image.jpg;
+              "${config.home.homeDirectory}/.face".source = ../assets/backgroud-image.jpg;
             };
           }
         )

@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 
-path = Path(__file__).resolve().parents[1] / "_assets" / "brightness.py"
+path = Path(__file__).resolve().parents[1] / "assets" / "brightness.py"
 spec = importlib.util.spec_from_file_location("brightness", path)
 brightness = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(brightness)
