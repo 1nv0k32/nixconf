@@ -127,7 +127,8 @@ let
         tooltip-format-deactivated = "Auto-lock after 10 minutes · Click to keep awake";
       };
       "niri/language" = {
-        format = "{short}";
+        # format-<lang> values are passed positionally, so named fields like {short} fail here.
+        format = "{}";
         format-en = "EN";
         format-fa = "FA";
         on-click = "${lib.getExe pkgs.niri} msg action switch-layout next";
