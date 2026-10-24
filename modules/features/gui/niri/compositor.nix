@@ -29,13 +29,10 @@ in
           xcursor-size = 24;
         };
         input = {
-          focus-follows-mouse = _: {
-            props.max-scroll-amount = "0%";
-          };
           keyboard = {
             xkb = {
               layout = "us,ir";
-              options = "grp:win_space_toggle";
+              options = "grp:alt_shift_toggle";
             };
             track-layout = "window";
             repeat-rate = 40;

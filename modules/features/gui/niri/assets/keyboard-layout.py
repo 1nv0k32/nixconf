@@ -32,7 +32,7 @@ def status(state, labels):
     label = short_label(name, labels)
     return {
         "text": label,
-        "tooltip": f"Keyboard layout: {name}\nClick or Super+Space to switch",
+        "tooltip": f"Keyboard layout: {name}\nClick or Shift+Alt to switch",
         "class": label.lower(),
     }
 

@@ -33,7 +33,7 @@ class KeyboardLayoutTests(unittest.TestCase):
             keyboard_layout.status(state, LABELS),
             {
                 "text": "EN",
-                "tooltip": "Keyboard layout: English (US)\nClick or Super+Space to switch",
+                "tooltip": "Keyboard layout: English (US)\nClick or Shift+Alt to switch",
                 "class": "en",
             },
         )

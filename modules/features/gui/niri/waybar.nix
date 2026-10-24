@@ -46,7 +46,7 @@ let
 
       "custom/launcher" = {
         format = "󱄅";
-        tooltip-format = "Applications · Super+S\nRight-click for the overview";
+        tooltip-format = "Applications · Super+Space\nRight-click for the overview";
         on-click = lib.getExe launcher;
         on-click-right = "${lib.getExe pkgs.niri} msg action toggle-overview";
       };

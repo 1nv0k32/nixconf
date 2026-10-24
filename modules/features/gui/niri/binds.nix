@@ -20,7 +20,7 @@ in
 workspaces
 // {
   "Mod+Return" = spawn pkgs.kitty [ ];
-  "Mod+S" = spawn shell.launcher [ ];
+  "Mod+Space" = spawn shell.launcher [ ];
   "Mod+E" = spawn pkgs.nautilus [ ];
   "Mod+Escape" = spawn shell.sessionMenu [ ];
   "Mod+Backspace" = spawn shell.lock [ ];
