@@ -9,6 +9,12 @@ import threading
 from pathlib import Path
 
 
+def is_bound(device):
+    if not device.name.startswith("ddcci") or not (device / "device").exists():
+        return True
+    return ((device / "device").resolve().parent / "driver").exists()
+
+
 def backlights(root=Path("/sys/class/backlight")):
     devices = []
     if not root.is_dir():
@@ -16,7 +22,7 @@ def backlights(root=Path("/sys/class/backlight")):
     for device in root.iterdir():
         try:
             maximum = int((device / "max_brightness").read_text())
-            if maximum > 0 and (device / "brightness").exists():
+            if maximum > 0 and (device / "brightness").exists() and is_bound(device):
                 devices.append(device.name)
         except (OSError, ValueError):
             continue

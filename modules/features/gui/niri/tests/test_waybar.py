@@ -62,6 +62,26 @@ class WaybarTests(unittest.TestCase):
                 (device / "brightness").write_text("1")
             self.assertEqual(waybar.backlights(root), ["amdgpu_bl1", "ddcci19"])
 
+    def test_ignores_unbound_ddcci_backlight(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            backlight = root / "backlight"
+            backlight.mkdir()
+
+            for number, bound in [(19, False), (23, True)]:
+                client = root / f"{number}-0037"
+                ddcci = client / f"ddcci{number}"
+                ddcci.mkdir(parents=True)
+                if bound:
+                    (client / "driver").mkdir()
+                device = backlight / f"ddcci{number}"
+                device.mkdir()
+                (device / "max_brightness").write_text("100")
+                (device / "brightness").write_text("50")
+                (device / "device").symlink_to(ddcci)
+
+            self.assertEqual(waybar.backlights(backlight), ["ddcci23"])
+
     def test_missing_backlight_directory(self):
         with tempfile.TemporaryDirectory() as directory:
             self.assertEqual(waybar.backlights(Path(directory) / "missing"), [])

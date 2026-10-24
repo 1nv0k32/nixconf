@@ -11,7 +11,11 @@
     ddccontrol
   ];
 
-  boot.extraModulePackages = [ config.boot.kernelPackages.ddcci-driver ];
+  boot.extraModulePackages = [
+    (config.boot.kernelPackages.ddcci-driver.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [ ./assets/ddcci-remove.patch ];
+    }))
+  ];
   boot.kernelModules = [
     "i2c-dev"
     "ddcci_backlight"

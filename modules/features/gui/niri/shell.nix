@@ -103,6 +103,7 @@ let
       background-color = colors.background;
       text-color = colors.text;
       border-color = colors.accent;
+      progress-color = "over ${colors.surface}";
       border-size = 2;
       border-radius = 12;
       padding = 16;
@@ -116,6 +117,21 @@ let
         border-color = colors.urgent;
         default-timeout = 0;
       };
+      "category=osd" = {
+        anchor = "bottom-center";
+        layer = "overlay";
+        width = 240;
+        height = 56;
+        padding = "12,20";
+        margin = "0,0,48,0";
+        border-radius = 14;
+        default-timeout = 1500;
+        ignore-timeout = 1;
+        history = 0;
+        icons = 0;
+        text-alignment = "center";
+        format = "<b>%s</b>";
+      };
     };
   };
 
@@ -128,10 +144,84 @@ let
       before-sleep '${lib.getExe lock}'
   '';
 
+  volume = pkgs.writeShellApplication {
+    name = "niri-volume";
+    runtimeInputs = [
+      pkgs.libnotify
+      pkgs.wireplumber
+    ];
+    text = ''
+      case "''${1:-}" in
+        up)
+          wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+
+          target=@DEFAULT_AUDIO_SINK@
+          kind=sink
+          ;;
+        down)
+          wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-
+          target=@DEFAULT_AUDIO_SINK@
+          kind=sink
+          ;;
+        mute)
+          wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+          target=@DEFAULT_AUDIO_SINK@
+          kind=sink
+          ;;
+        mic-mute)
+          wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+          target=@DEFAULT_AUDIO_SOURCE@
+          kind=source
+          ;;
+        *)
+          echo "Usage: niri-volume {up|down|mute|mic-mute}" >&2
+          exit 2
+          ;;
+      esac
+
+      if ! output=$(wpctl get-volume "$target" 2>/dev/null); then
+        exit 0
+      fi
+
+      raw=''${output#Volume: }
+      raw=''${raw%% *}
+      dec=''${raw//[.,]/}
+      percent=$(( 10#''${dec:-0} ))
+      bar=$(( percent > 100 ? 100 : (percent < 0 ? 0 : percent) ))
+
+      if [ "$kind" = source ]; then
+        if [[ "$output" == *"[MUTED]"* ]]; then
+          summary="󰍭  Microphone  Muted"
+          bar=0
+        else
+          summary="󰍬  Microphone  ''${percent}%"
+        fi
+      else
+        if [[ "$output" == *"[MUTED]"* ]]; then
+          summary="󰝟  Volume  Muted"
+          bar=0
+        elif [ "$percent" -eq 0 ]; then
+          summary="󰕿  Volume  0%"
+        elif [ "$percent" -lt 50 ]; then
+          summary="󰖀  Volume  ''${percent}%"
+        else
+          summary="󰕾  Volume  ''${percent}%"
+        fi
+      fi
+
+      notify-send \
+        --category=osd \
+        --transient \
+        --hint=string:x-canonical-private-synchronous:osd \
+        --hint="int:value:''${bar}" \
+        "$summary" || true
+    '';
+  };
+
   brightness = pkgs.writeShellApplication {
     name = "niri-brightness";
     runtimeInputs = [
       pkgs.brightnessctl
+      pkgs.libnotify
       pkgs.systemd
     ];
     text = ''
@@ -285,10 +375,10 @@ let
       "custom/audio" = {
         format = "󰕾";
         tooltip-format = "Click: volume controls · Right: mute output · Middle: mute microphone";
-        on-click-right = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-        on-click-middle = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-        on-scroll-up = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+";
-        on-scroll-down = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-";
+        on-click-right = "${lib.getExe volume} mute";
+        on-click-middle = "${lib.getExe volume} mic-mute";
+        on-scroll-up = "${lib.getExe volume} up";
+        on-scroll-down = "${lib.getExe volume} down";
       };
       pulseaudio = {
         format = "{volume}%  {format_source}";
@@ -303,8 +393,8 @@ let
         scroll-step = 5;
         max-volume = 140;
         tooltip-format = "{desc}\nRight: mute output · Middle: mute microphone";
-        on-click-right = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-        on-click-middle = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+        on-click-right = "${lib.getExe volume} mute";
+        on-click-middle = "${lib.getExe volume} mic-mute";
       };
       "pulseaudio/slider" = {
         min = 0;
@@ -384,6 +474,7 @@ in
     sessionMenu
     notifications
     idle
+    volume
     brightness
     waybar
     ;

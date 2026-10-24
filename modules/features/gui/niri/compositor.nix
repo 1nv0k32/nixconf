@@ -116,11 +116,6 @@ let
         "Mod+Ctrl+K".set-window-height = "-5%";
         "Mod+Ctrl+L".set-column-width = "+5%";
 
-        "Mod+WheelScrollDown".focus-column-left = empty;
-        "Mod+WheelScrollUp".focus-column-right = empty;
-        "Mod+Ctrl+WheelScrollDown".focus-workspace-down = empty;
-        "Mod+Ctrl+WheelScrollUp".focus-workspace-up = empty;
-
         # Native screenshots support selection and copy directly to the clipboard.
         "Print".screenshot = empty;
         "Mod+Print".screenshot-screen = empty;
@@ -128,17 +123,38 @@ let
         "Mod+Shift+S".spawn = lib.getExe shell.suspend;
 
         # Audio & Media (dconf.nix + XF86Audio* keys)
-        "Mod+V".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-        "XF86AudioMicMute".spawn-sh =
-          "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-        "Mod+F12".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+";
-        "Mod+F11".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-";
-        "Mod+F10".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-        "XF86AudioRaiseVolume".spawn-sh =
-          "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+";
-        "XF86AudioLowerVolume".spawn-sh =
-          "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-";
-        "XF86AudioMute".spawn-sh = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+        "Mod+V".spawn = [
+          (lib.getExe shell.volume)
+          "mic-mute"
+        ];
+        "XF86AudioMicMute".spawn = [
+          (lib.getExe shell.volume)
+          "mic-mute"
+        ];
+        "Mod+F12".spawn = [
+          (lib.getExe shell.volume)
+          "up"
+        ];
+        "Mod+F11".spawn = [
+          (lib.getExe shell.volume)
+          "down"
+        ];
+        "Mod+F10".spawn = [
+          (lib.getExe shell.volume)
+          "mute"
+        ];
+        "XF86AudioRaiseVolume".spawn = [
+          (lib.getExe shell.volume)
+          "up"
+        ];
+        "XF86AudioLowerVolume".spawn = [
+          (lib.getExe shell.volume)
+          "down"
+        ];
+        "XF86AudioMute".spawn = [
+          (lib.getExe shell.volume)
+          "mute"
+        ];
         "XF86MonBrightnessUp".spawn = [
           (lib.getExe shell.brightness)
           "up"
@@ -257,6 +273,7 @@ in
     shell.waybar
     shell.sessionMenu
     shell.lock
+    shell.volume
     shell.brightness
     swaybg
     playerctl

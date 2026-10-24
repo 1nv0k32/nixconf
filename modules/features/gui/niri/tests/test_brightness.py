@@ -69,10 +69,27 @@ class BrightnessTests(unittest.TestCase):
             brightness.Display("External", 40, 100, ("busctl", "ddcci19")),
             brightness.Display("Built-in", 500, 1000, ("busctl", "panel")),
         ]
-        with patch.object(brightness, "run", side_effect=[None, ""]) as run:
+        with patch.object(brightness, "run", side_effect=[None, "", ""]) as run:
             self.assertFalse(brightness.adjust(displays, 5))
         self.assertEqual(run.call_args_list[0].args[-1], "45")
         self.assertEqual(run.call_args_list[1].args[-1], "550")
+        self.assertEqual(run.call_args_list[2].args[0], "notify-send")
+        self.assertIn("--hint=int:value:48", run.call_args_list[2].args)
+        self.assertEqual(
+            run.call_args_list[2].args[-1], "󰃠  Brightness  40% / 55%"
+        )
+
+    def test_adjust_sends_collapsed_osd_notification(self):
+        displays = [
+            brightness.Display("External", 50, 100, ("busctl", "ddcci19")),
+            brightness.Display("Built-in", 500, 1000, ("busctl", "panel")),
+        ]
+        with patch.object(brightness, "run", return_value="") as run:
+            self.assertTrue(brightness.adjust(displays, 5))
+        self.assertEqual(run.call_args_list[-1].args[0], "notify-send")
+        self.assertIn("--category=osd", run.call_args_list[-1].args)
+        self.assertIn("--hint=int:value:55", run.call_args_list[-1].args)
+        self.assertEqual(run.call_args_list[-1].args[-1], "󰃠  Brightness  55%")
 
     def test_command_timeout_is_nonfatal(self):
         with patch.object(

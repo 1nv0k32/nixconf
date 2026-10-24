@@ -89,11 +89,31 @@ def status(displays):
     }
 
 
+def notify(displays):
+    if not displays:
+        return
+    percent = round(sum(display.percent for display in displays) / len(displays))
+    label = " / ".join(dict.fromkeys(f"{display.percent}%" for display in displays))
+    run(
+        "notify-send",
+        "--category=osd",
+        "--transient",
+        "--hint=string:x-canonical-private-synchronous:osd",
+        f"--hint=int:value:{max(0, min(100, percent))}",
+        f"󰃠  Brightness  {label}",
+    )
+
+
 def adjust(displays, delta):
-    results = [
-        run(*display.command, str(display.target(delta))) is not None
-        for display in displays
-    ]
+    results = []
+    for display in displays:
+        target = display.target(delta)
+        ok = run(*display.command, str(target)) is not None
+        if ok:
+            display.current = target
+        results.append(ok)
+    if any(results):
+        notify(displays)
     return bool(results) and all(results)
 
 
