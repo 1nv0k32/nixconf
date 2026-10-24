@@ -153,12 +153,12 @@ let
     text = ''
       case "''${1:-}" in
         up)
-          wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+
+          wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
           target=@DEFAULT_AUDIO_SINK@
           kind=sink
           ;;
         down)
-          wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-
+          wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%-
           target=@DEFAULT_AUDIO_SINK@
           kind=sink
           ;;
@@ -361,7 +361,6 @@ let
       "group/audio" = {
         orientation = "horizontal";
         drawer = {
-          click-to-reveal = true;
           transition-duration = 200;
           children-class = "audio-detail";
         };
@@ -369,12 +368,12 @@ let
           "custom/audio"
           "pulseaudio"
           "pulseaudio/slider"
-          "custom/audio-settings"
         ];
       };
       "custom/audio" = {
         format = "󰕾";
-        tooltip-format = "Click: volume controls · Right: mute output · Middle: mute microphone";
+        tooltip-format = "Click: audio settings · Right: mute output · Middle: mute microphone";
+        on-click = lib.getExe pkgs.pwvucontrol;
         on-click-right = "${lib.getExe volume} mute";
         on-click-middle = "${lib.getExe volume} mic-mute";
         on-scroll-up = "${lib.getExe volume} up";
@@ -391,21 +390,17 @@ let
           "󰕾"
         ];
         scroll-step = 5;
-        max-volume = 140;
-        tooltip-format = "{desc}\nRight: mute output · Middle: mute microphone";
+        max-volume = 100;
+        tooltip-format = "{desc}\nClick: audio settings · Right: mute output · Middle: mute microphone";
+        on-click = lib.getExe pkgs.pwvucontrol;
         on-click-right = "${lib.getExe volume} mute";
         on-click-middle = "${lib.getExe volume} mic-mute";
       };
       "pulseaudio/slider" = {
         min = 0;
-        max = 140;
+        max = 100;
         orientation = "horizontal";
         target = "sink";
-      };
-      "custom/audio-settings" = {
-        format = "󰒓";
-        tooltip-format = "Audio settings";
-        on-click = lib.getExe pkgs.pwvucontrol;
       };
       "group/brightness" = {
         orientation = "horizontal";

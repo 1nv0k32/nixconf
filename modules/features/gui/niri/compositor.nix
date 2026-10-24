@@ -62,7 +62,7 @@ let
         "Mod+Shift+Tab".switch-focus-between-floating-and-tiling = empty;
         "Mod+Shift+Slash".show-hotkey-overlay = empty;
         "Mod+Escape".spawn = lib.getExe shell.sessionMenu;
-        "Mod+Ctrl+Escape".spawn = lib.getExe shell.lock;
+        "Mod+Backspace".spawn = lib.getExe shell.lock;
 
         "Mod+F".maximize-column = empty;
         "Mod+G".fullscreen-window = empty;
@@ -275,6 +275,7 @@ in
     shell.lock
     shell.volume
     shell.brightness
+    veila
     swaybg
     playerctl
     brightnessctl

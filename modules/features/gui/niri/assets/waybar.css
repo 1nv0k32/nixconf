@@ -44,7 +44,6 @@ tooltip label {
 #custom-system,
 #custom-session,
 #custom-audio,
-#custom-audio-settings,
 #idle_inhibitor,
 #network,
 #pulseaudio,
@@ -72,7 +71,6 @@ tooltip label {
 }
 
 #custom-system,
-#custom-audio-settings,
 #idle_inhibitor,
 #network {
     font-size: 22px;
@@ -120,7 +118,6 @@ tooltip label {
 #custom-launcher:hover,
 #custom-session:hover,
 #custom-audio:hover,
-#custom-audio-settings:hover,
 #network:hover,
 #pulseaudio:hover,
 #custom-brightness:hover,

@@ -1,35 +1,33 @@
-{ lib, pkgs }:
-let
-  # Keep swaylock -f's guarantee: return only once the compositor is locked.
-  hyprlock = pkgs.hyprlock.overrideAttrs (old: {
-    patches = (old.patches or [ ]) ++ [ ./assets/hyprlock-notify.patch ];
-  });
-in
+{ pkgs, ... }:
 pkgs.writeShellApplication {
   name = "niri-lock";
-  runtimeInputs = [ pkgs.systemd ];
+  runtimeInputs = [
+    pkgs.systemd
+    pkgs.veila
+  ];
   text = ''
     if [ -z "''${WAYLAND_DISPLAY:-}" ]; then
       echo "Cannot lock: WAYLAND_DISPLAY is not set." >&2
       exit 1
     fi
-    if [ ! -r /etc/pam.d/hyprlock ]; then
+    if [ ! -r /etc/pam.d/veila ]; then
       echo "Apply the NixOS configuration before using the new lock screen." >&2
       exit 1
     fi
 
-    unit=$(systemd-escape --template=niri-lock@.service -- "$WAYLAND_DISPLAY")
-    if systemctl --user is-active --quiet "$unit"; then
-      exit 0
+    if ! veila health >/dev/null 2>&1; then
+      systemctl --user start veilad.service 2>/dev/null ||
+        systemd-run --user --collect --unit=veilad-fallback.service \
+          --setenv="WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
+          --setenv=XDG_SESSION_TYPE=wayland \
+          --setenv="XDG_CURRENT_DESKTOP=''${XDG_CURRENT_DESKTOP:-niri}" \
+          veilad
+      for _ in $(seq 1 50); do
+        veila health >/dev/null 2>&1 && break
+        sleep 0.1
+      done
     fi
 
-    exec systemd-run --user --collect --unit="$unit" \
-      --property=Type=notify --property=NotifyAccess=main \
-      --property=TimeoutStartSec=10s \
-      --setenv="WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
-      --setenv=XDG_SESSION_TYPE=wayland \
-      --setenv="XDG_CURRENT_DESKTOP=''${XDG_CURRENT_DESKTOP:-niri}" \
-      ${lib.getExe hyprlock} --config ${./assets/hyprlock.conf} \
-      --grace 0 --immediate-render
+    exec veila lock --wait-ready
   '';
 }
