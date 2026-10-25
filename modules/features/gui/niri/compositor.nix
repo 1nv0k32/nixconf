@@ -57,8 +57,8 @@ in
           ];
           focus-ring = {
             width = 2;
-            active-color = "#89b4fa";
-            inactive-color = "#313244";
+            active-color = theme.palette.accent;
+            inactive-color = theme.palette.outline;
           };
           border.off = empty;
           shadow = {
@@ -108,7 +108,7 @@ in
 
         workspaces = lib.genAttrs workspaces (_: { });
 
-        overview.backdrop-color = theme.background;
+        overview.backdrop-color = "#404040";
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
 
