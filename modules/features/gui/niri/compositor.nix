@@ -115,10 +115,26 @@ in
 
         workspaces = lib.genAttrs theme.workspaces (_: { });
 
+        # Alt+Tab uses Noctalia's switcher, where the pointer only highlights a window.
+        recent-windows.off = empty;
+
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
 
         # Lets Noctalia's notification actions and launcher activate windows.
         debug.honor-xdg-activation-with-invalid-serial = empty;
+      };
+    };
+  };
+
+  # niri binds fire on key press only, so a lone Super tap is turned into F24 here. Holding Super
+  # past the timeout (e.g. Super+drag) does not count as a tap.
+  services.keyd = {
+    enable = true;
+    keyboards.default = {
+      ids = [ "*" ];
+      settings = {
+        global.overload_tap_timeout = 200;
+        main.leftmeta = "overload(meta, f24)";
       };
     };
   };

@@ -7,6 +7,10 @@
     telemetry_enabled = false;
     # Launched apps survive a shell restart, such as the one a rebuild triggers.
     launch_apps_as_systemd_services = true;
+    # Typing in niri's overview opens the launcher; launching an app closes the overview.
+    niri_overview_type_to_launch_enabled = true;
+    niri_overview_close_on_launch_enabled = true;
+    window_switcher.mru = true;
     keyboard_layout.custom_labels = {
       "English (US)" = "EN";
       Persian = "FA";
