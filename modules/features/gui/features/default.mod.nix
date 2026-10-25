@@ -1,11 +1,17 @@
 {
   flake.nixosModules.gui-features =
     { lib, pkgs, ... }:
+    let
+      # Avatars are shown square; Noctalia's control center scales a wide picture by its long side
+      # and then upscales it to fill the square, which blurs it.
+      face = pkgs.runCommand "face.png" { nativeBuildInputs = [ pkgs.imagemagick ]; } ''
+        magick ${../assets/backgroud-image.jpg} -gravity center -crop 1:1 +repage $out
+      '';
+    in
     {
       imports = [
         ./pkgs.nix
         ./xdg.nix
-        ./ddc.nix
         ./chromium.nix
         ./gns3.nix
         ./localsend.nix
@@ -24,7 +30,7 @@
           {
             home.file = {
               "${config.home.homeDirectory}/.background-image".source = ../assets/backgroud-image.jpg;
-              "${config.home.homeDirectory}/.face".source = ../assets/backgroud-image.jpg;
+              "${config.home.homeDirectory}/.face".source = face;
             };
           }
         )

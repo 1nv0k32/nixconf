@@ -1,13 +1,11 @@
 {
   self,
+  config,
   lib,
   pkgs,
-  niriShell,
   ...
 }:
 let
-  # Set by whichever shell module is imported: actions, binds, windowRules, settings.
-  shell = niriShell;
   theme = import ./theme.nix { inherit lib; };
   empty = _: { };
 in
@@ -50,8 +48,7 @@ in
         binds = import ./binds.nix {
           inherit lib pkgs;
           inherit (theme) workspaces;
-          inherit (shell) actions;
-          extra = shell.binds;
+          noctalia = lib.getExe config.programs.noctalia.package;
         };
 
         layout = {
@@ -108,14 +105,21 @@ in
             ];
             open-floating = true;
           }
-        ]
-        ++ shell.windowRules;
+          {
+            matches = [ { app-id = "^dev\\.noctalia\\.Noctalia$"; } ];
+            open-floating = true;
+            default-column-width.fixed = 1080;
+            default-window-height.fixed = 920;
+          }
+        ];
 
         workspaces = lib.genAttrs theme.workspaces (_: { });
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
-      }
-      // shell.settings;
+
+        # Lets Noctalia's notification actions and launcher activate windows.
+        debug.honor-xdg-activation-with-invalid-serial = empty;
+      };
     };
   };
 

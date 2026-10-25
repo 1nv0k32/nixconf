@@ -17,6 +17,7 @@
     mode = "dark";
     source = "builtin";
     builtin = "Catppuccin";
+    pure_black_dark = true;
   };
 
   wallpaper = {
@@ -53,12 +54,19 @@
     };
   };
 
-  # External monitors already appear as backlights through the ddcci kernel driver, which owns
-  # their DDC address, so ddcutil would compete with it.
-  brightness.enable_ddcutil = false;
+  brightness.enable_ddcutil = true;
 
+  # 2026/Oct/25 Sun 11:31:22; a %S in the format makes the clock tick every second.
+  widget.clock.format = "{:%Y/%b/%d %a %H:%M:%S}";
+
+  # Full-width square bar; pure_black_dark above turns its surface colour black.
   bar.main = {
     position = "top";
+    background_opacity = 1.0;
+    radius = 0;
+    concave_edge_corners = false;
+    margin_ends = 0;
+    margin_edge = 0;
     start = [
       "launcher"
       "workspaces"

@@ -1,4 +1,3 @@
-{ self }:
 {
   config,
   lib,
@@ -7,11 +6,9 @@
 }:
 let
   theme = import ../theme.nix { inherit lib; };
-  pamAuth = import ../pam.nix { inherit config lib; };
+  greetd = config.security.pam.services.greetd;
 in
 {
-  imports = [ self.inputs.noctalia-greeter.nixosModules.default ];
-
   services.displayManager.noctalia-greeter = {
     enable = true;
     settings = {
@@ -37,5 +34,17 @@ in
     };
   };
 
-  security.pam.services.greetd = pamAuth config.security.pam.services.greetd true;
+  security.pam.services.greetd = {
+    u2f.enable = config.security.pam.services.login.u2f.enable;
+    u2f.control = config.security.pam.services.login.u2f.control;
+    fprintAuth = config.services.fprintd.enable;
+    # A supplied password should not wait for hardware authentication.
+    rules.auth.unix.order = lib.mkIf (greetd.u2f.control == "sufficient") (
+      greetd.rules.auth.u2f.order - 10
+    );
+    rules.auth.fprintd.settings = {
+      timeout = 10;
+      "max-tries" = 3;
+    };
+  };
 }

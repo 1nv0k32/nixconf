@@ -1,14 +1,37 @@
 {
   lib,
   pkgs,
+  noctalia,
   workspaces,
-  # Shell-provided niri actions for the keys below; each shell maps them to its own tools.
-  actions,
-  extra,
 }:
 let
   empty = _: { };
   spawn = package: args: { spawn = [ (lib.getExe package) ] ++ args; };
+  msg = args: {
+    spawn = [
+      noctalia
+      "msg"
+    ]
+    ++ args;
+  };
+
+  volumeUp = msg [ "volume-up" ];
+  volumeDown = msg [ "volume-down" ];
+  mute = msg [ "volume-mute" ];
+  micMute = msg [ "mic-mute" ];
+  brightness =
+    direction:
+    msg [
+      "brightness-${direction}"
+      "*"
+      "5%"
+    ];
+  media =
+    action:
+    msg [
+      "media"
+      action
+    ];
 
   workspaceBinds = lib.mergeAttrsList (
     lib.imap1 (key: name: {
@@ -20,11 +43,24 @@ in
 workspaceBinds
 // {
   "Mod+Return" = spawn pkgs.kitty [ ];
-  "Mod+Space" = actions.launcher;
+  "Mod+Space" = msg [
+    "panel-toggle"
+    "launcher"
+  ];
+  "Mod+Comma" = msg [ "settings-toggle" ];
   "Mod+E" = spawn pkgs.nautilus [ ];
-  "Mod+Escape" = actions.session;
-  "Mod+Backspace" = actions.lock;
-  "Mod+Shift+S" = actions.suspend;
+  "Mod+Escape" = msg [
+    "panel-toggle"
+    "session"
+  ];
+  "Mod+Backspace" = msg [
+    "session"
+    "lock"
+  ];
+  "Mod+Shift+S" = msg [
+    "session"
+    "lock-and-suspend"
+  ];
   "Mod+Q".close-window = empty;
   "Mod+Tab".toggle-overview = empty;
   "Mod+Shift+Tab".switch-focus-between-floating-and-tiling = empty;
@@ -75,24 +111,23 @@ workspaceBinds
   "Mod+Print".screenshot-screen = empty;
   "Mod+Shift+Print".screenshot-window = empty;
 
-  "Mod+F12" = actions.volumeUp;
-  "Mod+F11" = actions.volumeDown;
-  "Mod+F10" = actions.mute;
-  "Mod+V" = actions.micMute;
-  "XF86AudioRaiseVolume" = actions.volumeUp;
-  "XF86AudioLowerVolume" = actions.volumeDown;
-  "XF86AudioMute" = actions.mute;
-  "XF86AudioMicMute" = actions.micMute;
-  "XF86MonBrightnessUp" = actions.brightnessUp;
-  "XF86MonBrightnessDown" = actions.brightnessDown;
+  "Mod+F12" = volumeUp;
+  "Mod+F11" = volumeDown;
+  "Mod+F10" = mute;
+  "Mod+V" = micMute;
+  "XF86AudioRaiseVolume" = volumeUp;
+  "XF86AudioLowerVolume" = volumeDown;
+  "XF86AudioMute" = mute;
+  "XF86AudioMicMute" = micMute;
+  "XF86MonBrightnessUp" = brightness "up";
+  "XF86MonBrightnessDown" = brightness "down";
 
-  "Mod+Ctrl+Right" = actions.mediaNext;
-  "Mod+Ctrl+Down" = actions.mediaPlayPause;
-  "Mod+Ctrl+Left" = actions.mediaPrevious;
-  "Mod+Ctrl+Up" = actions.mediaStop;
-  "XF86AudioNext" = actions.mediaNext;
-  "XF86AudioPlay" = actions.mediaPlayPause;
-  "XF86AudioPrev" = actions.mediaPrevious;
-  "XF86AudioStop" = actions.mediaStop;
+  "Mod+Ctrl+Right" = media "next";
+  "Mod+Ctrl+Down" = media "toggle";
+  "Mod+Ctrl+Left" = media "previous";
+  "Mod+Ctrl+Up" = media "stop";
+  "XF86AudioNext" = media "next";
+  "XF86AudioPlay" = media "toggle";
+  "XF86AudioPrev" = media "previous";
+  "XF86AudioStop" = media "stop";
 }
-// extra
