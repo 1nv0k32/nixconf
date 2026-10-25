@@ -1,5 +1,3 @@
-# Noctalia provides the bar, launcher, notifications, OSD, polkit agent, idle handling and lock
-# screen; noctalia-greeter is the login screen.
 {
   config,
   lib,

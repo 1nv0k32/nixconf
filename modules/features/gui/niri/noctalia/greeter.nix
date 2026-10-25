@@ -19,7 +19,6 @@ in
         scheme = "Catppuccin";
         theme_mode = "dark";
         font_family = "Ubuntu";
-        # A color: path also overrides any wallpaper copied in by Noctalia's appearance sync.
         wallpaper.path = "color:#000000";
       };
       cursor = {
@@ -28,7 +27,6 @@ in
         path = "${pkgs.adwaita-icon-theme}/share/icons";
       };
       keyboard = theme.xkb;
-      # An empty password moves on to the security key, then the fingerprint reader.
       auth.allow_empty_password = true;
     };
   };
