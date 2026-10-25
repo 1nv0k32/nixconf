@@ -99,6 +99,15 @@ in
             open-floating = true;
           }
           {
+            matches = [ { app-id = "^org\\.telegram\\.desktop$"; } ];
+            excludes = [ { title = "^Media viewer$"; } ];
+            open-floating = true;
+          }
+          {
+            matches = [ { app-id = "^chromium-browser$"; } ];
+            open-maximized = true;
+          }
+          {
             matches = [ { app-id = "^dev\\.noctalia\\.Noctalia$"; } ];
             open-floating = true;
             default-column-width.fixed = 1080;
