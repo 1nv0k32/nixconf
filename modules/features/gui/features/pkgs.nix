@@ -4,12 +4,13 @@
   pkgs,
   ...
 }:
+let
+  llmAgents = self.inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+in
 {
   environment.systemPackages =
     with pkgs;
-    with self.inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
     [
-      kitty
       wl-clipboard
       stirling-pdf-desktop
       libreoffice
@@ -25,12 +26,10 @@
       bruno
       telegram-desktop
       vscode
+      llmAgents.openspec
+      llmAgents.droid
     ]
-    ++ [
-      openspec
-      droid
-    ]
-    ++ lib.optionals (pkgs.stdenv.hostPlatform.system == "x86_64-linux") [
+    ++ lib.optionals stdenv.hostPlatform.isx86_64 [
       spotify
       discord
       zoom-us

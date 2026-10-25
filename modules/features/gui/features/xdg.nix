@@ -1,4 +1,89 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+let
+  mimeTypes = {
+    "chromium-browser.desktop" = [
+      "x-scheme-handler/http"
+      "x-scheme-handler/https"
+    ];
+    "org.gnome.Nautilus.desktop" = [ "inode/directory" ];
+    "org.gnome.Evince.desktop" = [ "application/pdf" ];
+    "org.gnome.eog.desktop" = map (type: "image/${type}") [
+      "bmp"
+      "gif"
+      "jpg"
+      "pjpeg"
+      "png"
+      "tiff"
+      "webp"
+      "x-bmp"
+      "x-gray"
+      "x-icb"
+      "x-ico"
+      "x-png"
+      "x-portable-anymap"
+      "x-portable-bitmap"
+      "x-portable-graymap"
+      "x-portable-pixmap"
+      "x-xbitmap"
+      "x-xpixmap"
+      "x-pcx"
+      "svg+xml"
+      "svg+xml-compressed"
+      "vnd.wap.wbmp"
+      "x-icns"
+    ];
+    "vlc.desktop" = map (type: "video/${type}") [
+      "x-ogm+ogg"
+      "3gp"
+      "3gpp"
+      "3gpp2"
+      "dv"
+      "divx"
+      "fli"
+      "flv"
+      "mp2t"
+      "mp4"
+      "mp4v-es"
+      "mpeg"
+      "mpeg-system"
+      "msvideo"
+      "ogg"
+      "quicktime"
+      "vivo"
+      "vnd.divx"
+      "vnd.mpegurl"
+      "vnd.rn-realvideo"
+      "vnd.vivo"
+      "webm"
+      "x-anim"
+      "x-avi"
+      "x-flc"
+      "x-fli"
+      "x-flic"
+      "x-flv"
+      "x-m4v"
+      "x-matroska"
+      "x-mjpeg"
+      "x-mpeg"
+      "x-mpeg2"
+      "x-ms-asf"
+      "x-ms-asf-plugin"
+      "x-ms-asx"
+      "x-msvideo"
+      "x-ms-wm"
+      "x-ms-wmv"
+      "x-ms-wmx"
+      "x-ms-wvx"
+      "x-nsv"
+      "x-theora"
+      "x-theora+ogg"
+      "x-ogm"
+      "avi"
+      "x-mpeg-system"
+    ];
+  };
+  associations = lib.concatMapAttrs (app: types: lib.genAttrs types (_: [ app ])) mimeTypes;
+in
 {
   environment.systemPackages = with pkgs; [
     nautilus
@@ -7,167 +92,9 @@
     vlc
   ];
 
-  xdg.mime =
-    let
-      web = "chromium-browser.desktop";
-      inode = "org.gnome.Nautilus.desktop";
-      pdf = "org.gnome.Evince.desktop";
-      image = "org.gnome.eog.desktop";
-      video = "vlc.desktop";
-    in
-    {
-      enable = true;
-      addedAssociations = {
-        "inode/directory" = [ inode ];
-        "x-scheme-handler/http" = [ web ];
-        "x-scheme-handler/https" = [ web ];
-        "application/pdf" = [ pdf ];
-        "image/bmp" = [ image ];
-        "image/gif" = [ image ];
-        "image/jpg" = [ image ];
-        "image/pjpeg" = [ image ];
-        "image/png" = [ image ];
-        "image/tiff" = [ image ];
-        "image/webp" = [ image ];
-        "image/x-bmp" = [ image ];
-        "image/x-gray" = [ image ];
-        "image/x-icb" = [ image ];
-        "image/x-ico" = [ image ];
-        "image/x-png" = [ image ];
-        "image/x-portable-anymap" = [ image ];
-        "image/x-portable-bitmap" = [ image ];
-        "image/x-portable-graymap" = [ image ];
-        "image/x-portable-pixmap" = [ image ];
-        "image/x-xbitmap" = [ image ];
-        "image/x-xpixmap" = [ image ];
-        "image/x-pcx" = [ image ];
-        "image/svg+xml" = [ image ];
-        "image/svg+xml-compressed" = [ image ];
-        "image/vnd.wap.wbmp" = [ image ];
-        "image/x-icns" = [ image ];
-        "video/x-ogm+ogg" = [ video ];
-        "video/3gp" = [ video ];
-        "video/3gpp" = [ video ];
-        "video/3gpp2" = [ video ];
-        "video/dv" = [ video ];
-        "video/divx" = [ video ];
-        "video/fli" = [ video ];
-        "video/flv" = [ video ];
-        "video/mp2t" = [ video ];
-        "video/mp4" = [ video ];
-        "video/mp4v-es" = [ video ];
-        "video/mpeg" = [ video ];
-        "video/mpeg-system" = [ video ];
-        "video/msvideo" = [ video ];
-        "video/ogg" = [ video ];
-        "video/quicktime" = [ video ];
-        "video/vivo" = [ video ];
-        "video/vnd.divx" = [ video ];
-        "video/vnd.mpegurl" = [ video ];
-        "video/vnd.rn-realvideo" = [ video ];
-        "video/vnd.vivo" = [ video ];
-        "video/webm" = [ video ];
-        "video/x-anim" = [ video ];
-        "video/x-avi" = [ video ];
-        "video/x-flc" = [ video ];
-        "video/x-fli" = [ video ];
-        "video/x-flic" = [ video ];
-        "video/x-flv" = [ video ];
-        "video/x-m4v" = [ video ];
-        "video/x-matroska" = [ video ];
-        "video/x-mjpeg" = [ video ];
-        "video/x-mpeg" = [ video ];
-        "video/x-mpeg2" = [ video ];
-        "video/x-ms-asf" = [ video ];
-        "video/x-ms-asf-plugin" = [ video ];
-        "video/x-ms-asx" = [ video ];
-        "video/x-msvideo" = [ video ];
-        "video/x-ms-wm" = [ video ];
-        "video/x-ms-wmv" = [ video ];
-        "video/x-ms-wmx" = [ video ];
-        "video/x-ms-wvx" = [ video ];
-        "video/x-nsv" = [ video ];
-        "video/x-theora" = [ video ];
-        "video/x-theora+ogg" = [ video ];
-        "video/x-ogm" = [ video ];
-        "video/avi" = [ video ];
-        "video/x-mpeg-system" = [ video ];
-      };
-      defaultApplications = {
-        "inode/directory" = [ inode ];
-        "x-scheme-handler/http" = [ web ];
-        "x-scheme-handler/https" = [ web ];
-        "application/pdf" = [ pdf ];
-        "image/bmp" = [ image ];
-        "image/gif" = [ image ];
-        "image/jpg" = [ image ];
-        "image/pjpeg" = [ image ];
-        "image/png" = [ image ];
-        "image/tiff" = [ image ];
-        "image/webp" = [ image ];
-        "image/x-bmp" = [ image ];
-        "image/x-gray" = [ image ];
-        "image/x-icb" = [ image ];
-        "image/x-ico" = [ image ];
-        "image/x-png" = [ image ];
-        "image/x-portable-anymap" = [ image ];
-        "image/x-portable-bitmap" = [ image ];
-        "image/x-portable-graymap" = [ image ];
-        "image/x-portable-pixmap" = [ image ];
-        "image/x-xbitmap" = [ image ];
-        "image/x-xpixmap" = [ image ];
-        "image/x-pcx" = [ image ];
-        "image/svg+xml" = [ image ];
-        "image/svg+xml-compressed" = [ image ];
-        "image/vnd.wap.wbmp" = [ image ];
-        "image/x-icns" = [ image ];
-        "video/x-ogm+ogg" = [ video ];
-        "video/3gp" = [ video ];
-        "video/3gpp" = [ video ];
-        "video/3gpp2" = [ video ];
-        "video/dv" = [ video ];
-        "video/divx" = [ video ];
-        "video/fli" = [ video ];
-        "video/flv" = [ video ];
-        "video/mp2t" = [ video ];
-        "video/mp4" = [ video ];
-        "video/mp4v-es" = [ video ];
-        "video/mpeg" = [ video ];
-        "video/mpeg-system" = [ video ];
-        "video/msvideo" = [ video ];
-        "video/ogg" = [ video ];
-        "video/quicktime" = [ video ];
-        "video/vivo" = [ video ];
-        "video/vnd.divx" = [ video ];
-        "video/vnd.mpegurl" = [ video ];
-        "video/vnd.rn-realvideo" = [ video ];
-        "video/vnd.vivo" = [ video ];
-        "video/webm" = [ video ];
-        "video/x-anim" = [ video ];
-        "video/x-avi" = [ video ];
-        "video/x-flc" = [ video ];
-        "video/x-fli" = [ video ];
-        "video/x-flic" = [ video ];
-        "video/x-flv" = [ video ];
-        "video/x-m4v" = [ video ];
-        "video/x-matroska" = [ video ];
-        "video/x-mjpeg" = [ video ];
-        "video/x-mpeg" = [ video ];
-        "video/x-mpeg2" = [ video ];
-        "video/x-ms-asf" = [ video ];
-        "video/x-ms-asf-plugin" = [ video ];
-        "video/x-ms-asx" = [ video ];
-        "video/x-msvideo" = [ video ];
-        "video/x-ms-wm" = [ video ];
-        "video/x-ms-wmv" = [ video ];
-        "video/x-ms-wmx" = [ video ];
-        "video/x-ms-wvx" = [ video ];
-        "video/x-nsv" = [ video ];
-        "video/x-theora" = [ video ];
-        "video/x-theora+ogg" = [ video ];
-        "video/x-ogm" = [ video ];
-        "video/avi" = [ video ];
-        "video/x-mpeg-system" = [ video ];
-      };
-    };
+  xdg.mime = {
+    enable = true;
+    addedAssociations = associations;
+    defaultApplications = associations;
+  };
 }

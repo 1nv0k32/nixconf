@@ -6,7 +6,7 @@
   ...
 }:
 let
-  theme = import ../theme.nix { inherit lib; };
+  theme = import ../theme.nix { inherit pkgs; };
   greetd = config.security.pam.services.greetd;
 in
 {
@@ -16,18 +16,17 @@ in
       session.default = "niri";
       user.default = self.lib.user.name;
       appearance = {
-        scheme = "Catppuccin";
-        theme_mode = "dark";
-        font_family = "Ubuntu";
-        wallpaper.path = "color:#000000";
+        inherit (theme.palette) scheme;
+        theme_mode = theme.palette.mode;
+        font_family = theme.font;
+        wallpaper.path = "color:${theme.background}";
       };
       cursor = {
-        theme = "Adwaita";
-        size = 24;
-        path = "${pkgs.adwaita-icon-theme}/share/icons";
+        inherit (theme.cursor) theme size;
+        path = "${theme.cursor.package}/share/icons";
       };
       keyboard = theme.xkb;
-      auth.allow_empty_password = true;
+      auth.allow_empty_password = greetd.u2f.enable;
     };
   };
 

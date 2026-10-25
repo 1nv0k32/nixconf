@@ -5,10 +5,11 @@
   ...
 }:
 let
+  theme = import ../theme.nix { inherit pkgs; };
   noctalia = lib.getExe config.programs.noctalia.package;
 
   configFile = (pkgs.formats.toml { }).generate "noctalia-config.toml" (
-    import ./settings.nix { inherit config; }
+    import ./settings.nix { inherit config theme; }
   );
   # Noctalia reads $NOCTALIA_CONFIG_HOME/noctalia/*.toml. Changes made in its Settings window go to
   # ~/.local/state/noctalia/settings.toml and override this file.
@@ -19,8 +20,6 @@ let
   '';
 in
 {
-  imports = [ ./greeter.nix ];
-
   programs.noctalia = {
     enable = true;
     recommendedServices.enable = true;

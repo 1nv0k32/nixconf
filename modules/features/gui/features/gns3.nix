@@ -8,7 +8,7 @@
   ];
 
   security.wrappers.ubridge = {
-    source = "${lib.getExe pkgs.ubridge}";
+    source = lib.getExe pkgs.ubridge;
     capabilities = "cap_net_admin,cap_net_raw=ep";
     owner = "root";
     group = "ubridge";

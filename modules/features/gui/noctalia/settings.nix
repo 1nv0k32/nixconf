@@ -1,13 +1,12 @@
-{ config }:
+{ config, theme }:
 {
   shell = {
-    font_family = "Ubuntu";
+    font_family = theme.font;
     polkit_agent = true;
     telemetry_enabled = false;
     launch_apps_as_systemd_services = true;
     niri_overview_type_to_launch_enabled = true;
     niri_overview_close_on_launch_enabled = true;
-    window_switcher.mru = true;
     keyboard_layout.custom_labels = {
       "English (US)" = "EN";
       Persian = "FA";
@@ -15,9 +14,9 @@
   };
 
   theme = {
-    mode = "dark";
+    inherit (theme.palette) mode;
     source = "builtin";
-    builtin = "Catppuccin";
+    builtin = theme.palette.scheme;
     pure_black_dark = true;
   };
 
@@ -62,15 +61,13 @@
     start = [
       "launcher"
       "workspaces"
+      "media"
     ];
     center = [
-      "media"
       "clock"
       "keyboard_layout"
       "notifications"
       "control-center"
-      "caffeine"
-      "session"
     ];
     end = [
       "sysmon"
@@ -81,6 +78,8 @@
       "battery"
       "volume"
       "tray"
+      "caffeine"
+      "session"
     ];
   };
 }

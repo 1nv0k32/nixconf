@@ -1,12 +1,9 @@
-{ pkgs, lib, ... }:
+{ lib, pkgs, ... }:
 {
-  config = lib.mkIf (pkgs.stdenv.hostPlatform.system == "x86_64-linux") {
+  config = lib.mkIf pkgs.stdenv.hostPlatform.isx86_64 {
     programs.steam = {
       enable = true;
-      package = pkgs.steam;
-      extraCompatPackages = with pkgs; [
-        proton-ge-bin
-      ];
+      extraCompatPackages = [ pkgs.proton-ge-bin ];
     };
   };
 }

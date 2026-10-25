@@ -45,10 +45,6 @@ workspaceBinds
   "Mod+Return" = spawn pkgs.kitty [ ];
   "Mod+Space".switch-layout = "next";
   "Mod+Comma" = msg [ "settings-toggle" ];
-  "Alt+Tab" = msg [
-    "window-switcher"
-    "hold"
-  ];
   "Mod+E" = spawn pkgs.nautilus [ ];
   "Mod+Escape" = msg [
     "panel-toggle"
@@ -64,7 +60,7 @@ workspaceBinds
   ];
   "Mod+Q".close-window = empty;
   "Mod+Tab".toggle-overview = empty;
-  # keyd sends F24 when Super is tapped on its own.
+  # super-tap.nix sends F24 when Super is tapped on its own.
   "F24".toggle-overview = empty;
   "Mod+Shift+Tab".switch-focus-between-floating-and-tiling = empty;
   "Mod+Shift+Slash".show-hotkey-overlay = empty;

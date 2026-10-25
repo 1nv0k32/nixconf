@@ -6,7 +6,8 @@
   ...
 }:
 let
-  theme = import ./theme.nix { inherit lib; };
+  theme = import ../theme.nix { inherit pkgs; };
+  workspaces = map (i: "w${toString i}") (lib.range 0 4);
   empty = _: { };
 in
 {
@@ -14,19 +15,12 @@ in
     enable = true;
     package = self.inputs.wrapper-modules.wrappers.niri.wrap {
       inherit pkgs;
-      prefixVar = [
-        [
-          "XCURSOR_PATH"
-          ":"
-          "${pkgs.adwaita-icon-theme}/share/icons"
-        ]
-      ];
       settings = {
         prefer-no-csd = empty;
         hotkey-overlay.skip-at-startup = empty;
         cursor = {
-          xcursor-theme = "Adwaita";
-          xcursor-size = 24;
+          xcursor-theme = theme.cursor.theme;
+          xcursor-size = theme.cursor.size;
         };
         input = {
           keyboard = {
@@ -46,14 +40,13 @@ in
         };
 
         binds = import ./binds.nix {
-          inherit lib pkgs;
-          inherit (theme) workspaces;
+          inherit lib pkgs workspaces;
           noctalia = lib.getExe config.programs.noctalia.package;
         };
 
         layout = {
           gaps = 10;
-          background-color = theme.colors.background;
+          background-color = theme.background;
           center-focused-column = "on-overflow";
           always-center-single-column = empty;
           default-column-width.proportion = 0.5;
@@ -64,8 +57,8 @@ in
           ];
           focus-ring = {
             width = 2;
-            active-color = theme.colors.accent;
-            inactive-color = theme.colors.surface;
+            active-color = "#89b4fa";
+            inactive-color = "#313244";
           };
           border.off = empty;
           shadow = {
@@ -113,12 +106,9 @@ in
           }
         ];
 
-        workspaces = lib.genAttrs theme.workspaces (_: { });
+        workspaces = lib.genAttrs workspaces (_: { });
 
-        overview.backdrop-color = theme.colors.background;
-
-        # Alt+Tab uses Noctalia's switcher, where the pointer only highlights a window.
-        recent-windows.off = empty;
+        overview.backdrop-color = theme.background;
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
 
@@ -128,18 +118,6 @@ in
     };
   };
 
-  # niri binds fire on key press only, so a lone Super tap is turned into F24 here. Holding Super
-  # past the timeout (e.g. Super+drag) does not count as a tap.
-  services.keyd = {
-    enable = true;
-    keyboards.default = {
-      ids = [ "*" ];
-      settings = {
-        global.overload_tap_timeout = 200;
-        main.leftmeta = "overload(meta, f24)";
-      };
-    };
-  };
-
-  environment.systemPackages = [ pkgs.adwaita-icon-theme ];
+  # The cursor theme is found through XCURSOR_PATH, which includes the system profile.
+  environment.systemPackages = [ theme.cursor.package ];
 }
