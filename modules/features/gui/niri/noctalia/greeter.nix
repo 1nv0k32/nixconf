@@ -1,4 +1,5 @@
 {
+  self,
   config,
   lib,
   pkgs,
@@ -13,15 +14,13 @@ in
     enable = true;
     settings = {
       session.default = "niri";
+      user.default = self.lib.user.name;
       appearance = {
         scheme = "Catppuccin";
         theme_mode = "dark";
         font_family = "Ubuntu";
-        wallpaper = {
-          path = "${theme.wallpaper}";
-          fill_mode = "center";
-          fill_color = "#000000";
-        };
+        # A color: path also overrides any wallpaper copied in by Noctalia's appearance sync.
+        wallpaper.path = "color:#000000";
       };
       cursor = {
         theme = "Adwaita";
