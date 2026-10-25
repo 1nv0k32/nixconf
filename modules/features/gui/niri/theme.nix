@@ -8,8 +8,5 @@
   };
   workspaces = map (i: "w${toString i}") (lib.range 0 4);
   wallpaper = ../assets/backgroud-image.jpg;
-  xkb = {
-    layout = "us,ir";
-    options = "grp:alt_shift_toggle";
-  };
+  xkb.layout = "us,ir";
 }

@@ -43,10 +43,7 @@ in
 workspaceBinds
 // {
   "Mod+Return" = spawn pkgs.kitty [ ];
-  "Mod+Space" = msg [
-    "panel-toggle"
-    "launcher"
-  ];
+  "Mod+Space".switch-layout = "next";
   "Mod+Comma" = msg [ "settings-toggle" ];
   "Alt+Tab" = msg [
     "window-switcher"
