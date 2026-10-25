@@ -1,30 +1,30 @@
 {
   lib,
   pkgs,
-  shell,
+  workspaces,
+  # Shell-provided niri actions for the keys below; each shell maps them to its own tools.
+  actions,
+  extra,
 }:
 let
   empty = _: { };
   spawn = package: args: { spawn = [ (lib.getExe package) ] ++ args; };
-  volume = action: spawn shell.volume [ action ];
-  brightness = action: spawn shell.brightness [ action ];
-  player = action: spawn pkgs.playerctl [ action ];
 
-  workspaces = lib.mergeAttrsList (
+  workspaceBinds = lib.mergeAttrsList (
     lib.imap1 (key: name: {
       "Mod+${toString key}".focus-workspace = name;
       "Mod+Shift+${toString key}".move-column-to-workspace = name;
-    }) shell.workspaces
+    }) workspaces
   );
 in
-workspaces
+workspaceBinds
 // {
   "Mod+Return" = spawn pkgs.kitty [ ];
-  "Mod+Space" = spawn shell.launcher [ ];
+  "Mod+Space" = actions.launcher;
   "Mod+E" = spawn pkgs.nautilus [ ];
-  "Mod+Escape" = spawn shell.sessionMenu [ ];
-  "Mod+Backspace" = spawn shell.lock [ ];
-  "Mod+Shift+S" = spawn shell.suspend [ ];
+  "Mod+Escape" = actions.session;
+  "Mod+Backspace" = actions.lock;
+  "Mod+Shift+S" = actions.suspend;
   "Mod+Q".close-window = empty;
   "Mod+Tab".toggle-overview = empty;
   "Mod+Shift+Tab".switch-focus-between-floating-and-tiling = empty;
@@ -75,23 +75,24 @@ workspaces
   "Mod+Print".screenshot-screen = empty;
   "Mod+Shift+Print".screenshot-window = empty;
 
-  "Mod+F12" = volume "up";
-  "Mod+F11" = volume "down";
-  "Mod+F10" = volume "mute";
-  "Mod+V" = volume "mic-mute";
-  "XF86AudioRaiseVolume" = volume "up";
-  "XF86AudioLowerVolume" = volume "down";
-  "XF86AudioMute" = volume "mute";
-  "XF86AudioMicMute" = volume "mic-mute";
-  "XF86MonBrightnessUp" = brightness "up";
-  "XF86MonBrightnessDown" = brightness "down";
+  "Mod+F12" = actions.volumeUp;
+  "Mod+F11" = actions.volumeDown;
+  "Mod+F10" = actions.mute;
+  "Mod+V" = actions.micMute;
+  "XF86AudioRaiseVolume" = actions.volumeUp;
+  "XF86AudioLowerVolume" = actions.volumeDown;
+  "XF86AudioMute" = actions.mute;
+  "XF86AudioMicMute" = actions.micMute;
+  "XF86MonBrightnessUp" = actions.brightnessUp;
+  "XF86MonBrightnessDown" = actions.brightnessDown;
 
-  "Mod+Ctrl+Right" = player "next";
-  "Mod+Ctrl+Down" = player "play-pause";
-  "Mod+Ctrl+Left" = player "previous";
-  "Mod+Ctrl+Up" = player "stop";
-  "XF86AudioNext" = player "next";
-  "XF86AudioPlay" = player "play-pause";
-  "XF86AudioPrev" = player "previous";
-  "XF86AudioStop" = player "stop";
+  "Mod+Ctrl+Right" = actions.mediaNext;
+  "Mod+Ctrl+Down" = actions.mediaPlayPause;
+  "Mod+Ctrl+Left" = actions.mediaPrevious;
+  "Mod+Ctrl+Up" = actions.mediaStop;
+  "XF86AudioNext" = actions.mediaNext;
+  "XF86AudioPlay" = actions.mediaPlayPause;
+  "XF86AudioPrev" = actions.mediaPrevious;
+  "XF86AudioStop" = actions.mediaStop;
 }
+// extra

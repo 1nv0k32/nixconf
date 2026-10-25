@@ -6,7 +6,9 @@
   ...
 }:
 let
+  # Set by whichever shell module is imported: actions, binds, windowRules, settings.
   shell = niriShell;
+  theme = import ./theme.nix { inherit lib; };
   empty = _: { };
 in
 {
@@ -30,10 +32,7 @@ in
         };
         input = {
           keyboard = {
-            xkb = {
-              layout = "us,ir";
-              options = "grp:alt_shift_toggle";
-            };
+            inherit (theme) xkb;
             track-layout = "window";
             repeat-rate = 40;
             repeat-delay = 600;
@@ -48,11 +47,16 @@ in
           mouse.accel-profile = "flat";
         };
 
-        binds = import ./binds.nix { inherit lib pkgs shell; };
+        binds = import ./binds.nix {
+          inherit lib pkgs;
+          inherit (theme) workspaces;
+          inherit (shell) actions;
+          extra = shell.binds;
+        };
 
         layout = {
           gaps = 10;
-          background-color = shell.colors.base;
+          background-color = theme.colors.base;
           center-focused-column = "on-overflow";
           always-center-single-column = empty;
           default-column-width.proportion = 0.5;
@@ -63,8 +67,8 @@ in
           ];
           focus-ring = {
             width = 2;
-            active-color = shell.colors.accent;
-            inactive-color = shell.colors.surface;
+            active-color = theme.colors.accent;
+            inactive-color = theme.colors.surface;
           };
           border.off = empty;
           shadow = {
@@ -104,24 +108,16 @@ in
             ];
             open-floating = true;
           }
-        ];
+        ]
+        ++ shell.windowRules;
 
-        workspaces = lib.genAttrs shell.workspaces (_: { });
+        workspaces = lib.genAttrs theme.workspaces (_: { });
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
-      };
+      }
+      // shell.settings;
     };
   };
 
-  environment.systemPackages = [
-    shell.launcher
-    shell.sessionMenu
-    shell.lock
-    shell.volume
-    shell.brightness
-    pkgs.playerctl
-    pkgs.brightnessctl
-    pkgs.adwaita-icon-theme
-    pkgs.papirus-icon-theme
-  ];
+  environment.systemPackages = [ pkgs.adwaita-icon-theme ];
 }

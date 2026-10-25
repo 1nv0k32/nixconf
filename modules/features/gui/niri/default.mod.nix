@@ -7,10 +7,10 @@
         niri-scripts = pkgs.runCommand "niri-scripts-tests" { nativeBuildInputs = [ pkgs.python3 ]; } ''
           cd ${
             lib.fileset.toSource {
-              root = ./.;
+              root = ./custom-shell;
               fileset = lib.fileset.unions [
-                ./assets
-                ./tests
+                ./custom-shell/assets
+                ./custom-shell/tests
               ];
             }
           }
@@ -20,22 +20,12 @@
       };
     };
 
-  flake.nixosModules.gui-niri =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
-    }:
-    {
-      imports = [
-        ./compositor.nix
-        ./session.nix
-      ];
-
-      _module.args.niriShell = import ./shell.nix {
-        inherit self lib pkgs;
-        fingerprint = config.services.fprintd.enable;
-      };
-    };
+  flake.nixosModules.gui-niri = {
+    imports = [
+      ./compositor.nix
+      ./session.nix
+      # Swap for (import ./custom-shell { inherit self; }) to go back to the Waybar-based shell and ly.
+      (import ./noctalia { inherit self; })
+    ];
+  };
 }

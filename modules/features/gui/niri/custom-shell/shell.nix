@@ -2,22 +2,14 @@
   self,
   lib,
   pkgs,
+  theme,
   fingerprint,
 }:
 let
   wrappers = self.inputs.wrapper-modules.wrappers;
   # 0.4.4 adds native fprintd support that reports reader status on the lock screen.
   veila = pkgs.unstable.veila;
-  colors = {
-    base = "#1e1e2e";
-    surface = "#313244";
-    text = "#cdd6f4";
-    muted = "#6c7086";
-    accent = "#89b4fa";
-    urgent = "#f38ba8";
-  };
-  workspaces = map (i: "w${toString i}") (lib.range 0 4);
-  wallpaper = ../assets/backgroud-image.jpg;
+  inherit (theme) colors workspaces wallpaper;
   # fuzzel wants RRGGBBAA without the leading hash.
   opaque = color: "${lib.removePrefix "#" color}ff";
 
