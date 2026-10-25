@@ -1,5 +1,5 @@
 # Noctalia config.toml as Nix; see https://docs.noctalia.dev/noctalia/configuration/.
-{ config, theme }:
+{ config }:
 {
   shell = {
     font_family = "Ubuntu";
@@ -24,12 +24,8 @@
     pure_black_dark = true;
   };
 
-  wallpaper = {
-    enabled = true;
-    fill_mode = "center";
-    fill_color = "#000000";
-    default.path = "${theme.wallpaper}";
-  };
+  # niri's black background shows instead.
+  wallpaper.enabled = false;
 
   lockscreen = {
     enabled = true;

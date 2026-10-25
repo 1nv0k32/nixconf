@@ -2,11 +2,10 @@
 { lib }:
 {
   colors = {
-    base = "#1e1e2e";
+    background = "#000000";
     surface = "#313244";
     accent = "#89b4fa";
   };
   workspaces = map (i: "w${toString i}") (lib.range 0 4);
-  wallpaper = ../assets/backgroud-image.jpg;
   xkb.layout = "us,ir";
 }

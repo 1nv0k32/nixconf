@@ -53,7 +53,7 @@ in
 
         layout = {
           gaps = 10;
-          background-color = theme.colors.base;
+          background-color = theme.colors.background;
           center-focused-column = "on-overflow";
           always-center-single-column = empty;
           default-column-width.proportion = 0.5;
@@ -114,6 +114,8 @@ in
         ];
 
         workspaces = lib.genAttrs theme.workspaces (_: { });
+
+        overview.backdrop-color = theme.colors.background;
 
         # Alt+Tab uses Noctalia's switcher, where the pointer only highlights a window.
         recent-windows.off = empty;

@@ -1,5 +1,5 @@
-# Noctalia provides the bar, launcher, notifications, OSD, polkit agent, wallpaper, idle handling and
-# lock screen; noctalia-greeter is the login screen.
+# Noctalia provides the bar, launcher, notifications, OSD, polkit agent, idle handling and lock
+# screen; noctalia-greeter is the login screen.
 {
   config,
   lib,
@@ -7,11 +7,10 @@
   ...
 }:
 let
-  theme = import ../theme.nix { inherit lib; };
   noctalia = lib.getExe config.programs.noctalia.package;
 
   configFile = (pkgs.formats.toml { }).generate "noctalia-config.toml" (
-    import ./settings.nix { inherit config theme; }
+    import ./settings.nix { inherit config; }
   );
   # Noctalia reads $NOCTALIA_CONFIG_HOME/noctalia/*.toml. Changes made in its Settings window go to
   # ~/.local/state/noctalia/settings.toml and override this file.
