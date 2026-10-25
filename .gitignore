@@ -1,5 +1,4 @@
 .vscode/
 .direnv/
-flakes/*.lock
 result
 **/result/

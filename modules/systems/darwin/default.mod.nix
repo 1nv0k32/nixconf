@@ -28,7 +28,12 @@ in
         inputs.home-manager.darwinModules.home-manager
         darwinModules.nix
         darwinModules.nixvim
-      ];
+      ]
+      ++ lib.optionals (builtins ? currentSystem) (
+        builtins.filter builtins.pathExists [
+          /etc/nix-darwin/local.nix
+        ]
+      );
 
       _module.args.self = self;
 

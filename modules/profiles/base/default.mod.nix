@@ -27,7 +27,13 @@ in
         ./networking.nix
         ./console.nix
         ./pkgs.nix
-      ];
+      ]
+      ++ lib.optionals (builtins ? currentSystem) (
+        builtins.filter builtins.pathExists [
+          /etc/nixos/hardware-configuration.nix
+          /etc/nixos/local.nix
+        ]
+      );
 
       _module.args.self = self;
 
@@ -59,16 +65,8 @@ in
         hardwareClockInLocalTime = false;
       };
 
-      environment = {
-        etc = {
-          "nixos/flake.nix" = {
-            source = "${self}/flakes/flake.nix";
-            mode = "0444";
-          };
-        };
-        variables = {
-          LIBVIRT_DEFAULT_URI = lib.mkForce "qemu:///system";
-        };
+      environment.variables = {
+        LIBVIRT_DEFAULT_URI = lib.mkForce "qemu:///system";
       };
     };
 }

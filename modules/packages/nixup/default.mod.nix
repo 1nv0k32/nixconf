@@ -7,17 +7,20 @@
         set -euo pipefail
 
         if [ $# -eq 0 ]; then
-          sudo ${lib.getExe pkgs.curl} -sfL "${self.lib.remote}/raw/branch/main/flakes/flake.nix" -o /etc/nixos/flake.nix || true
           sudo ${lib.getExe pkgs.nixos-rebuild} switch \
+            --impure \
             --no-write-lock-file \
-            --print-build-logs
+            --print-build-logs \
+            --flake "git+${self.lib.remote}"
           exit 0
         fi
         case "$1" in
           --boot)
             sudo ${lib.getExe pkgs.nixos-rebuild} boot \
+              --impure \
               --no-write-lock-file \
-              --print-build-logs
+              --print-build-logs \
+              --flake "git+${self.lib.remote}"
             ;;
           --target)
             [ $# -eq 2 ] || { echo "usage: nixup [--target HOST]" >&2; exit 1; }
