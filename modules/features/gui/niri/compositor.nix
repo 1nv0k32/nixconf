@@ -108,7 +108,7 @@ in
 
         workspaces = lib.genAttrs workspaces (_: { });
 
-        overview.backdrop-color = "#404040";
+        overview.backdrop-color = "#303030";
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
 
