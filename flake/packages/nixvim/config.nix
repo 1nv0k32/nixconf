@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   viAlias = true;
   vimAlias = true;
@@ -38,8 +38,7 @@
   clipboard = {
     register = "unnamedplus";
     providers = {
-      wl-copy.enable = pkgs.stdenv.hostPlatform.isLinux;
-      pbcopy.enable = pkgs.stdenv.hostPlatform.isDarwin;
+      wl-copy.enable = true;
     };
   };
 
