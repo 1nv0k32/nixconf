@@ -101,7 +101,7 @@ in
           {
             matches = [ { app-id = "^org\\.telegram\\.desktop$"; } ];
             excludes = [ { title = "^Media viewer$"; } ];
-            open-floating = true;
+            default-column-width.proportion = 0.6;
           }
           {
             matches = [ { app-id = "^kitty$"; } ];
