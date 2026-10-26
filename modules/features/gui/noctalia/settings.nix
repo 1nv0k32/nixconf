@@ -64,22 +64,20 @@
       "media"
     ];
     center = [
-      "clock"
-      "keyboard_layout"
+      "caffeine"
       "notifications"
+      "clock"
       "control-center"
+      "session"
     ];
     end = [
-      "sysmon"
+      "keyboard_layout"
       "brightness"
       "volume"
       "bluetooth"
       "network"
       "battery"
-      "power_profile"
       "tray"
-      "caffeine"
-      "session"
     ];
   };
 }
