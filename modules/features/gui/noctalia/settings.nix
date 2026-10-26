@@ -72,11 +72,11 @@
     end = [
       "sysmon"
       "brightness"
+      "volume"
       "bluetooth"
       "network"
-      "power_profile"
       "battery"
-      "volume"
+      "power_profile"
       "tray"
       "caffeine"
       "session"
