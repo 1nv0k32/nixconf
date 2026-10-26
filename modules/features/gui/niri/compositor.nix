@@ -85,11 +85,6 @@ in
               { app-id = "^nm-connection-editor$"; }
               { app-id = "^org\\.gnome\\.Calculator$"; }
               { app-id = "^floating\\."; }
-            ];
-            open-floating = true;
-          }
-          {
-            matches = [
               {
                 app-id = "^org\\.gnome\\.Nautilus$";
                 title = "^(Properties|.* Properties)$";
@@ -98,9 +93,10 @@ in
             open-floating = true;
           }
           {
-            matches = [ { app-id = "^org\\.telegram\\.desktop$"; } ];
-            excludes = [ { title = "^Media viewer$"; } ];
-            default-column-width.proportion = 0.6;
+            matches = [ { app-id = "^dev\\.noctalia\\.Noctalia$"; } ];
+            open-floating = true;
+            default-column-width.fixed = 1080;
+            default-window-height.fixed = 920;
           }
           {
             matches = [ { app-id = "^kitty$"; } ];
@@ -108,13 +104,8 @@ in
           }
           {
             matches = [ { app-id = "^chromium-browser$"; } ];
+            matches = [ { app-id = "^Spotify$"; } ];
             open-maximized = true;
-          }
-          {
-            matches = [ { app-id = "^dev\\.noctalia\\.Noctalia$"; } ];
-            open-floating = true;
-            default-column-width.fixed = 1080;
-            default-window-height.fixed = 920;
           }
         ];
 
