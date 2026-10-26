@@ -79,7 +79,7 @@
       ];
 
       imports = [
-        (inputs.import-tree.filter (lib.hasInfix ".mod.") ./modules)
+        (inputs.import-tree.filter (lib.hasInfix ".mod.") ./flake)
       ];
 
       perSystem =
