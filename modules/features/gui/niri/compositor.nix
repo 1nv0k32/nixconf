@@ -83,7 +83,7 @@ in
             matches = [
               { app-id = "^com\\.saivert\\.pwvucontrol$"; }
               { app-id = "^nm-connection-editor$"; }
-              { app-id = "^org\\.gnome\\.Calculator$"; }
+              { app-id = "^qalculate-gtk$"; }
               { app-id = "^floating\\."; }
               {
                 app-id = "^org\\.gnome\\.Nautilus$";
