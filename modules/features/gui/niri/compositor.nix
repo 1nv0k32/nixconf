@@ -47,8 +47,7 @@ in
         layout = {
           gaps = 10;
           background-color = theme.background;
-          center-focused-column = "on-overflow";
-          always-center-single-column = empty;
+          center-focused-column = "always";
           default-column-width.proportion = 0.5;
           preset-column-widths = [
             { proportion = 0.333333; }
