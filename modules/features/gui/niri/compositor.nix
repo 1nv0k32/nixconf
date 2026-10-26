@@ -104,6 +104,10 @@ in
             open-floating = true;
           }
           {
+            matches = [ { app-id = "^kitty$"; } ];
+            default-column-width.proportion = 0.8;
+          }
+          {
             matches = [ { app-id = "^chromium-browser$"; } ];
             open-maximized = true;
           }
