@@ -12,13 +12,14 @@ in
     with pkgs;
     [
       wl-clipboard
+      qalculate-gtk
+      networkmanagerapplet
+      pwvucontrol
       stirling-pdf-desktop
       libreoffice
       transmission_4
       transmission_4-gtk
       gparted
-      pwvucontrol
-      alsa-utils
       virt-manager
       obs-studio
       gimp
