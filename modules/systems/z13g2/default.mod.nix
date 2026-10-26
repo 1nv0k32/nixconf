@@ -38,7 +38,7 @@ in
 
       services = {
         fprintd.enable = true;
-        udev.extraRules = lib.mkAfter ''
+        udev.extraRules = ''
           ACTION=="change", SUBSYSTEM=="sound", KERNEL=="card*", ATTR{id}=="Generic_1", RUN+="${lib.getExe' pkgs.alsa-utils "alsactl"} init $attr{number}"
         '';
       };
