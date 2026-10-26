@@ -103,8 +103,10 @@ in
             default-column-width.proportion = 0.8;
           }
           {
-            matches = [ { app-id = "^chromium-browser$"; } ];
-            matches = [ { app-id = "^Spotify$"; } ];
+            matches = [
+              { app-id = "^chromium-browser$"; }
+              { app-id = "^Spotify$"; }
+            ];
             open-maximized = true;
           }
         ];
