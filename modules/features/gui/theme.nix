@@ -14,6 +14,9 @@
     size = 24;
     package = pkgs.adwaita-icon-theme;
   };
-  xkb.layout = "us,ir";
+  xkb = {
+    layout = "us,ir";
+    options = "grp:alt_shift_toggle";
+  };
   background = "#000000";
 }
