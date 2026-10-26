@@ -12,7 +12,6 @@ in
     with pkgs;
     [
       wl-clipboard
-      qalculate-gtk
       networkmanagerapplet
       pwvucontrol
       stirling-pdf-desktop
