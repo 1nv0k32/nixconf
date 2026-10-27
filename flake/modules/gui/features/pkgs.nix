@@ -14,6 +14,7 @@ in
       wl-clipboard
       networkmanagerapplet
       pwvucontrol
+      qtpass
       stirling-pdf-desktop
       libreoffice
       transmission_4

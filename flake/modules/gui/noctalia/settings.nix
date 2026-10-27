@@ -18,6 +18,15 @@
     source = "builtin";
     builtin = theme.palette.scheme;
     pure_black_dark = true;
+    templates = {
+      enable_builtin_templates = true;
+      builtin_ids = [
+        "gtk3"
+        "gtk4"
+        "qt"
+        "kcolorscheme"
+      ];
+    };
   };
 
   wallpaper.enabled = false;

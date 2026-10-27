@@ -34,5 +34,46 @@ in
 
   # External monitor brightness: Noctalia runs ddcutil, which needs /dev/i2c-* access.
   hardware.i2c.enable = true;
-  environment.systemPackages = [ pkgs.ddcutil ];
+  environment.systemPackages = with pkgs; [
+    adw-gtk3
+    ddcutil
+  ];
+
+  qt = {
+    enable = true;
+    platformTheme = "qt5ct";
+  };
+
+  home-manager.sharedModules = [
+    (
+      { config, ... }:
+      let
+        qtctAppearance = dir: {
+          Appearance = {
+            color_scheme_path = "${config.xdg.configHome}/${dir}/colors/noctalia.conf";
+            custom_palette = true;
+            standard_dialogs = "xdgdesktopportal";
+            style = "Fusion";
+          };
+        };
+      in
+      {
+        gtk = {
+          enable = true;
+          colorScheme = theme.palette.mode;
+          theme = {
+            name = if theme.palette.mode == "light" then "adw-gtk3" else "adw-gtk3-dark";
+            package = pkgs.adw-gtk3;
+          };
+        };
+
+        qt = {
+          enable = true;
+          platformTheme.name = "qtct";
+          qt5ctSettings = qtctAppearance "qt5ct";
+          qt6ctSettings = qtctAppearance "qt6ct";
+        };
+      }
+    )
+  ];
 }
