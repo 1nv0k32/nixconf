@@ -37,6 +37,17 @@
     allow_empty_password = config.security.pam.services.login.u2f.enable;
   };
 
+  lockscreen_widgets = {
+    enabled = true;
+    widget.clock = {
+      type = "clock";
+      placement_width = 1920.0;
+      placement_height = 1080.0;
+      cx = 960.0;
+      cy = 300.0;
+    };
+  };
+
   idle = {
     behavior_order = [
       "lock"

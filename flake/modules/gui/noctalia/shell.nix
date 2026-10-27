@@ -11,8 +11,8 @@ let
   configFile = (pkgs.formats.toml { }).generate "noctalia-config.toml" (
     import ./settings.nix { inherit config theme; }
   );
-  # Noctalia reads $NOCTALIA_CONFIG_HOME/noctalia/*.toml. Changes made in its Settings window go to
-  # ~/.local/state/noctalia/settings.toml and override this file.
+  # Noctalia reads $NOCTALIA_CONFIG_HOME/noctalia/*.toml. Clear its runtime settings.toml
+  # sidecar on start so declarative changes in settings.nix are never shadowed by stale state.
   configHome = pkgs.runCommand "noctalia-config" { } ''
     HOME=$TMPDIR ${noctalia} config validate ${configFile}
     mkdir -p $out/noctalia
@@ -30,7 +30,10 @@ in
     };
   };
   # A changed config changes the unit, so a rebuild restarts the shell with it.
-  systemd.user.services.noctalia.environment.NOCTALIA_CONFIG_HOME = "${configHome}";
+  systemd.user.services.noctalia = {
+    environment.NOCTALIA_CONFIG_HOME = "${configHome}";
+    serviceConfig.ExecStartPre = "-${pkgs.coreutils}/bin/rm -f %S/noctalia/settings.toml";
+  };
 
   # External monitor brightness: Noctalia runs ddcutil, which needs /dev/i2c-* access.
   hardware.i2c.enable = true;
