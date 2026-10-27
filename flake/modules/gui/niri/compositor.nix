@@ -18,6 +18,7 @@ in
       settings = {
         prefer-no-csd = empty;
         hotkey-overlay.skip-at-startup = empty;
+        gestures.hot-corners.off = empty;
         cursor = {
           xcursor-theme = theme.cursor.theme;
           xcursor-size = theme.cursor.size;
