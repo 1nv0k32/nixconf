@@ -32,6 +32,7 @@
     behavior_order = [
       "lock"
       "screen-off"
+      "suspend"
     ];
     behavior = {
       lock = {
@@ -41,11 +42,21 @@
       };
       screen-off = {
         timeout = 900;
-        action = "screen_off";
+        action = "command";
+        command = "grep -qx Discharging /sys/class/power_supply/BAT*/status && noctalia msg dpms-off";
+        resume_command = "noctalia msg dpms-on";
+        enabled = true;
+      };
+      suspend = {
+        timeout = 1200;
+        action = "command";
+        command = "grep -qx Discharging /sys/class/power_supply/BAT*/status && systemctl suspend";
         enabled = true;
       };
     };
   };
+
+  hooks.battery_discharging = [ "noctalia msg caffeine-disable" ];
 
   brightness.enable_ddcutil = true;
 
