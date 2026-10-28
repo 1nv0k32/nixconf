@@ -12,6 +12,7 @@ in
 {
   services.displayManager.noctalia-greeter = {
     enable = true;
+    package = pkgs.unstable.noctalia-greeter;
     settings = {
       session.default = "niri";
       user.default = self.lib.user.name;

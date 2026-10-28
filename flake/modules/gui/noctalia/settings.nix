@@ -6,7 +6,6 @@
     telemetry_enabled = false;
     launch_apps_as_systemd_services = true;
     niri_overview_type_to_launch_enabled = true;
-    niri_overview_close_on_launch_enabled = true;
     keyboard_layout.custom_labels = {
       "English (US)" = "EN";
       Persian = "FA";
