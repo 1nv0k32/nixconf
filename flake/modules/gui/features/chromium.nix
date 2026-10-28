@@ -1,18 +1,14 @@
 { pkgs, ... }:
 {
-  environment.systemPackages = [
-    (pkgs.chromium.override {
-      commandLineArgs = [
-        "--enable-features=AcceleratedVideoDecodeLinuxZeroCopyGL,AcceleratedVideoDecodeLinuxGL,VaapiIgnoreDriverChecks"
-        "--ignore-gpu-blocklist"
-        "--enable-zero-copy"
-        "--ozone-platform-hint=auto"
-      ];
-    })
-  ];
+  environment.systemPackages = [ pkgs.chromium ];
 
   programs.chromium = {
     enable = true;
+    initialPrefs = {
+      vertical_tabs = {
+        enabled = true;
+      };
+    };
     extensions = [
       "nngceckbapebfimnlniiiahkandclblb" # bitwarden
       "ddkjiahejlhfcafbddmgiahcphecmpfh" # ublock origin lite
