@@ -35,11 +35,6 @@ in
           hash = "sha256-Yp/3vVmrVNa4Y5Z4/W4KEu6c7+clIKNiAf92BTsanVA=";
         })
         (fetchLorePatch {
-          name = "0003-nvme-translate-pcie-inbound-addresses.patch";
-          msgId = "20260706172152.5257168BFE";
-          hash = "sha256-QcnJ9/LYM3+IiYk3v1vI3eIulyVaCEouwYJzUE5PrCQ=";
-        })
-        (fetchLorePatch {
           name = "0004-rpi-enable-nvme.patch";
           msgId = "20260706172154.B506B68CFE";
           hash = "sha256-G6Tp0yGK+rBztOzFe6iMKjo1IjULSGXhNkz5OrHNnPk=";
