@@ -10,6 +10,7 @@ in
   flake.nixosModules.parallels = {
     imports = [
       nixosModules.extra
+      nixosModules.gui
       ./disko.nix
     ];
 
