@@ -10,12 +10,11 @@ let
   mkHost =
     hostName:
     {
-      module,
+      modules,
       domain ? null,
     }:
     inputs.nixpkgs.lib.nixosSystem {
-      modules = [
-        module
+      modules = modules ++ [
         {
           networking = {
             inherit hostName domain;
@@ -88,30 +87,33 @@ in
   config.flake.nixosConfigurations = builtins.mapAttrs mkHost {
     nyx = {
       domain = "nyxlan.internal";
-      module = nixosModules.z13g2;
+      modules = [ nixosModules.z13g2 ];
     };
     nyxpi = {
       domain = "nyxlan.internal";
-      module = nixosModules.rpi5;
+      modules = [ nixosModules.rpi5 ];
     };
     nyxmac = {
-      module = nixosModules.mac;
+      modules = [ nixosModules.mac ];
     };
     nyxdroid = {
-      module = nixosModules.avf;
+      modules = [ nixosModules.avf ];
     };
     nyxwsl = {
-      module = nixosModules.wsl;
+      modules = [ nixosModules.wsl ];
     };
     # VMs
     nyxvm = {
-      module = nixosModules.qemu;
+      modules = [
+        nixosModules.qemu
+        nixosModules.gui
+      ];
     };
     nyxutm = {
-      module = nixosModules.utm;
+      modules = [ nixosModules.utm ];
     };
     nyxprl = {
-      module = nixosModules.parallels;
+      modules = [ nixosModules.parallels ];
     };
   };
 }
