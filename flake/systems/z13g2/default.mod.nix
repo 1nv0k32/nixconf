@@ -40,6 +40,11 @@ in
         fprintd.enable = true;
         udev.extraRules = ''
           ACTION=="change", SUBSYSTEM=="sound", KERNEL=="card*", ATTR{id}=="Generic_1", RUN+="${lib.getExe' pkgs.alsa-utils "alsactl"} init $attr{number}"
+
+          # Arm USB hubs, including root hubs, for input-device wakeup.
+          ACTION=="add|change", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{bDeviceClass}=="09", TEST=="power/wakeup", ATTR{power/wakeup}="enabled"
+          # Match HID interfaces so composite keyboard/mouse receivers are included.
+          ACTION=="add|change", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{ID_USB_INTERFACES}=="*:03????:*", TEST=="power/wakeup", ATTR{power/wakeup}="enabled"
         '';
       };
     };
