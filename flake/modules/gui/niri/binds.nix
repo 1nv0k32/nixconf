@@ -119,6 +119,8 @@ workspaceBinds
   "XF86AudioLowerVolume" = volumeDown;
   "XF86AudioMute" = mute;
   "XF86AudioMicMute" = micMute;
+  "Mod+F1" = brightness "down";
+  "Mod+F2" = brightness "up";
   "XF86MonBrightnessUp" = brightness "up";
   "XF86MonBrightnessDown" = brightness "down";
 
