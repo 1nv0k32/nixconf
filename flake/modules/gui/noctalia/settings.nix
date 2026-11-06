@@ -89,6 +89,8 @@
 
   brightness.enable_ddcutil = true;
 
+  osd.kinds.media = false;
+
   widget.clock.format = "{:%Y/%b/%d %a %H:%M:%S}";
 
   widget.input-volume = {
