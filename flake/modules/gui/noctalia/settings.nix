@@ -6,6 +6,15 @@
     telemetry_enabled = false;
     launch_apps_as_systemd_services = true;
     niri_overview_type_to_launch_enabled = true;
+    panel = {
+      launcher_position = "auto";
+      clipboard_position = "auto";
+      open_near_click_launcher = true;
+      open_near_click_clipboard = true;
+      open_near_click_control_center = true;
+      open_near_click_wallpaper = true;
+      open_near_click_session = true;
+    };
     keyboard_layout.custom_labels = {
       "English (US)" = "EN";
       Persian = "FA";
@@ -109,6 +118,7 @@
       "session"
     ];
     end = [
+      "clipboard"
       "keyboard_layout"
       "brightness"
       "volume"
