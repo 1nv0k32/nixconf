@@ -32,6 +32,7 @@
 
   lockscreen = {
     enabled = true;
+    transition = [ "fade" ];
     fingerprint = config.services.fprintd.enable;
     allow_empty_password = config.security.pam.services.login.u2f.enable;
   };
