@@ -24,7 +24,7 @@ in
     enable = true;
     package = pkgs.unstable.noctalia.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [
-        ../../../../patches/noctalia/escape-cancels-authentication-5.4.1.patch
+        ./patches/escape-cancels-authentication-5.4.1.patch
       ];
     });
     recommendedServices.enable = true;

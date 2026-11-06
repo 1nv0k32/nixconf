@@ -82,6 +82,13 @@
 
   widget.clock.format = "{:%Y/%b/%d %a %H:%M:%S}";
 
+  widget.input-volume = {
+    type = "volume";
+    device = "input";
+  };
+
+  widget.network.show_label = false;
+
   bar.main = {
     position = "top";
     background_opacity = 1.0;
@@ -105,6 +112,7 @@
       "keyboard_layout"
       "brightness"
       "volume"
+      "input-volume"
       "bluetooth"
       "network"
       "battery"
