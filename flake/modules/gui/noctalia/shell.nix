@@ -22,7 +22,11 @@ in
 {
   programs.noctalia = {
     enable = true;
-    package = pkgs.unstable.noctalia;
+    package = pkgs.unstable.noctalia.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [
+        ../../../../patches/noctalia/escape-cancels-authentication-5.4.1.patch
+      ];
+    });
     recommendedServices.enable = true;
     systemd = {
       enable = true;
