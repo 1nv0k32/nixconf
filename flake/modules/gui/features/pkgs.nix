@@ -24,6 +24,7 @@ in
       obs-studio
       gimp
       freecad
+      openscad
       bruno
       telegram-desktop
       vscode

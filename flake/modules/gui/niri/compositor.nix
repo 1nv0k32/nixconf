@@ -45,6 +45,15 @@ in
           noctalia = lib.getExe config.programs.noctalia.package;
         };
 
+        recent-windows.binds = {
+          "Alt+Tab".next-window = _: { props.scope = "workspace"; };
+          "Alt+Shift+Tab".previous-window = _: { props.scope = "workspace"; };
+          "Alt+grave".next-window = _: { props.filter = "app-id"; };
+          "Alt+Shift+grave".previous-window = _: { props.filter = "app-id"; };
+          "Mod+grave".next-window = _: { props.filter = "app-id"; };
+          "Mod+Shift+grave".previous-window = _: { props.filter = "app-id"; };
+        };
+
         layout = {
           gaps = 10;
           background-color = theme.background;

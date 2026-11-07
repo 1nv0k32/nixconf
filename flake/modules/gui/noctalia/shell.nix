@@ -34,6 +34,9 @@ in
       target = "niri.service";
     };
   };
+
+  services.udisks2.enable = true;
+
   # A changed config changes the unit, so a rebuild restarts the shell with it.
   systemd.user.services.noctalia = {
     environment.NOCTALIA_CONFIG_HOME = "${configHome}";
@@ -66,6 +69,13 @@ in
         };
       in
       {
+        services.udiskie = {
+          enable = true;
+          automount = true;
+        };
+        # Use Noctalia's Wayland-compatible tray for the removable-drive menu.
+        xsession.preferStatusNotifierItems = true;
+
         gtk = {
           enable = true;
           colorScheme = theme.palette.mode;
