@@ -2,10 +2,22 @@
 let
   mimeTypes = {
     "chromium-browser.desktop" = [
+      "text/html"
+      "application/xhtml+xml"
       "x-scheme-handler/http"
       "x-scheme-handler/https"
+      "x-scheme-handler/about"
+      "x-scheme-handler/unknown"
     ];
     "org.gnome.Nautilus.desktop" = [ "inode/directory" ];
+    "code-url-handler.desktop" = [ "x-scheme-handler/vscode" ];
+    "org.telegram.desktop.desktop" = [
+      "x-scheme-handler/tg"
+      "x-scheme-handler/tonsite"
+    ];
+    "slack.desktop" = [ "x-scheme-handler/slack" ];
+    "bruno.desktop" = [ "x-scheme-handler/bruno" ];
+    "com.orcaslicer.OrcaSlicer.desktop" = [ "model/3mf" ];
     "org.gnome.Evince.desktop" = [ "application/pdf" ];
     "org.gnome.eog.desktop" = map (type: "image/${type}") [
       "bmp"
@@ -97,4 +109,18 @@ in
     addedAssociations = associations;
     defaultApplications = associations;
   };
+
+  # ~/.config/mimeapps.list takes precedence over /etc/xdg/mimeapps.list (and is what
+  # the flatpak OpenURI portal consults), and apps like VS Code rewrite it to claim
+  # http/https. Owning it from home-manager keeps it in sync with the system defaults.
+  home-manager.sharedModules = [
+    {
+      xdg.mimeApps = {
+        enable = true;
+        associations.added = associations;
+        defaultApplications = associations;
+      };
+      xdg.configFile."mimeapps.list".force = true;
+    }
+  ];
 }
