@@ -15,6 +15,7 @@
         ./waydroid.nix
         ./gpu-screen-recorder.nix
         ./terminal.nix
+        ./logitech.nix
       ];
 
       security.rtkit.enable = lib.mkDefault true;
