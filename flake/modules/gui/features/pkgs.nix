@@ -36,6 +36,5 @@ in
       discord
       zoom-us
       slack
-      unstable.devin-desktop
     ];
 }
