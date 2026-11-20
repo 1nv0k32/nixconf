@@ -106,8 +106,8 @@ workspaceBinds
   "Mod+Ctrl+Shift+P".move-column-to-monitor-previous = empty;
   "Mod+Ctrl+Shift+N".move-column-to-monitor-next = empty;
 
-  # Native screenshots support selection and copy directly to the clipboard.
-  "Print".screenshot = empty;
+  "Print" = spawn pkgs.flameshot [ "gui" ];
+  # Native screenshots copy directly to the clipboard.
   "Mod+Print".screenshot-screen = empty;
   "Mod+Shift+Print".screenshot-window = empty;
 

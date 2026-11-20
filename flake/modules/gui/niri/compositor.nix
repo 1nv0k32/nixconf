@@ -112,6 +112,14 @@ in
             default-column-width.proportion = 0.8;
           }
           {
+            # Flameshot's capture overlay is an ordinary window titled "flameshot".
+            matches = [ { title = "^flameshot$"; } ];
+            open-fullscreen = true;
+            open-floating = true;
+            geometry-corner-radius = 0;
+            shadow.off = empty;
+          }
+          {
             matches = [
               { app-id = "^chromium-browser$"; }
               { app-id = "^Spotify$"; }

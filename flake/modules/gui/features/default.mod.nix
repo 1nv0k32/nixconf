@@ -14,6 +14,7 @@
         ./appimage.nix
         ./waydroid.nix
         ./gpu-screen-recorder.nix
+        ./flameshot.nix
         ./terminal.nix
         ./logitech.nix
       ];
