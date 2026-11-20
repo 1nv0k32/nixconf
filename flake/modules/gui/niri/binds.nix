@@ -70,6 +70,7 @@ workspaceBinds
   "Mod+G".fullscreen-window = empty;
   "Mod+Shift+F".toggle-window-floating = empty;
   "Mod+C".center-column = empty;
+  "Mod+Shift+C" = msg [ "caffeine-toggle" ];
   "Mod+R".switch-preset-column-width = empty;
   "Mod+Shift+R".reset-window-height = empty;
   "Mod+W".toggle-column-tabbed-display = empty;
