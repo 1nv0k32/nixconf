@@ -89,7 +89,10 @@
 
   brightness.enable_ddcutil = true;
 
-  osd.kinds.media = false;
+  osd.kinds = {
+    media = false;
+    keyboard_layout = false;
+  };
 
   widget.clock.format = "{:%Y/%b/%d %a %H:%M:%S}";
 
