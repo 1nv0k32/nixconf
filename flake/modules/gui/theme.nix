@@ -18,5 +18,6 @@
     layout = "us,ir";
     options = "grp:alt_shift_toggle";
   };
-  background = "#000000";
+  # Ayu dark surface, so the backdrop matches app and shell backgrounds.
+  background = "#0B0E14";
 }

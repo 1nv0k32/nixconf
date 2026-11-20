@@ -9,5 +9,6 @@
     [General]
     useGrimAdapter=true
     disabledGrimWarning=true
+    disabledTrayIcon=true
   '';
 }

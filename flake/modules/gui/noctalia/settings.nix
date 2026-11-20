@@ -25,7 +25,7 @@
     inherit (theme.palette) mode;
     source = "builtin";
     builtin = theme.palette.scheme;
-    pure_black_dark = true;
+    pure_black_dark = false;
     templates = {
       enable_builtin_templates = true;
       builtin_ids = [
