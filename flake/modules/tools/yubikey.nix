@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   yk-ssh-keygen = pkgs.writeShellScriptBin "yk-ssh-keygen" ''
     set -euo pipefail
@@ -48,4 +53,17 @@ in
       };
     };
   };
+
+  # polkit >= 127 runs PAM in a sandboxed unit with no /dev/hidraw*, so pam_u2f silently
+  # falls through. nixpkgs 26.05 only opens it when security.pam.u2f.enable is global;
+  # NixOS/nixpkgs#585509 fixes that on master.
+  systemd.services."polkit-agent-helper@".serviceConfig =
+    lib.mkIf (config.security.polkit.enable && config.security.pam.services.polkit-1.u2f.enable)
+      {
+        PrivateDevices = false;
+        DeviceAllow = [
+          "/dev/urandom r"
+          "char-hidraw rw"
+        ];
+      };
 }
