@@ -3,6 +3,7 @@
   stdenv,
   anonsurf,
   cmake,
+  kdePackages,
   qt6,
 }:
 
@@ -28,9 +29,7 @@ stdenv.mkDerivation {
     substituteInPlace gui/src/cli/commandclient.cpp \
       --replace-fail '"/usr/bin/anonsurf"' '"${lib.getExe anonsurf}"' \
       --replace-fail '"/usr/lib/anonsurf/safekill"' '"${anonsurf}/lib/anonsurf/safekill"' \
-      --replace-fail '"/usr/bin/konsole"' '"konsole"' \
-      --replace-fail 'QFileInfo(KonsolePath).isExecutable()' '!QStandardPaths::findExecutable(KonsolePath).isEmpty()' \
-      --replace-fail '#include <QJsonObject>' $'#include <QJsonObject>\n#include <QStandardPaths>'
+      --replace-fail '"/usr/bin/konsole"' '"${lib.getExe kdePackages.konsole}"'
   '';
 
   meta = {
@@ -38,7 +37,7 @@ stdenv.mkDerivation {
     longDescription = ''
       Qt 6 interface for managing AnonSurf routing, status, Tor identities
       and startup integration. It controls the `anonsurfd.service` provided by
-      `services.anonsurf` and opens the Tor monitor in Konsole when available.
+      `services.anonsurf` and opens the Tor monitor in Konsole.
     '';
     inherit (anonsurf.meta) homepage maintainers platforms;
     license = with lib.licenses; [
