@@ -48,6 +48,7 @@ in
         nixosModules.server
         nixosModules.media
         nixosModules.gitea
+        nixosModules.tor
         ./disko.nix
       ];
 

@@ -16,6 +16,7 @@ in
         nixosModules.extra
         nixosModules.gui
         nixosModules.sdr
+        nixosModules.anonsurf
         ./disko.nix
       ];
 
@@ -37,6 +38,10 @@ in
       };
 
       services = {
+        anonsurf = {
+          enable = true;
+          gui.enable = true;
+        };
         fprintd.enable = true;
         udev.extraRules = ''
           ACTION=="change", SUBSYSTEM=="sound", KERNEL=="card*", ATTR{id}=="Generic_1", RUN+="${lib.getExe' pkgs.alsa-utils "alsactl"} init $attr{number}"

@@ -1,4 +1,6 @@
 {
+  flake.nixosModules.tor = ./tor.nix;
+
   flake.nixosModules.tools =
     { ... }:
     {
@@ -10,7 +12,6 @@
         ./tmux.nix
         ./fzf.nix
         ./kube.nix
-        ./tor.nix
       ];
     };
 }
