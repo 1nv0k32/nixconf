@@ -106,10 +106,6 @@ in
             default-window-height.fixed = 920;
           }
           {
-            matches = [ { app-id = "^kitty$"; } ];
-            default-column-width.proportion = 0.8;
-          }
-          {
             # Flameshot's capture overlay is an ordinary window titled "flameshot".
             matches = [ { title = "^flameshot$"; } ];
             open-fullscreen = true;
@@ -121,6 +117,7 @@ in
             matches = [
               { app-id = "^chromium-browser$"; }
               { app-id = "^Spotify$"; }
+              { app-id = "^kitty$"; }
             ];
             open-maximized = true;
           }
