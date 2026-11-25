@@ -50,8 +50,6 @@ in
           "Alt+Shift+Tab".previous-window = _: { props.scope = "workspace"; };
           "Alt+grave".next-window = _: { props.filter = "app-id"; };
           "Alt+Shift+grave".previous-window = _: { props.filter = "app-id"; };
-          "Mod+grave".next-window = _: { props.filter = "app-id"; };
-          "Mod+Shift+grave".previous-window = _: { props.filter = "app-id"; };
         };
 
         layout = {

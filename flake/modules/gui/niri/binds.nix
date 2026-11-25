@@ -57,6 +57,10 @@ workspaceBinds
     "session"
     "lock"
   ];
+  "Mod+grave" = msg [
+    "session"
+    "lock"
+  ];
   "Mod+Shift+S" = msg [
     "session"
     "lock-and-suspend"
