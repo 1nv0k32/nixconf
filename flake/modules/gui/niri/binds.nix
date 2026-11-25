@@ -53,10 +53,6 @@ workspaceBinds
     "panel-toggle"
     "session"
   ];
-  "Mod+Backspace" = msg [
-    "session"
-    "lock"
-  ];
   "Mod+grave" = msg [
     "session"
     "lock"
