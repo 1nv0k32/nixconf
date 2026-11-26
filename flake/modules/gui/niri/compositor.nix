@@ -99,6 +99,13 @@ in
             open-floating = true;
           }
           {
+            # Fits the laptop panel (1536x960 logical) and leaves room for the layout preview.
+            matches = [ { app-id = "^wdisplays$"; } ];
+            open-floating = true;
+            default-column-width.fixed = 1100;
+            default-window-height.fixed = 760;
+          }
+          {
             matches = [ { app-id = "^dev\\.noctalia\\.Noctalia$"; } ];
             open-floating = true;
             default-column-width.fixed = 1080;
@@ -136,4 +143,23 @@ in
 
   # The cursor theme is found through XCURSOR_PATH, which includes the system profile.
   environment.systemPackages = [ theme.cursor.package ];
+
+  # The running niri keeps watching the store config it was started with, so without this
+  # a rebuild only reaches the next session.
+  home-manager.sharedModules = [
+    (
+      { lib, ... }:
+      {
+        home.activation.reloadNiriConfig = lib.hm.dag.entryAfter [ "reloadSystemd" ] ''
+          niriSocket=$(${pkgs.systemd}/bin/systemctl --user show-environment 2>/dev/null \
+            | ${pkgs.gnused}/bin/sed -n 's/^NIRI_SOCKET=//p' || true)
+          if [[ -S $niriSocket ]]; then
+            NIRI_SOCKET=$niriSocket run ${lib.getExe config.programs.niri.package} msg action \
+              load-config-file --path ${config.programs.niri.package}/niri-config.kdl \
+              || warnEcho "niri did not accept the new config"
+          fi
+        '';
+      }
+    )
+  ];
 }
