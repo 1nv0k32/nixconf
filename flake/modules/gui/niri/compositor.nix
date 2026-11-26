@@ -33,7 +33,6 @@ in
           touchpad = {
             tap = empty;
             dwt = empty;
-            natural-scroll = empty;
             click-method = "button-areas";
             middle-emulation = empty;
           };
