@@ -33,6 +33,23 @@ let
       action
     ];
 
+  # Cycles the kanshi profiles from outputs.nix while an external display is connected.
+  displayMode = pkgs.writeShellApplication {
+    name = "niri-display-mode";
+    runtimeInputs = [
+      pkgs.kanshi
+      pkgs.jq
+    ];
+    text = ''
+      case "$(kanshictl status | jq -r .current_profile)" in
+        external) next=extend ;;
+        extend) next=laptop ;;
+        *) next=external ;;
+      esac
+      kanshictl switch "$next"
+    '';
+  };
+
   workspaceBinds = lib.mergeAttrsList (
     lib.imap1 (key: name: {
       "Mod+${toString key}".focus-workspace = name;
@@ -65,6 +82,7 @@ workspaceBinds
   "Mod+Tab".toggle-overview = empty;
   "Mod+Shift+Tab".switch-focus-between-floating-and-tiling = empty;
   "Mod+Shift+Slash".show-hotkey-overlay = empty;
+  "Mod+P" = spawn displayMode [ ];
 
   "Mod+F".maximize-column = empty;
   "Mod+G".fullscreen-window = empty;
