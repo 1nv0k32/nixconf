@@ -22,12 +22,13 @@ in
 {
   programs.noctalia = {
     enable = true;
-    package = pkgs.unstable.noctalia.overrideAttrs (old: {
-      patches = (old.patches or [ ]) ++ [
-        ./patches/escape-cancels-authentication-5.4.1.patch
-      ];
-    });
-    recommendedServices.enable = true;
+    package = pkgs.unstable.noctalia;
+    # package = pkgs.unstable.noctalia.overrideAttrs (old: {
+    #   patches = (old.patches or [ ]) ++ [
+    #     ./patches/escape-cancels-authentication-5.6.0.patch
+    #   ];
+    # });
+    # recommendedServices.enable = true;
     systemd = {
       enable = true;
       # niri.service imports WAYLAND_DISPLAY and NIRI_SOCKET before it reports ready.

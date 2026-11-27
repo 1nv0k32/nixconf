@@ -1,6 +1,6 @@
 # Escape during authentication
 
-Prepared on 2026-11-06. The shared Noctalia shell module applies the 5.4.1 backport to its package using `overrideAttrs`, preserving existing package patches. It takes effect on the next NixOS rebuild; no live service has been restarted. PAM configuration, module order, the greeter package, and the lock file are unchanged.
+Prepared on 2026-11-06. The shared Noctalia shell module applies the 5.6.0 backport to its package using `overrideAttrs`, preserving existing package patches. It takes effect on the next NixOS rebuild; no live service has been restarted. PAM configuration, module order, the greeter package, and the lock file are unchanged.
 
 ## Upstream findings
 
@@ -15,7 +15,7 @@ The included patch targets the missing **lock-screen** fix. No duplicate greeter
 
 `escape-cancels-authentication.patch` is a plain Git-applicable patch for `noctalia-dev/noctalia`, not for this configuration repository. Its base is upstream snapshot `28f1702d2dfb349ced501d0d0ae106efa91bcefd`. The original context of every changed-file hunk also matches upstream `main` as checked on 2026-11-06.
 
-`escape-cancels-authentication-5.4.1.patch` is the package backport used by `flake/modules/gui/noctalia/shell.nix`. It adjusts the Meson test-list context and preserves the release header's `nodiscard` annotations; the fix and regression test are otherwise unchanged.
+`escape-cancels-authentication-5.6.0.patch` is the package backport used by `flake/modules/gui/noctalia/shell.nix`. Noctalia 5.6.0 moved PAM into a separate `noctalia-pam-helper` executable with a versioned protocol, so the backport threads the stop token through that helper instead of the self re-exec. The regression test points `NOCTALIA_PAM_HELPER_PATH` at itself and speaks the versioned protocol; it passed in the 5.6.0 package build (190/190 Meson tests).
 
 It:
 

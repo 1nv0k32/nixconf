@@ -1,20 +1,21 @@
 Subject: [PATCH] fix(lockscreen): cancel pending authentication with Escape
 
 Escape clears the prompt but leaves m_authenticating set, keeping buttons
-disabled until the old PAM attempt returns. Cancel the disposable helper,
-invalidate its result, and restore prompt interactivity without changing
-the PAM service or stack. Keep cancellation registered until helper exit
-and remove it before reaping to avoid signalling a reused PID.
+disabled until the old PAM attempt returns. Cancel the helper, invalidate
+its result, and restore prompt interactivity without changing the PAM
+service or stack. Keep cancellation registered until helper exit and
+remove it before reaping to avoid signalling a reused PID.
 
 Include deterministic helper-protocol tests that do not invoke system PAM.
 
-Backport to Noctalia 5.4.1: adjust only the Meson test-list context and
-preserve the release header's nodiscard annotations.
-
+Backport to Noctalia 5.6.0: thread the stop token through the separate
+noctalia-pam-helper executable and its versioned protocol. The test points
+NOCTALIA_PAM_HELPER_PATH at itself to impersonate the helper.
 diff --git a/docs/user/configuration/shell.mdx b/docs/user/configuration/shell.mdx
+index 9498e07..0f7ac95 100644
 --- a/docs/user/configuration/shell.mdx
 +++ b/docs/user/configuration/shell.mdx
-@@ -539,6 +539,8 @@
+@@ -551,6 +551,8 @@ The OSD powers volume, brightness, DND, caffeine, lock-key, keyboard-layout, pri
 
  ## Lock screen
 
@@ -23,7 +24,7 @@ diff --git a/docs/user/configuration/shell.mdx b/docs/user/configuration/shell.m
  Set **`[lockscreen].enabled = false`** to turn off session lock entirely: no `ext-session-lock-v1` engagement, no logind lock/unlock integration, and lock actions are hidden or no-op (idle lock, session panel, launcher, and `noctalia msg session lock`). **`lock-and-suspend`** falls back to suspend-only while the lock screen is disabled.
 
  When the lock screen is enabled, **`lock_before_suspend`** (default `true`) locks the session on logind `PrepareForSleep` before suspend or hibernate (including lid-close sleep), so you do not need a separate idle daemon for lock-before-sleep. Set it `false` if you want external suspend without locking.
-@@ -737,7 +739,7 @@
+@@ -760,7 +762,7 @@ action = "lock_and_suspend"
  lockscreen_shortcut = "Escape"
  ```
 
@@ -33,56 +34,62 @@ diff --git a/docs/user/configuration/shell.mdx b/docs/user/configuration/shell.m
  ### Greeter sync
 
 diff --git a/meson.build b/meson.build
+index 5a76c8d..8131f7a 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1323,6 +1323,7 @@
-     'notification_inline_reply',
+@@ -1316,6 +1316,7 @@ if build_tests
+     'notification_icon_source',
      'notification_internal_history',
      'path_browse',
 +    'pam_authenticator_cancellation',
      'pipewire_error',
+     'pipewire_route_cache',
      'umbriel_audio_provider',
-     'privacy_capture_classification',
 diff --git a/src/auth/pam_authenticator.cpp b/src/auth/pam_authenticator.cpp
+index 451fc66..085bb01 100644
 --- a/src/auth/pam_authenticator.cpp
 +++ b/src/auth/pam_authenticator.cpp
-@@ -334,7 +334,8 @@
+@@ -175,14 +175,15 @@ namespace {
+
  } // namespace
 
- PamAuthenticator::Result PamAuthenticator::authenticateCurrentUser(
--    std::string_view password, std::string_view service, std::string_view language, std::string_view startFailureMessage
-+    std::string_view password, std::string_view service, std::string_view language,
-+    std::string_view startFailureMessage, const std::stop_token& stopToken
- ) const {
-   // Re-exec before invoking PAM so the helper cannot inherit locked library
-   // state from the shell's other threads.
-@@ -342,7 +343,7 @@
-     return Result{.success = false, .message = std::string(startFailureMessage)};
-   };
+-PamAuthenticator::Result
+-PamAuthenticator::authenticateCurrentUser(std::string_view password, const Messages& messages) const {
++PamAuthenticator::Result PamAuthenticator::authenticateCurrentUser(
++    std::string_view password, const Messages& messages, const std::stop_token& stopToken
++) const {
+   // PAM runs in a separate helper executable: the helper cannot inherit locked
+   // library state from the shell's other threads, and distributions can grant
+   // it the privileges their PAM stack needs without extending them to the shell.
+   const auto fail = [&messages] { return Result{.success = false, .message = messages.startFailed}; };
 
--  if (password.size() > kMaxPasswordBytes || service.empty() || language.empty()) {
-+  if (stopToken.stop_requested() || password.size() > kMaxPasswordBytes || service.empty() || language.empty()) {
+-  if (password.size() > pam_helper::kMaxPasswordBytes) {
++  if (stopToken.stop_requested() || password.size() > pam_helper::kMaxPasswordBytes) {
      return fail();
    }
 
-@@ -386,18 +387,33 @@
+@@ -226,14 +227,25 @@ PamAuthenticator::authenticateCurrentUser(std::string_view password, const Messa
    closeFd(inPipe[0]);
    closeFd(outPipe[1]);
 
 -  const bool sentOk = sendPassword(inPipe[1], password);
 -  closeFd(inPipe[1]);
 -
-   Result result;
--  const bool readOk = sentOk && readResult(outPipe[0], result);
--  closeFd(outPipe[0]);
+-  // Read even if sending failed: a helper that rejects our protocol version
+-  // replies with its own before closing stdin.
 +  bool sentOk = false;
 +  bool readOk = false;
+   HelperReply reply;
+-  const bool readOk = readReply(outPipe[0], reply);
+-  closeFd(outPipe[0]);
 +  {
 +    std::stop_callback cancelHelper(stopToken, [pid] { (void)::kill(pid, SIGKILL); });
 +    sentOk = sendPassword(inPipe[1], password);
 +    closeFd(inPipe[1]);
 +
-+    readOk = sentOk && readResult(outPipe[0], result);
++    // Read even if sending failed: a helper that rejects our protocol version
++    // replies with its own before closing stdin.
++    readOk = readReply(outPipe[0], reply);
 +    closeFd(outPipe[0]);
 +
 +    // Keep cancellation armed until exit, but unregister it before reaping so
@@ -94,17 +101,19 @@ diff --git a/src/auth/pam_authenticator.cpp b/src/auth/pam_authenticator.cpp
 
    int status = 0;
    pid_t waitResult = -1;
-   do {
+@@ -241,6 +253,10 @@ PamAuthenticator::authenticateCurrentUser(std::string_view password, const Messa
      waitResult = ::waitpid(pid, &status, 0);
    } while (waitResult < 0 && errno == EINTR);
-+
+
 +  if (stopToken.stop_requested()) {
 +    return fail();
 +  }
-
++
    const bool exited = waitResult == pid && WIFEXITED(status);
    const int exitCode = exited ? WEXITSTATUS(status) : -1;
+   const bool succeeded = reply.status == pam_helper::Status::Success;
 diff --git a/src/auth/pam_authenticator.h b/src/auth/pam_authenticator.h
+index bc75cab..f09a4cd 100644
 --- a/src/auth/pam_authenticator.h
 +++ b/src/auth/pam_authenticator.h
 @@ -1,5 +1,6 @@
@@ -114,19 +123,21 @@ diff --git a/src/auth/pam_authenticator.h b/src/auth/pam_authenticator.h
  #include <string>
  #include <string_view>
 
-@@ -12,7 +13,7 @@
+@@ -17,6 +18,8 @@ public:
+     std::string authenticationFailed;
+   };
 
-   [[nodiscard]] Result authenticateCurrentUser(
-       std::string_view password, std::string_view service, std::string_view language,
--      std::string_view startFailureMessage
-+      std::string_view startFailureMessage, const std::stop_token& stopToken = {}
-   ) const;
-   [[nodiscard]] static std::string currentUsername();
-   [[nodiscard]] static int runHelperMode(int argc, char* argv[]);
+-  Result authenticateCurrentUser(std::string_view password, const Messages& messages) const;
++  Result authenticateCurrentUser(
++      std::string_view password, const Messages& messages, const std::stop_token& stopToken = {}
++  ) const;
+   static std::string currentUsername();
+ };
 diff --git a/src/shell/lockscreen/lock_screen.cpp b/src/shell/lockscreen/lock_screen.cpp
+index 32fb894..ac3eda4 100644
 --- a/src/shell/lockscreen/lock_screen.cpp
 +++ b/src/shell/lockscreen/lock_screen.cpp
-@@ -558,20 +558,25 @@
+@@ -560,20 +560,25 @@ void LockScreen::onKeyboardEvent(const KeyboardEvent& event) {
      return;
    }
 
@@ -155,7 +166,7 @@ diff --git a/src/shell/lockscreen/lock_screen.cpp b/src/shell/lockscreen/lock_sc
      return;
    }
 
-@@ -1436,6 +1441,7 @@
+@@ -1439,6 +1444,7 @@ void LockScreen::onKeyboardLayoutChanged() {
 
  void LockScreen::invalidatePendingAuthentication() {
    ++m_authGeneration;
@@ -163,7 +174,7 @@ diff --git a/src/shell/lockscreen/lock_screen.cpp b/src/shell/lockscreen/lock_sc
    m_authenticating = false;
  }
 
-@@ -1475,6 +1481,8 @@
+@@ -1478,6 +1484,8 @@ void LockScreen::tryAuthenticate() {
    clearSensitiveString(m_password);
 
    const std::uint64_t generation = ++m_authGeneration;
@@ -172,17 +183,17 @@ diff --git a/src/shell/lockscreen/lock_screen.cpp b/src/shell/lockscreen/lock_sc
    m_authenticating = true;
    m_status = i18n::tr("lockscreen.authenticating");
    m_statusIsError = false;
-@@ -1487,11 +1495,17 @@
-   const std::string pamService = "login";
-   const std::string pamLanguage(i18n::Service::instance().language());
-   const std::string pamStartFailure = i18n::tr("auth.pam.start-failed");
+@@ -1493,11 +1501,16 @@ void LockScreen::tryAuthenticate() {
+       .userUnavailable = i18n::tr("auth.pam.user-unavailable"),
+       .authenticationFailed = i18n::tr("auth.pam.authentication-failed"),
+   };
+-  std::thread([this, generation, password = std::move(password), authenticator,
+-               pamMessages = std::move(pamMessages)] mutable {
+-    const auto result = authenticator.authenticateCurrentUser(password, pamMessages);
 +  const std::weak_ptr<void> alive = m_aliveGuard;
-   std::thread([this, generation, password = std::move(password), authenticator, pamService, pamLanguage,
--               pamStartFailure] mutable {
--    const auto result = authenticator.authenticateCurrentUser(password, pamService, pamLanguage, pamStartFailure);
-+               pamStartFailure, stopToken, alive] mutable {
-+    const auto result =
-+        authenticator.authenticateCurrentUser(password, pamService, pamLanguage, pamStartFailure, stopToken);
++  std::thread([this, generation, password = std::move(password), authenticator, pamMessages = std::move(pamMessages),
++               stopToken, alive] mutable {
++    const auto result = authenticator.authenticateCurrentUser(password, pamMessages, stopToken);
      clearSensitiveString(password);
 -    DeferredCall::callLater([this, generation, result] { handleAuthResult(generation, result); });
 +    DeferredCall::callLater([this, generation, result, alive] {
@@ -194,6 +205,7 @@ diff --git a/src/shell/lockscreen/lock_screen.cpp b/src/shell/lockscreen/lock_sc
  }
 
 diff --git a/src/shell/lockscreen/lock_screen.h b/src/shell/lockscreen/lock_screen.h
+index dd3be2e..139b205 100644
 --- a/src/shell/lockscreen/lock_screen.h
 +++ b/src/shell/lockscreen/lock_screen.h
 @@ -9,6 +9,7 @@
@@ -204,7 +216,7 @@ diff --git a/src/shell/lockscreen/lock_screen.h b/src/shell/lockscreen/lock_scre
  #include <string>
  #include <unordered_map>
  #include <vector>
-@@ -178,6 +179,7 @@
+@@ -178,6 +179,7 @@ private:
    wl_surface* m_pointerSurface = nullptr;
    bool m_statusIsError = false;
    bool m_authenticating = false;
@@ -214,17 +226,22 @@ diff --git a/src/shell/lockscreen/lock_screen.h b/src/shell/lockscreen/lock_scre
    bool m_locked = false;
 diff --git a/tests/pam_authenticator_cancellation_test.cpp b/tests/pam_authenticator_cancellation_test.cpp
 new file mode 100644
+index 0000000..6d7db5b
 --- /dev/null
 +++ b/tests/pam_authenticator_cancellation_test.cpp
-@@ -0,0 +1,175 @@
+@@ -0,0 +1,177 @@
 +#include "auth/pam_authenticator.h"
++#include "auth/pam_helper_protocol.h"
 +#include "test_check.h"
 +
++#include <array>
 +#include <cerrno>
 +#include <charconv>
 +#include <chrono>
++#include <climits>
 +#include <csignal>
 +#include <cstdint>
++#include <cstdlib>
 +#include <future>
 +#include <poll.h>
 +#include <print>
@@ -238,79 +255,73 @@ new file mode 100644
 +
 +  using namespace std::chrono_literals;
 +
-+  constexpr std::string_view kStartFailure = "helper did not complete";
++  // The authenticator execs NOCTALIA_PAM_HELPER_PATH with this argv[0]; pointing
++  // it at this executable lets the test impersonate the helper without PAM.
++  constexpr std::string_view kHelperName = "noctalia-pam-helper";
++  constexpr const char* kModeEnv = "NOCTALIA_TEST_PAM_HELPER_MODE";
++  constexpr const char* kReadyFdEnv = "NOCTALIA_TEST_PAM_HELPER_READY_FD";
 +
-+  bool writeBytes(int fd, const void* data, std::size_t size) {
-+    const auto* bytes = static_cast<const char*>(data);
-+    while (size > 0) {
-+      const ssize_t count = ::write(fd, bytes, size);
-+      if (count < 0 && errno == EINTR) {
-+        continue;
-+      }
-+      if (count <= 0) {
-+        return false;
-+      }
-+      bytes += count;
-+      size -= static_cast<std::size_t>(count);
-+    }
-+    return true;
++  const PamAuthenticator::Messages kMessages{
++      .startFailed = "helper did not complete",
++      .userUnavailable = "user unavailable",
++      .authenticationFailed = "rejected",
++  };
++
++  bool writeReply(pam_helper::Status status, std::int32_t pamRc) {
++    const auto statusByte = static_cast<std::uint8_t>(status);
++    return pam_helper::writeAll(STDOUT_FILENO, &pam_helper::kProtocolVersion, sizeof(pam_helper::kProtocolVersion))
++        && pam_helper::writeAll(STDOUT_FILENO, &statusByte, sizeof(statusByte))
++        && pam_helper::writeAll(STDOUT_FILENO, &pamRc, sizeof(pamRc));
 +  }
 +
-+  bool readBytes(int fd, void* data, std::size_t size) {
-+    auto* bytes = static_cast<char*>(data);
-+    while (size > 0) {
-+      const ssize_t count = ::read(fd, bytes, size);
-+      if (count < 0 && errno == EINTR) {
-+        continue;
-+      }
-+      if (count <= 0) {
-+        return false;
-+      }
-+      bytes += count;
-+      size -= static_cast<std::size_t>(count);
-+    }
-+    return true;
-+  }
-+
-+  int runTestHelper(std::string_view mode, std::string_view readyFdText) {
-+    // This executable impersonates pam-helper. No system PAM service is used.
++  int runTestHelper() {
 +    ::alarm(10);
++    const char* modeEnv = std::getenv(kModeEnv);
++    TEST_CHECK(modeEnv != nullptr);
++    const std::string_view mode(modeEnv);
++
 +    if (mode != "no-read") {
++      std::uint8_t version = 0;
++      TEST_CHECK(pam_helper::readAll(STDIN_FILENO, &version, sizeof(version)));
++      TEST_CHECK(version == pam_helper::kProtocolVersion);
 +      std::uint32_t size = 0;
-+      TEST_CHECK(readBytes(STDIN_FILENO, &size, sizeof(size)));
-+      TEST_CHECK(size <= 64 * 1024);
++      TEST_CHECK(pam_helper::readAll(STDIN_FILENO, &size, sizeof(size)));
++      TEST_CHECK(size <= pam_helper::kMaxPasswordBytes);
 +      std::string password(size, '\0');
-+      TEST_CHECK(readBytes(STDIN_FILENO, password.data(), password.size()));
++      TEST_CHECK(size == 0 || pam_helper::readAll(STDIN_FILENO, password.data(), password.size()));
 +    }
 +
 +    if (mode == "success" || mode == "failure" || mode == "after-result") {
-+      const std::uint8_t success = mode == "failure" ? 0 : 1;
-+      const std::string message = mode == "failure" ? "rejected" : "";
-+      const auto size = static_cast<std::uint32_t>(message.size());
-+      TEST_CHECK(writeBytes(STDOUT_FILENO, &success, sizeof(success)));
-+      TEST_CHECK(writeBytes(STDOUT_FILENO, &size, sizeof(size)));
-+      TEST_CHECK(writeBytes(STDOUT_FILENO, message.data(), message.size()));
++      const bool success = mode != "failure";
++      // 7 is PAM_AUTH_ERR.
++      TEST_CHECK(writeReply(success ? pam_helper::Status::Success : pam_helper::Status::Failed, success ? 0 : 7));
 +      if (mode != "after-result") {
-+        return success != 0 ? 0 : 1;
++        return success ? pam_helper::kExitSuccess : pam_helper::kExitFailure;
 +      }
 +    } else if (mode == "partial") {
-+      const std::uint8_t success = 1;
-+      TEST_CHECK(writeBytes(STDOUT_FILENO, &success, sizeof(success)));
++      TEST_CHECK(
++          pam_helper::writeAll(STDOUT_FILENO, &pam_helper::kProtocolVersion, sizeof(pam_helper::kProtocolVersion))
++      );
 +    } else {
 +      TEST_CHECK(mode == "no-read" || mode == "blocked");
 +    }
 +
++    const char* readyFdEnv = std::getenv(kReadyFdEnv);
++    TEST_CHECK(readyFdEnv != nullptr);
++    const std::string_view readyFdText(readyFdEnv);
 +    int readyFd = -1;
 +    const auto parsed = std::from_chars(readyFdText.data(), readyFdText.data() + readyFdText.size(), readyFd);
 +    TEST_CHECK(parsed.ec == std::errc{});
 +    TEST_CHECK(parsed.ptr == readyFdText.data() + readyFdText.size());
 +    TEST_CHECK(readyFd >= 0);
 +    const pid_t pid = ::getpid();
-+    TEST_CHECK(writeBytes(readyFd, &pid, sizeof(pid)));
++    TEST_CHECK(pam_helper::writeAll(readyFd, &pid, sizeof(pid)));
 +    while (true) {
 +      ::pause();
 +    }
 +  }
++
++  void setMode(std::string_view mode) { TEST_CHECK(::setenv(kModeEnv, std::string(mode).c_str(), 1) == 0); }
 +
 +  void checkNoChildren() {
 +    int status = 0;
@@ -320,26 +331,24 @@ new file mode 100644
 +
 +  void checkResults() {
 +    const PamAuthenticator authenticator;
-+    TEST_CHECK(authenticator.authenticateCurrentUser("test", "success", "unused", kStartFailure).success);
++    setMode("success");
++    TEST_CHECK(authenticator.authenticateCurrentUser("test", kMessages).success);
 +    std::stop_source cancellation;
-+    TEST_CHECK(authenticator
-+                   .authenticateCurrentUser("test", "success", "unused", kStartFailure, cancellation.get_token())
-+                   .success);
-+    const auto failure =
-+        authenticator.authenticateCurrentUser("test", "failure", "unused", kStartFailure, cancellation.get_token());
++    TEST_CHECK(authenticator.authenticateCurrentUser("test", kMessages, cancellation.get_token()).success);
++    setMode("failure");
++    const auto failure = authenticator.authenticateCurrentUser("test", kMessages, cancellation.get_token());
 +    TEST_CHECK(!failure.success);
-+    TEST_CHECK(failure.message == "rejected");
++    TEST_CHECK(failure.message != kMessages.startFailed);
 +    // A completed attempt has no callback left that could signal another process.
 +    TEST_CHECK(cancellation.request_stop());
 +    checkNoChildren();
 +  }
 +
 +  void checkAlreadyCancelled() {
++    setMode("success");
 +    std::stop_source cancellation;
 +    cancellation.request_stop();
-+    const auto result = PamAuthenticator{}.authenticateCurrentUser(
-+        "test", "success", "unused", kStartFailure, cancellation.get_token()
-+    );
++    const auto result = PamAuthenticator{}.authenticateCurrentUser("test", kMessages, cancellation.get_token());
 +    TEST_CHECK(!result.success);
 +    checkNoChildren();
 +  }
@@ -347,24 +356,23 @@ new file mode 100644
 +  void checkCancellation(std::string_view mode) {
 +    int ready[2] = {-1, -1};
 +    TEST_CHECK(::pipe(ready) == 0);
++    TEST_CHECK(::setenv(kReadyFdEnv, std::to_string(ready[1]).c_str(), 1) == 0);
++    setMode(mode);
 +    std::stop_source cancellation;
-+    const std::string password(mode == "no-read" ? 64 * 1024 : 4, 'x');
-+    const std::string readyFd = std::to_string(ready[1]);
++    const std::string password(mode == "no-read" ? pam_helper::kMaxPasswordBytes : 4, 'x');
 +    auto result = std::async(std::launch::async, [&] {
-+      return PamAuthenticator{}.authenticateCurrentUser(
-+          password, mode, readyFd, kStartFailure, cancellation.get_token()
-+      );
++      return PamAuthenticator{}.authenticateCurrentUser(password, kMessages, cancellation.get_token());
 +    });
 +
 +    pollfd readyPoll{.fd = ready[0], .events = POLLIN, .revents = 0};
 +    TEST_CHECK(::poll(&readyPoll, 1, 2000) == 1);
 +    pid_t helperPid = -1;
-+    TEST_CHECK(readBytes(ready[0], &helperPid, sizeof(helperPid)));
++    TEST_CHECK(pam_helper::readAll(ready[0], &helperPid, sizeof(helperPid)));
 +    TEST_CHECK(cancellation.request_stop());
 +    TEST_CHECK(result.wait_for(2s) == std::future_status::ready);
 +    const auto cancelled = result.get();
 +    TEST_CHECK(!cancelled.success);
-+    TEST_CHECK(cancelled.message == kStartFailure);
++    TEST_CHECK(cancelled.message == kMessages.startFailed);
 +    TEST_CHECK(::kill(helperPid, 0) == -1);
 +    TEST_CHECK(errno == ESRCH);
 +    ::close(ready[0]);
@@ -372,16 +380,23 @@ new file mode 100644
 +    checkNoChildren();
 +
 +    // A new attempt works without waiting for the abandoned one.
-+    TEST_CHECK(PamAuthenticator{}.authenticateCurrentUser("test", "success", "unused", kStartFailure).success);
++    setMode("success");
++    TEST_CHECK(PamAuthenticator{}.authenticateCurrentUser("test", kMessages).success);
 +  }
 +
 +} // namespace
 +
 +int main(int argc, char* argv[]) {
-+  if (argc == 4 && std::string_view(argv[1]) == "pam-helper") {
-+    return runTestHelper(argv[2], argv[3]);
++  if (argc == 1 && std::string_view(argv[0]) == kHelperName) {
++    return runTestHelper();
 +  }
 +  ::alarm(30);
++
++  std::array<char, PATH_MAX> exe{};
++  const ssize_t n = ::readlink("/proc/self/exe", exe.data(), exe.size() - 1);
++  TEST_CHECK(n > 0);
++  TEST_CHECK(::setenv("NOCTALIA_PAM_HELPER_PATH", exe.data(), 1) == 0);
++
 +  checkResults();
 +  checkAlreadyCancelled();
 +  for (int attempt = 0; attempt < 5; ++attempt) {
