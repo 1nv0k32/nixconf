@@ -8,6 +8,8 @@
     programs.nixvim = {
       enable = true;
       defaultEditor = true;
+      # silences nixvim's warning about its nixpkgs input being followed
+      nixpkgs.source = inputs.nixpkgs;
       imports = [
         ./config.nix
       ];

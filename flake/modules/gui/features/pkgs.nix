@@ -1,11 +1,11 @@
 {
-  self,
+  inputs,
   lib,
   pkgs,
   ...
 }:
 let
-  llmAgents = self.inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+  llmAgents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
 in
 {
   environment.systemPackages =

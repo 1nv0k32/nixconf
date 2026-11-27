@@ -2,7 +2,6 @@
   lib,
   pkgs,
   noctalia,
-  workspaces,
 }:
 let
   empty = _: { };
@@ -34,10 +33,10 @@ let
     ];
 
   workspaceBinds = lib.mergeAttrsList (
-    lib.imap1 (key: name: {
-      "Mod+${toString key}".focus-workspace = name;
-      "Mod+Shift+${toString key}".move-column-to-workspace = name;
-    }) workspaces
+    map (key: {
+      "Mod+${toString key}".focus-workspace = key;
+      "Mod+Shift+${toString key}".move-column-to-workspace = key;
+    }) (lib.range 1 5)
   );
 in
 workspaceBinds

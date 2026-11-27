@@ -31,6 +31,7 @@ in
     openssl
     pre-commit
     screen
+    tack
     tree
     unzip
     wget

@@ -1,5 +1,5 @@
 {
-  self,
+  inputs,
   config,
   lib,
   pkgs,
@@ -7,13 +7,12 @@
 }:
 let
   theme = import ../theme.nix { inherit pkgs; };
-  workspaces = map (i: "w${toString i}") (lib.range 0 4);
   empty = _: { };
 in
 {
   programs.niri = {
     enable = true;
-    package = self.inputs.wrapper-modules.wrappers.niri.wrap {
+    package = inputs.wrapper-modules.wrappers.niri.wrap {
       inherit pkgs;
       settings = {
         prefer-no-csd = empty;
@@ -40,7 +39,7 @@ in
         };
 
         binds = import ./binds.nix {
-          inherit lib pkgs workspaces;
+          inherit lib pkgs;
           noctalia = lib.getExe config.programs.noctalia.package;
         };
 
@@ -128,8 +127,6 @@ in
             open-maximized = true;
           }
         ];
-
-        workspaces = lib.genAttrs workspaces (_: { });
 
         overview.backdrop-color = "#303030";
 

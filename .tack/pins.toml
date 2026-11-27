@@ -1,0 +1,78 @@
+# tack pins. edit by hand or with tack add / rm / alias
+# nix reads pins.lock.json; this file drives tack update
+
+# every input named nixpkgs, at any depth, follows the top-level nixpkgs pin
+# opt out per pin with exclude_follow, or point elsewhere with follows
+[all_follow]
+nixpkgs = "nixpkgs"
+
+# nixpkgs
+[inputs.nixpkgs-master]
+url = "github:NixOS/nixpkgs/master"
+
+[inputs.nixpkgs-unstable]
+url = "github:NixOS/nixpkgs/nixos-unstable"
+
+[inputs.nixpkgs]
+url = "github:NixOS/nixpkgs/nixos-26.05"
+
+[inputs.nixpkgs-old]
+url = "github:NixOS/nixpkgs/nixos-25.11"
+
+[inputs.nixpkgs-test]
+url = "github:1nv0k32/nixpkgs"
+
+# tools
+[inputs.flake-parts]
+url     = "github:hercules-ci/flake-parts"
+follows = { nixpkgs-lib = "nixpkgs" }
+
+[inputs.import-tree]
+url = "github:denful/import-tree"
+
+[inputs.wrapper-modules]
+url = "github:BirdeeHub/nix-wrapper-modules"
+
+[inputs.home-manager]
+url = "github:nix-community/home-manager/release-26.05"
+
+[inputs.nixvim]
+url = "github:nix-community/nixvim/nixos-26.05"
+
+[inputs.disko]
+url = "github:nix-community/disko/latest"
+
+[inputs.nixos-generators]
+url = "github:nix-community/nixos-generators"
+
+[inputs.nixarr]
+url = "github:nix-media-server/nixarr"
+
+# tracks nixpkgs-unstable and uses packages that stable lacks
+[inputs.llm-agents]
+url     = "github:numtide/llm-agents.nix"
+follows = { nixpkgs = "nixpkgs-unstable" }
+
+# hardware
+[inputs.nixos-avf]
+url = "github:nix-community/nixos-avf"
+
+[inputs.nixos-mac]
+url = "github:nix-community/nixos-apple-silicon"
+
+[inputs.nixos-wsl]
+url = "github:nix-community/NixOS-WSL"
+
+[inputs.srvos]
+url = "github:nix-community/srvos"
+
+[inputs.nixos-hardware]
+url     = "github:NixOS/nixos-hardware"
+follows = { nixpkgs = "nixpkgs-unstable" }
+
+# desktop
+[inputs.noctalia]
+url = "github:noctalia-dev/noctalia"
+
+[inputs.noctalia-greeter]
+url = "github:noctalia-dev/noctalia-greeter"

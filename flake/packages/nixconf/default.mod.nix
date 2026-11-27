@@ -22,11 +22,11 @@
           esac
         done
 
-        [ -f flake.nix ] && [ -f flake.lock ] || false
+        [ -f flake.nix ] && [ -f .tack/pins.toml ] || false
         cd "$(${lib.getExe pkgs.git} rev-parse --show-toplevel 2> /dev/null)"
 
         if [ "$update" = true ]; then
-          ${lib.getExe pkgs.nix} flake update
+          ${lib.getExe pkgs.tack} update
         fi
 
         while true; do

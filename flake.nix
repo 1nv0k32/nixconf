@@ -1,70 +1,11 @@
 {
-  inputs = {
-    # nixpkgs
-    nixpkgs-master.url = "github:NixOS/nixpkgs/master";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
-    nixpkgs-old.url = "github:NixOS/nixpkgs/nixos-25.11";
-    nixpkgs-test.url = "github:1nv0k32/nixpkgs";
-    # tools
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs-lib.follows = "nixpkgs";
-    };
-    import-tree.url = "github:denful/import-tree";
-    wrapper-modules = {
-      url = "github:BirdeeHub/nix-wrapper-modules";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    home-manager = {
-      url = "github:nix-community/home-manager/release-26.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixvim = {
-      url = "github:nix-community/nixvim/nixos-26.05";
-    };
-    disko = {
-      url = "github:nix-community/disko/latest";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixarr.url = "github:nix-media-server/nixarr";
-    llm-agents.url = "github:numtide/llm-agents.nix";
-    # hardware
-    nixos-avf.url = "github:nix-community/nixos-avf";
-    nixos-mac = {
-      url = "github:nix-community/nixos-apple-silicon";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    srvos = {
-      url = "github:nix-community/srvos";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixos-hardware = {
-      url = "github:NixOS/nixos-hardware";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-    # desktop
-    noctalia = {
-      url = "github:noctalia-dev/noctalia";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    noctalia-greeter = {
-      url = "github:noctalia-dev/noctalia-greeter";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
-
+  # inputs are pinned by tack in ./.tack, update them with `tack update`
   outputs =
-    inputs:
+    { self, ... }:
     let
+      inputs = removeAttrs (import ./.tack) [ "__functor" ] // {
+        inherit self;
+      };
       inherit (inputs.nixpkgs) lib;
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
@@ -78,8 +19,11 @@
       ];
 
       perSystem =
-        { pkgs, ... }:
+        { pkgs, system, ... }:
         {
+          # flake-parts derives pkgs from self.inputs, which tack leaves empty
+          _module.args.pkgs = inputs.nixpkgs.legacyPackages.${system};
+
           formatter = pkgs.nixfmt-tree;
         };
     };

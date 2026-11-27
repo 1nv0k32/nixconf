@@ -35,7 +35,9 @@ in
         ]
       );
 
-      _module.args.self = self;
+      _module.args = {
+        inherit inputs self;
+      };
 
       fileSystems."/" = lib.mkDefault {
         device = "none";

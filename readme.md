@@ -23,6 +23,17 @@ nix build \
     "git+https://codeberg.org/1nv0k32/nixconf#nixosConfigurations.HOST.config.system.build.toplevel"
 ```
 
+## Inputs
+
+Inputs are pinned with [tack](https://github.com/manic-systems/tack) in `.tack/`.
+Edit `.tack/pins.toml`, then refresh the lock:
+
+```sh
+tack update            # all pins
+tack update nixpkgs    # one pin
+tack look              # show upstream drift without writing the lock
+```
+
 ## Run devShells or pkgs
 
 ```sh
