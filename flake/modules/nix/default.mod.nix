@@ -3,6 +3,8 @@
   flake.nixosModules.nix = {
     environment.variables = {
       NIXPKGS_ALLOW_UNFREE = "1";
+      # let tack read the GitHub token from nix.conf access-tokens
+      TACK_NIX_CONF_TOKENS = "1";
     };
 
     nixpkgs = {
